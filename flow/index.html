@@ -1,0 +1,1404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Flow — Personal Command Center</title>
+<style>
+  :root {
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  html[data-theme="light"] {
+    --bg: #fbfbfa;
+    --bg-elevated: #ffffff;
+    --bg-hover: #f1f1ef;
+    --bg-active: #eaeae7;
+    --border: #e6e6e3;
+    --border-strong: #d8d8d4;
+    --text-primary: #1c1c1a;
+    --text-secondary: #6f6f6b;
+    --text-tertiary: #a3a39d;
+    --accent: #5b5bd6;
+    --accent-hover: #4d4dc4;
+    --accent-contrast: #ffffff;
+    --accent-wash: #ecebfb;
+    --danger: #d13b3b;
+    --danger-wash: #fbeaea;
+    --overdue: #c0392b;
+    --shadow: 0 1px 2px rgba(20,20,15,0.04), 0 8px 24px rgba(20,20,15,0.08);
+    --scrim: rgba(20,20,15,0.28);
+    --grad-start: #0891b2;
+    --grad-end: #15803d;
+    --attn-wash: #ecebfb;
+    --attn-border: #c9c6f5;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #101013;
+    --bg-elevated: #17171b;
+    --bg-hover: #1f1f24;
+    --bg-active: #26262c;
+    --border: #27272d;
+    --border-strong: #34343c;
+    --text-primary: #f2f2f4;
+    --text-secondary: #9d9da6;
+    --text-tertiary: #6c6c76;
+    --accent: #8583ff;
+    --accent-hover: #9997ff;
+    --accent-contrast: #0d0d10;
+    --accent-wash: #201f3a;
+    --danger: #f0605c;
+    --danger-wash: #331d1d;
+    --overdue: #f0605c;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.45);
+    --scrim: rgba(0,0,0,0.5);
+    --grad-start: #22d3ee;
+    --grad-end: #4ade80;
+    --attn-wash: #201f3a;
+    --attn-border: #34325e;
+  }
+
+  .grad-text {
+    background: linear-gradient(120deg, var(--grad-start), var(--grad-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .grad-icon { color: var(--grad-start); } /* fallback if SVG gradient unsupported */
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  button, input, textarea { font-family: inherit; color: inherit; }
+  button { cursor: pointer; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 232px 1fr;
+    height: 100vh;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 18px 12px 14px;
+    min-width: 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px 18px;
+  }
+  .brand-mark {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-section { margin-bottom: 18px; }
+  .nav-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 7px 8px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    text-align: left;
+  }
+  .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .nav-item.active { background: var(--accent-wash); font-weight: 650; }
+  .nav-item.active .label,
+  .nav-item.active .count {
+    background: linear-gradient(120deg, var(--grad-start), var(--grad-end));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .nav-item svg { flex-shrink: 0; color: var(--text-tertiary); }
+  .nav-item .label { flex: 1; }
+  .nav-item .count { font-size: 12px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+  .icon-grad { stroke: url(#flowGrad) !important; }
+
+  .search-trigger {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 7px 8px; margin-bottom: 14px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg-elevated); color: var(--text-tertiary); font-size: 13px;
+  }
+  .search-trigger:hover { border-color: var(--border-strong); color: var(--text-secondary); }
+  .search-trigger kbd {
+    margin-left: auto; font-size: 11px; padding: 1px 5px; border-radius: 4px;
+    border: 1px solid var(--border); color: var(--text-tertiary); font-family: inherit;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    display: flex; flex-direction: column; gap: 8px;
+    padding-top: 12px; border-top: 1px solid var(--border);
+  }
+  .sync-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-tertiary); padding: 4px 8px;
+  }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #3ba55d; flex-shrink: 0; }
+  .sync-pill.saving .sync-dot { background: #d6a300; animation: pulse 1s ease-in-out infinite; }
+  .sync-pill.error .sync-dot { background: var(--danger); animation: none; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .theme-toggle {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 6px 8px; border: none; background: transparent;
+    border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 12.5px;
+  }
+  .theme-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  /* ---------- Main ---------- */
+  .main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100vh;
+  }
+  .main-header {
+    padding: 22px 32px 4px;
+    flex-shrink: 0;
+  }
+  .view-title {
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .view-subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-top: 3px;
+  }
+
+  .attention { margin: 14px 32px 0; display: flex; flex-direction: column; gap: 6px; }
+  .attention:empty { display: none; }
+  .attn-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: var(--radius-md);
+    background: var(--attn-wash); border: 1px solid var(--attn-border);
+  }
+  .attn-icon {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--grad-start), var(--grad-end));
+    color: #06231f;
+  }
+  html[data-theme="dark"] .attn-icon { color: #06231f; }
+  .attn-body { flex: 1; min-width: 0; }
+  .attn-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+  .attn-snippet { font-size: 12.5px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .attn-source { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+  .attn-open {
+    display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0;
+    font-size: 12.5px; font-weight: 600; text-decoration: none; padding: 6px 10px;
+    border-radius: 999px; border: 1px solid var(--attn-border);
+    background: linear-gradient(120deg, var(--grad-start), var(--grad-end));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .attn-open:hover { border-color: var(--grad-start); }
+  .attn-dismiss { flex-shrink: 0; color: var(--text-tertiary); }
+  .attn-dismiss:hover { color: var(--danger); background: var(--danger-wash); }
+
+  .quick-add {
+    margin: 14px 32px 6px;
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    padding: 9px 10px;
+    flex-shrink: 0;
+  }
+  .quick-add:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-wash); }
+  .quick-add svg { color: var(--text-tertiary); flex-shrink: 0; }
+  .quick-add input[type="text"] {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 14px; color: var(--text-primary);
+  }
+  .quick-add input[type="text"]::placeholder { color: var(--text-tertiary); }
+
+  .qa-date-details { position: relative; flex-shrink: 0; }
+  .qa-date-details summary { list-style: none; }
+  .qa-date-details summary::-webkit-details-marker { display: none; }
+  .qa-date-chip {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 4px 9px 4px 8px; white-space: nowrap;
+  }
+  .qa-date-chip:hover { border-color: var(--border-strong); }
+  .qa-date-chip.set { color: var(--accent); border-color: var(--accent); background: var(--accent-wash); }
+  .qa-popover {
+    position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
+    background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md);
+    box-shadow: var(--shadow); padding: 6px; width: 190px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .qa-popover button {
+    display: flex; justify-content: space-between; align-items: center;
+    border: none; background: transparent; text-align: left;
+    padding: 7px 8px; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-primary);
+  }
+  .qa-popover button:hover { background: var(--bg-hover); }
+  .qa-popover .hint { font-size: 11px; color: var(--text-tertiary); }
+  .qa-popover input[type="date"] {
+    width: 100%; margin-top: 4px; padding: 6px 7px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--bg); color: var(--text-primary); font-size: 12.5px;
+  }
+
+  .quick-add-submit-hint { font-size: 11px; color: var(--text-tertiary); flex-shrink: 0; }
+
+  /* ---------- Task list ---------- */
+  .list-scroll { flex: 1; overflow-y: auto; padding: 8px 32px 40px; }
+  .group-header {
+    font-size: 11.5px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-tertiary); padding: 16px 4px 6px;
+  }
+  .group-header:first-child { padding-top: 8px; }
+
+  .task-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 8px; border-radius: var(--radius-md);
+    border: 1px solid transparent;
+  }
+  .task-row:hover { background: var(--bg-hover); }
+  .task-row:focus-visible { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-wash); }
+  .task-row.completed .task-title { color: var(--text-tertiary); text-decoration: line-through; text-decoration-color: var(--border-strong); }
+
+  .row-checkbox {
+    width: 18px; height: 18px; border-radius: 5px; margin-top: 1px;
+    border: 1.5px solid var(--border-strong); background: var(--bg-elevated);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0;
+  }
+  .row-checkbox:hover { border-color: var(--accent); }
+  .row-checkbox.checked { background: var(--accent); border-color: var(--accent); }
+  .row-checkbox svg { opacity: 0; color: var(--accent-contrast); }
+  .row-checkbox.checked svg { opacity: 1; }
+
+  .task-main { flex: 1; min-width: 0; cursor: pointer; }
+  .task-title { font-size: 14px; line-height: 1.4; word-break: break-word; }
+  .task-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11.5px; color: var(--text-tertiary);
+  }
+  .badge.overdue { color: var(--overdue); font-weight: 600; }
+  .badge svg { width: 12px; height: 12px; }
+  .notes-preview { font-size: 12px; color: var(--text-tertiary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 340px; }
+
+  .row-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+  .icon-btn {
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+    border: none; background: transparent; border-radius: var(--radius-sm); color: var(--text-tertiary);
+  }
+  .icon-btn:hover { background: var(--bg-active); color: var(--text-primary); }
+  .icon-btn.star.active { color: #d6a300; }
+  .icon-btn.star.active svg { fill: #d6a300; }
+
+  /* ---------- Empty states ---------- */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    padding: 48px 8px 8px; color: var(--text-tertiary);
+  }
+  .empty-state .headline { font-size: 14.5px; color: var(--text-secondary); font-weight: 600; }
+  .empty-state .sub { font-size: 13px; }
+  .empty-state kbd {
+    font-size: 11px; padding: 1px 5px; border-radius: 4px; border: 1px solid var(--border);
+    color: var(--text-tertiary); font-family: inherit;
+  }
+
+  /* ---------- Slide-over panel ---------- */
+  .scrim {
+    position: fixed; inset: 0; background: var(--scrim); z-index: 40;
+    opacity: 0; pointer-events: none; transition: opacity .15s ease;
+  }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+
+  .panel {
+    position: fixed; top: 0; right: 0; height: 100vh; width: 400px; max-width: 92vw;
+    background: var(--bg-elevated); border-left: 1px solid var(--border);
+    box-shadow: var(--shadow); z-index: 41;
+    transform: translateX(100%); transition: transform .18s ease;
+    display: flex; flex-direction: column;
+  }
+  .panel.open { transform: translateX(0); }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .panel-header .status { font-size: 11.5px; color: var(--text-tertiary); }
+  .panel-body { flex: 1; overflow-y: auto; padding: 6px 20px 20px; }
+  .panel-title {
+    width: 100%; border: none; outline: none; background: transparent; resize: none;
+    font-size: 19px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.35;
+    padding: 8px 0; color: var(--text-primary);
+  }
+  .panel-notes {
+    width: 100%; border: none; outline: none; background: transparent; resize: vertical;
+    font-size: 13.5px; line-height: 1.6; color: var(--text-secondary); min-height: 90px; padding: 4px 0;
+  }
+  .panel-notes::placeholder, .panel-title::placeholder { color: var(--text-tertiary); }
+
+  .panel-field {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-top: 1px solid var(--border);
+  }
+  .panel-field .field-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+  .panel-field .field-label svg { color: var(--text-tertiary); }
+  .field-control { display: flex; align-items: center; gap: 6px; }
+  .field-control input[type="date"] {
+    border: 1px solid var(--border); background: var(--bg); color: var(--text-primary);
+    border-radius: var(--radius-sm); font-size: 12.5px; padding: 5px 7px;
+  }
+  .field-control button.chip {
+    border: 1px solid var(--border); background: var(--bg); border-radius: 999px;
+    font-size: 12px; padding: 4px 9px; color: var(--text-secondary);
+  }
+  .field-control button.chip:hover { border-color: var(--border-strong); }
+  .field-control .clear-date { color: var(--text-tertiary); }
+
+  .switch {
+    width: 34px; height: 20px; border-radius: 999px; border: none; background: var(--border-strong);
+    position: relative; flex-shrink: 0; padding: 0;
+  }
+  .switch::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--bg-elevated); transition: transform .12s ease;
+  }
+  .switch.on { background: var(--accent); }
+  .switch.on::after { transform: translateX(14px); background: #fff; }
+
+  .panel-footer {
+    padding: 12px 20px 16px; border-top: 1px solid var(--border); flex-shrink: 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .danger-btn {
+    display: flex; align-items: center; gap: 6px; border: none; background: transparent;
+    color: var(--danger); font-size: 13px; padding: 6px 8px; border-radius: var(--radius-sm);
+  }
+  .danger-btn:hover { background: var(--danger-wash); }
+  .meta-line { font-size: 11.5px; color: var(--text-tertiary); }
+
+  /* ---------- Search overlay ---------- */
+  .search-overlay {
+    position: fixed; inset: 0; background: var(--scrim); z-index: 50;
+    display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh;
+    opacity: 0; pointer-events: none; transition: opacity .12s ease;
+  }
+  .search-overlay.open { opacity: 1; pointer-events: auto; }
+  .search-modal {
+    width: 560px; max-width: 90vw; max-height: 60vh; background: var(--bg-elevated);
+    border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .search-input-row { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .search-input-row svg { color: var(--text-tertiary); flex-shrink: 0; }
+  .search-input-row input {
+    flex: 1; border: none; outline: none; background: transparent; font-size: 15px; color: var(--text-primary);
+  }
+  .search-results { overflow-y: auto; padding: 6px; }
+  .search-result {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm);
+    border: none; background: transparent; width: 100%; text-align: left;
+  }
+  .search-result:hover, .search-result.active-result { background: var(--bg-hover); }
+  .search-result .sr-title { font-size: 13.5px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .search-result.completed .sr-title { color: var(--text-tertiary); text-decoration: line-through; }
+  .search-result .sr-tag { font-size: 11px; color: var(--text-tertiary); flex-shrink: 0; }
+  .search-empty { padding: 28px 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%) translateY(8px);
+    background: var(--bg-elevated); border: 1px solid var(--border); box-shadow: var(--shadow);
+    border-radius: var(--radius-md); padding: 9px 14px; font-size: 12.5px; color: var(--text-primary);
+    z-index: 60; opacity: 0; pointer-events: none; transition: opacity .15s ease, transform .15s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  @media (max-width: 720px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color: var(--grad-start)"></stop>
+        <stop offset="100%" style="stop-color: var(--grad-end)"></stop>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <nav class="sidebar" aria-label="Flow navigation">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-name grad-text">Flow</div>
+      </div>
+
+      <button class="search-trigger" id="searchTrigger" aria-label="Open search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="icon-grad"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Search</span>
+        <kbd>/</kbd>
+      </button>
+
+      <div class="nav-section">
+        <ul class="nav-list" id="navList" role="tablist"></ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sync-pill" id="syncPill" aria-live="polite">
+          <span class="sync-dot"></span>
+          <span id="syncLabel">Synced</span>
+        </div>
+        <button class="theme-toggle" id="themeToggle"></button>
+      </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="main-header">
+        <h1 class="view-title grad-text" id="viewTitle">Today</h1>
+        <div class="view-subtitle" id="viewSubtitle"></div>
+      </div>
+
+      <div class="attention" id="attention" aria-live="polite"></div>
+
+      <form class="quick-add" id="quickAddForm" aria-label="Quick add task">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="icon-grad"><path d="M12 5v14M5 12h14"/></svg>
+        <input type="text" id="quickAddInput" placeholder="Add a task…" autocomplete="off" maxlength="500" />
+        <details class="qa-date-details" id="qaDateDetails">
+          <summary>
+            <span class="qa-date-chip" id="qaDateChip">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <span id="qaDateLabel">No date</span>
+            </span>
+          </summary>
+          <div class="qa-popover" id="qaPopover">
+            <button type="button" data-qa-preset="today">Today</button>
+            <button type="button" data-qa-preset="tomorrow">Tomorrow</button>
+            <button type="button" data-qa-preset="nextweek">Next week</button>
+            <input type="date" id="qaDateInput" aria-label="Pick a date" />
+            <button type="button" data-qa-preset="clear">No date</button>
+          </div>
+        </details>
+        <span class="quick-add-submit-hint">Enter ↵</span>
+      </form>
+
+      <div class="list-scroll" id="listScroll"></div>
+    </main>
+  </div>
+
+  <!-- Slide-over panel -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Task detail" tabindex="-1">
+    <div class="panel-header">
+      <span class="status" id="panelStatus">Saved</span>
+      <button class="icon-btn" id="panelClose" aria-label="Close (Esc)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="panel-body">
+      <textarea class="panel-title" id="panelTitle" placeholder="Task title" rows="1" maxlength="500"></textarea>
+      <textarea class="panel-notes" id="panelNotes" placeholder="Add notes…" rows="3" maxlength="4000"></textarea>
+
+      <div class="panel-field">
+        <span class="field-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Due date
+        </span>
+        <div class="field-control">
+          <button type="button" class="chip clear-date" id="panelClearDate">None</button>
+          <input type="date" id="panelDate" aria-label="Due date" />
+        </div>
+      </div>
+
+      <div class="panel-field">
+        <span class="field-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg>
+          Focus
+        </span>
+        <button class="switch" id="panelFocus" role="switch" aria-checked="false" aria-label="Toggle focus"></button>
+      </div>
+
+      <div class="panel-field">
+        <span class="field-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
+          Completed
+        </span>
+        <button class="switch" id="panelCompleted" role="switch" aria-checked="false" aria-label="Toggle completed"></button>
+      </div>
+
+      <div class="meta-line" id="panelMeta"></div>
+    </div>
+    <div class="panel-footer">
+      <button class="danger-btn" id="panelDelete">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>
+        Delete task
+      </button>
+    </div>
+  </aside>
+
+  <!-- Search overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" class="icon-grad"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Search tasks…" autocomplete="off" />
+        <kbd class="sr-only">Escape to close</kbd>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------
+  // CONFIG — dedicated Supabase project for this artifact (flow-personal-command-center)
+  // ---------------------------------------------------------------------
+  const SUPABASE_URL = "https://czdrshvrrasizpxdcpwn.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_teEd54nmkdn_UFBNhCbvAQ_A3FagwhM";
+  const REST = SUPABASE_URL + "/rest/v1";
+  const HEADERS = {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY,
+    "Content-Type": "application/json",
+  };
+
+  // ---------------------------------------------------------------------
+  // STATE (in-memory only — the source of truth is Postgres via REST)
+  // ---------------------------------------------------------------------
+  const state = {
+    tasks: [],
+    signals: [],
+    theme: "system",
+    view: "today",
+    loading: true,
+    panelTaskId: null,
+    searchOpen: false,
+    searchQuery: "",
+    qaDate: null, // yyyy-mm-dd or null
+    lastFocused: null,
+  };
+
+  const VIEWS = [
+    { id: "today", label: "Today", icon: iconToday },
+    { id: "focus", label: "Focus", icon: iconFocus },
+    { id: "inbox", label: "Inbox", icon: iconInbox },
+    { id: "upcoming", label: "Upcoming", icon: iconUpcoming },
+    { id: "completed", label: "Completed", icon: iconCompleted },
+  ];
+
+  // ---------------------------------------------------------------------
+  // ICONS (inline SVG, stroke-based, 16px)
+  // ---------------------------------------------------------------------
+  function svg(inner, size, grad) {
+    size = size || 16;
+    const cls = grad ? ' class="icon-grad"' : '';
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"' + cls + '>' + inner + "</svg>";
+  }
+  function iconToday() { return svg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/>', 16, true); }
+  function iconFocus() { return svg('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>', 16, true); }
+  function iconInbox() { return svg('<path d="M21 12h-5l-1.8 3h-4.4L8 12H3"/><path d="M5.4 5.6 3 12v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6l-2.4-6.4A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.9 1.6z"/>', 16, true); }
+  function iconUpcoming() { return svg('<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 9.5h18"/>', 16, true); }
+  function iconCompleted() { return svg('<circle cx="12" cy="12" r="8"/><path d="m8.5 12 2.3 2.3L15.5 9.5"/>', 16, true); }
+  function iconStar(active) { return svg('<path d="M12 3.5l2.6 5.4 5.9.7-4.3 4.1 1.1 5.9L12 16.7l-5.3 2.9 1.1-5.9-4.3-4.1 5.9-.7z" ' + (active ? 'fill="currentColor"' : '') + '/>', 14); }
+  function iconCheck() { return svg('<path d="M20 6.5 9.5 17 4 11.5"/>', 12); }
+  function iconTrash() { return svg('<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/>', 14); }
+  function iconSun() { return svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', 14); }
+  function iconMoon() { return svg('<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>', 14); }
+  function iconSystem() { return svg('<rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>', 14); }
+  function iconSearch(size) { return svg('<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>', size || 16, true); }
+  function iconPlus() { return svg('<path d="M12 5v14M5 12h14"/>', 16, true); }
+  function iconBell() { return svg('<path d="M12 3a5 5 0 0 0-5 5v3.6c0 .6-.2 1.2-.6 1.7L5 15.5h14l-1.4-2.2c-.4-.5-.6-1.1-.6-1.7V8a5 5 0 0 0-5-5z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/>', 14); }
+  function iconExternal() { return svg('<path d="M14 4h6v6M20 4 10 14M19 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/>', 12); }
+
+  // ---------------------------------------------------------------------
+  // API LAYER
+  // ---------------------------------------------------------------------
+  async function apiRequest(path, options) {
+    setSync("saving");
+    try {
+      const res = await fetch(REST + path, Object.assign({}, options, {
+        headers: Object.assign({}, HEADERS, (options && options.headers) || {}),
+      }));
+      if (!res.ok) {
+        const text = await res.text().catch(function () { return ""; });
+        throw new Error("HTTP " + res.status + " " + text);
+      }
+      setSync("idle");
+      if (res.status === 204) return null;
+      const text = await res.text();
+      return text ? JSON.parse(text) : null;
+    } catch (err) {
+      setSync("error");
+      showToast("Couldn't reach Flow's database. " + (err && err.message ? "" : ""), true);
+      throw err;
+    }
+  }
+
+  function fetchTasks() {
+    return apiRequest("/flow_tasks?select=*&order=created_at.asc", { method: "GET" });
+  }
+  function fetchSettings() {
+    return apiRequest("/flow_settings?id=eq.1&select=*", { method: "GET" });
+  }
+  function createTask(payload) {
+    return apiRequest("/flow_tasks", {
+      method: "POST",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify([payload]),
+    }).then(function (rows) { return rows && rows[0]; });
+  }
+  function patchTask(id, patch) {
+    return apiRequest("/flow_tasks?id=eq." + encodeURIComponent(id), {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(patch),
+    }).then(function (rows) { return rows && rows[0]; });
+  }
+  function removeTask(id) {
+    return apiRequest("/flow_tasks?id=eq." + encodeURIComponent(id), { method: "DELETE" });
+  }
+  function patchSettings(patch) {
+    return apiRequest("/flow_settings?id=eq.1", { method: "PATCH", body: JSON.stringify(patch) });
+  }
+  function fetchSignals() {
+    return apiRequest("/flow_signals?select=*&dismissed=eq.false&order=created_at.desc", { method: "GET" });
+  }
+  function dismissSignal(id) {
+    return apiRequest("/flow_signals?id=eq." + encodeURIComponent(id), {
+      method: "PATCH",
+      body: JSON.stringify({ dismissed: true, dismissed_at: new Date().toISOString() }),
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // DATE HELPERS
+  // ---------------------------------------------------------------------
+  function todayStr() {
+    const d = new Date();
+    return toLocalDateStr(d);
+  }
+  function toLocalDateStr(d) {
+    const off = d.getTimezoneOffset();
+    const local = new Date(d.getTime() - off * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+  function addDays(dateStr, n) {
+    const d = new Date(dateStr + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    return toLocalDateStr(d);
+  }
+  function fmtBadge(dateStr) {
+    const t = todayStr();
+    if (dateStr === t) return "Today";
+    if (dateStr === addDays(t, 1)) return "Tomorrow";
+    if (dateStr === addDays(t, -1)) return "Yesterday";
+    const d = new Date(dateStr + "T00:00:00");
+    const diff = (new Date(dateStr + "T00:00:00") - new Date(t + "T00:00:00")) / 86400000;
+    if (diff > 1 && diff < 7) {
+      return d.toLocaleDateString("en-US", { weekday: "long" });
+    }
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: d.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined });
+  }
+  function fmtGroupHeader(dateStr) {
+    return fmtBadge(dateStr);
+  }
+
+  // ---------------------------------------------------------------------
+  // VIEW FILTERS
+  // ---------------------------------------------------------------------
+  function tasksToday() {
+    const t = todayStr();
+    return state.tasks.filter(function (x) { return !x.completed && x.due_date && x.due_date <= t; })
+      .sort(function (a, b) { return a.due_date < b.due_date ? -1 : a.due_date > b.due_date ? 1 : 0; });
+  }
+  function tasksFocus() {
+    return state.tasks.filter(function (x) { return !x.completed && x.focus; })
+      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+  }
+  function tasksInbox() {
+    return state.tasks.filter(function (x) { return !x.completed && !x.due_date; })
+      .sort(function (a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+  }
+  function tasksUpcoming() {
+    const t = todayStr();
+    return state.tasks.filter(function (x) { return !x.completed && x.due_date && x.due_date > t; })
+      .sort(function (a, b) { return a.due_date < b.due_date ? -1 : 1; });
+  }
+  function tasksCompleted() {
+    return state.tasks.filter(function (x) { return x.completed; })
+      .sort(function (a, b) { return new Date(b.completed_at || b.updated_at) - new Date(a.completed_at || a.updated_at); });
+  }
+
+  // ---------------------------------------------------------------------
+  // RENDER
+  // ---------------------------------------------------------------------
+  const el = {
+    navList: document.getElementById("navList"),
+    viewTitle: document.getElementById("viewTitle"),
+    viewSubtitle: document.getElementById("viewSubtitle"),
+    listScroll: document.getElementById("listScroll"),
+    attention: document.getElementById("attention"),
+    syncPill: document.getElementById("syncPill"),
+    syncLabel: document.getElementById("syncLabel"),
+    themeToggle: document.getElementById("themeToggle"),
+    quickAddForm: document.getElementById("quickAddForm"),
+    quickAddInput: document.getElementById("quickAddInput"),
+    qaDateDetails: document.getElementById("qaDateDetails"),
+    qaDateChip: document.getElementById("qaDateChip"),
+    qaDateLabel: document.getElementById("qaDateLabel"),
+    qaDateInput: document.getElementById("qaDateInput"),
+    qaPopover: document.getElementById("qaPopover"),
+    scrim: document.getElementById("scrim"),
+    panel: document.getElementById("panel"),
+    panelStatus: document.getElementById("panelStatus"),
+    panelClose: document.getElementById("panelClose"),
+    panelTitle: document.getElementById("panelTitle"),
+    panelNotes: document.getElementById("panelNotes"),
+    panelDate: document.getElementById("panelDate"),
+    panelClearDate: document.getElementById("panelClearDate"),
+    panelFocus: document.getElementById("panelFocus"),
+    panelCompleted: document.getElementById("panelCompleted"),
+    panelDelete: document.getElementById("panelDelete"),
+    panelMeta: document.getElementById("panelMeta"),
+    searchTrigger: document.getElementById("searchTrigger"),
+    searchOverlay: document.getElementById("searchOverlay"),
+    searchInput: document.getElementById("searchInput"),
+    searchResults: document.getElementById("searchResults"),
+    toast: document.getElementById("toast"),
+  };
+
+  function renderNav() {
+    el.navList.innerHTML = "";
+    VIEWS.forEach(function (v, i) {
+      const count = viewCount(v.id);
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.className = "nav-item" + (state.view === v.id ? " active" : "");
+      btn.setAttribute("role", "tab");
+      btn.setAttribute("aria-selected", state.view === v.id ? "true" : "false");
+      btn.innerHTML = v.icon() + '<span class="label">' + v.label + "</span>" + (count ? '<span class="count">' + count + "</span>" : "");
+      btn.addEventListener("click", function () { setView(v.id); });
+      li.appendChild(btn);
+      el.navList.appendChild(li);
+    });
+  }
+
+  function viewCount(id) {
+    if (id === "today") return tasksToday().length;
+    if (id === "focus") return tasksFocus().length;
+    if (id === "inbox") return tasksInbox().length;
+    if (id === "upcoming") return tasksUpcoming().length;
+    return 0; // completed: no count badge, keeps sidebar calm
+  }
+
+  function setView(id) {
+    state.view = id;
+    closePanel();
+    renderNav();
+    renderMain();
+  }
+
+  function renderMain() {
+    const v = VIEWS.find(function (x) { return x.id === state.view; });
+    el.viewTitle.textContent = v.label;
+    el.viewSubtitle.textContent = subtitleFor(state.view);
+
+    if (state.loading) {
+      el.listScroll.innerHTML = '<div class="empty-state"><div class="sub">Loading…</div></div>';
+      return;
+    }
+
+    if (state.view === "today") return renderFlat(tasksToday(), emptyToday());
+    if (state.view === "focus") return renderFlat(tasksFocus(), emptyFocus());
+    if (state.view === "inbox") return renderFlat(tasksInbox(), emptyInbox());
+    if (state.view === "completed") return renderFlat(tasksCompleted(), emptyCompleted());
+    if (state.view === "upcoming") return renderGrouped(tasksUpcoming(), emptyUpcoming());
+  }
+
+  function subtitleFor(id) {
+    if (id === "today") {
+      return new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+    }
+    return "";
+  }
+
+  function isZeroState() { return state.tasks.length === 0; }
+
+  function emptyToday() {
+    if (isZeroState()) return welcomeEmpty();
+    return { headline: "Nothing due today", sub: "Enjoy the clear runway." };
+  }
+  function emptyFocus() {
+    if (isZeroState()) return welcomeEmpty();
+    return { headline: "No tasks in focus", sub: "Star a task to bring it here." };
+  }
+  function emptyInbox() {
+    if (isZeroState()) return welcomeEmpty();
+    return { headline: "Inbox zero", sub: "Undated tasks land here until you triage them." };
+  }
+  function emptyUpcoming() {
+    if (isZeroState()) return welcomeEmpty();
+    return { headline: "Nothing scheduled ahead", sub: "Give a task a future date to see it here." };
+  }
+  function emptyCompleted() {
+    if (isZeroState()) return welcomeEmpty();
+    return { headline: "Nothing completed yet", sub: "Finished tasks show up here." };
+  }
+  function welcomeEmpty() {
+    return { headline: "Flow is empty", sub: "Create your first task below, or press C." };
+  }
+
+  function renderFlat(tasks, empty) {
+    el.listScroll.innerHTML = "";
+    if (!tasks.length) return el.listScroll.appendChild(emptyEl(empty));
+    tasks.forEach(function (t) { el.listScroll.appendChild(taskRow(t)); });
+  }
+
+  function renderGrouped(tasks, empty) {
+    el.listScroll.innerHTML = "";
+    if (!tasks.length) return el.listScroll.appendChild(emptyEl(empty));
+    let lastDate = null;
+    tasks.forEach(function (t) {
+      if (t.due_date !== lastDate) {
+        lastDate = t.due_date;
+        const h = document.createElement("div");
+        h.className = "group-header";
+        h.textContent = fmtGroupHeader(t.due_date);
+        el.listScroll.appendChild(h);
+      }
+      el.listScroll.appendChild(taskRow(t));
+    });
+  }
+
+  function emptyEl(copy) {
+    const d = document.createElement("div");
+    d.className = "empty-state";
+    d.innerHTML = '<div class="headline">' + escapeHtml(copy.headline) + '</div><div class="sub">' + escapeHtml(copy.sub) + "</div>";
+    return d;
+  }
+
+  function taskRow(t) {
+    const row = document.createElement("div");
+    row.className = "task-row" + (t.completed ? " completed" : "");
+    row.tabIndex = 0;
+    row.dataset.id = t.id;
+    row.setAttribute("role", "group");
+    row.setAttribute("aria-label", t.title);
+
+    const cb = document.createElement("button");
+    cb.className = "row-checkbox" + (t.completed ? " checked" : "");
+    cb.setAttribute("role", "checkbox");
+    cb.setAttribute("aria-checked", t.completed ? "true" : "false");
+    cb.setAttribute("aria-label", t.completed ? "Mark as not completed" : "Mark as completed");
+    cb.innerHTML = iconCheck();
+    cb.addEventListener("click", function (e) { e.stopPropagation(); toggleCompleted(t); });
+    row.appendChild(cb);
+
+    const main = document.createElement("div");
+    main.className = "task-main";
+    const title = document.createElement("div");
+    title.className = "task-title";
+    title.textContent = t.title;
+    main.appendChild(title);
+
+    const meta = document.createElement("div");
+    meta.className = "task-meta";
+    if (t.due_date && state.view !== "upcoming") {
+      const overdue = !t.completed && t.due_date < todayStr();
+      const b = document.createElement("span");
+      b.className = "badge" + (overdue ? " overdue" : "");
+      b.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 9.5h18"/></svg><span>' + fmtBadge(t.due_date) + (overdue ? " · Overdue" : "") + "</span>";
+      meta.appendChild(b);
+    }
+    if (t.notes) {
+      const n = document.createElement("span");
+      n.className = "notes-preview";
+      n.textContent = t.notes;
+      meta.appendChild(n);
+    }
+    if (meta.children.length) main.appendChild(meta);
+    main.addEventListener("click", function () { openPanel(t.id); });
+    row.appendChild(main);
+
+    const actions = document.createElement("div");
+    actions.className = "row-actions";
+    const star = document.createElement("button");
+    star.className = "icon-btn star" + (t.focus ? " active" : "");
+    star.setAttribute("aria-pressed", t.focus ? "true" : "false");
+    star.setAttribute("aria-label", t.focus ? "Remove from focus" : "Add to focus");
+    star.innerHTML = iconStar(t.focus);
+    star.addEventListener("click", function (e) { e.stopPropagation(); toggleFocus(t); });
+    actions.appendChild(star);
+    row.appendChild(actions);
+
+    row.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); openPanel(t.id); }
+      else if (e.key === " ") { e.preventDefault(); toggleCompleted(t); }
+    });
+
+    return row;
+  }
+
+  // ---------------------------------------------------------------------
+  // ATTENTION STRIP (external signals — e.g. Gmail — surfaced with a link)
+  // ---------------------------------------------------------------------
+  function renderAttention() {
+    el.attention.innerHTML = "";
+    state.signals.forEach(function (s) {
+      const item = document.createElement("div");
+      item.className = "attn-item";
+      item.dataset.id = s.id;
+
+      const icon = document.createElement("div");
+      icon.className = "attn-icon";
+      icon.innerHTML = iconBell();
+      item.appendChild(icon);
+
+      const body = document.createElement("div");
+      body.className = "attn-body";
+      body.innerHTML =
+        '<div class="attn-title">' + escapeHtml(s.title) + "</div>" +
+        (s.snippet ? '<div class="attn-snippet">' + escapeHtml(s.snippet) + "</div>" : "") +
+        '<div class="attn-source">' + escapeHtml(s.source || "Signal") + "</div>";
+      item.appendChild(body);
+
+      if (s.link) {
+        const a = document.createElement("a");
+        a.className = "attn-open";
+        a.href = s.link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.innerHTML = "Open " + iconExternal();
+        item.appendChild(a);
+      }
+
+      const dismiss = document.createElement("button");
+      dismiss.className = "icon-btn attn-dismiss";
+      dismiss.setAttribute("aria-label", "Dismiss");
+      dismiss.innerHTML = svg('<path d="M18 6 6 18M6 6l12 12"/>', 14);
+      dismiss.addEventListener("click", function () { dismissSignalLocal(s.id); });
+      item.appendChild(dismiss);
+
+      el.attention.appendChild(item);
+    });
+  }
+
+  function dismissSignalLocal(id) {
+    const prev = state.signals.slice();
+    state.signals = state.signals.filter(function (s) { return s.id !== id; });
+    renderAttention();
+    dismissSignal(id).catch(function () {
+      state.signals = prev;
+      renderAttention();
+      showToast("Couldn't dismiss. Try again.", true);
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // MUTATIONS (optimistic UI + real persistence)
+  // ---------------------------------------------------------------------
+  function upsertLocal(task) {
+    const idx = state.tasks.findIndex(function (x) { return x.id === task.id; });
+    if (idx === -1) state.tasks.push(task); else state.tasks[idx] = task;
+  }
+  function removeLocal(id) {
+    state.tasks = state.tasks.filter(function (x) { return x.id !== id; });
+  }
+
+  function toggleCompleted(t) {
+    const patch = t.completed
+      ? { completed: false, completed_at: null }
+      : { completed: true, completed_at: new Date().toISOString() };
+    const prev = Object.assign({}, t);
+    Object.assign(t, patch); // optimistic
+    renderNav(); renderMain(); syncPanelIfOpen(t.id);
+    patchTask(t.id, patch).then(function (row) {
+      if (row) upsertLocal(row);
+      renderNav(); renderMain(); syncPanelIfOpen(t.id);
+    }).catch(function () {
+      Object.assign(t, prev); renderNav(); renderMain(); syncPanelIfOpen(t.id);
+    });
+  }
+
+  function toggleFocus(t) {
+    const patch = { focus: !t.focus };
+    const prev = t.focus;
+    t.focus = patch.focus;
+    renderNav(); renderMain(); syncPanelIfOpen(t.id);
+    patchTask(t.id, patch).then(function (row) {
+      if (row) upsertLocal(row);
+      renderNav(); renderMain(); syncPanelIfOpen(t.id);
+    }).catch(function () {
+      t.focus = prev; renderNav(); renderMain(); syncPanelIfOpen(t.id);
+    });
+  }
+
+  function createTaskFromQuickAdd() {
+    const title = el.quickAddInput.value.trim();
+    if (!title) return;
+    const payload = { title: title, due_date: state.qaDate || null };
+    el.quickAddInput.value = "";
+    setQaDate(null);
+    createTask(payload).then(function (row) {
+      if (row) { state.tasks.push(row); renderNav(); renderMain(); }
+    }).catch(function () {
+      showToast("Couldn't create the task. Try again.", true);
+      el.quickAddInput.value = title;
+    });
+  }
+
+  function deleteTaskById(id) {
+    const idx = state.tasks.findIndex(function (x) { return x.id === id; });
+    const removed = idx !== -1 ? state.tasks[idx] : null;
+    removeLocal(id);
+    closePanel();
+    renderNav(); renderMain();
+    removeTask(id).catch(function () {
+      if (removed) state.tasks.push(removed);
+      renderNav(); renderMain();
+      showToast("Couldn't delete the task. Try again.", true);
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // PANEL (edit view)
+  // ---------------------------------------------------------------------
+  let saveTimer = null;
+
+  function openPanel(id) {
+    const t = state.tasks.find(function (x) { return x.id === id; });
+    if (!t) return;
+    state.panelTaskId = id;
+    state.lastFocused = document.activeElement;
+    fillPanel(t);
+    el.scrim.classList.add("open");
+    el.panel.classList.add("open");
+    setTimeout(function () { el.panelTitle.focus(); autoGrow(el.panelTitle); }, 10);
+  }
+
+  function closePanel() {
+    if (!state.panelTaskId) return;
+    state.panelTaskId = null;
+    el.scrim.classList.remove("open");
+    el.panel.classList.remove("open");
+    if (state.lastFocused && document.contains(state.lastFocused)) {
+      try { state.lastFocused.focus(); } catch (e) {}
+    }
+  }
+
+  function syncPanelIfOpen(id) {
+    if (state.panelTaskId === id) {
+      const t = state.tasks.find(function (x) { return x.id === id; });
+      if (t) fillPanel(t, true);
+    }
+  }
+
+  function fillPanel(t, skipTextFields) {
+    if (!skipTextFields) {
+      el.panelTitle.value = t.title;
+      el.panelNotes.value = t.notes || "";
+      autoGrow(el.panelTitle);
+    }
+    el.panelDate.value = t.due_date || "";
+    el.panelFocus.classList.toggle("on", !!t.focus);
+    el.panelFocus.setAttribute("aria-checked", t.focus ? "true" : "false");
+    el.panelCompleted.classList.toggle("on", !!t.completed);
+    el.panelCompleted.setAttribute("aria-checked", t.completed ? "true" : "false");
+    el.panelMeta.textContent = "Created " + new Date(t.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    el.panelStatus.textContent = "Saved";
+  }
+
+  function autoGrow(ta) {
+    ta.style.height = "auto";
+    ta.style.height = ta.scrollHeight + "px";
+  }
+
+  function currentPanelTask() {
+    return state.tasks.find(function (x) { return x.id === state.panelTaskId; });
+  }
+
+  function scheduleAutosave(patch) {
+    const t = currentPanelTask();
+    if (!t) return;
+    Object.assign(t, patch);
+    el.panelStatus.textContent = "Saving…";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      patchTask(t.id, patch).then(function (row) {
+        if (row) upsertLocal(row);
+        el.panelStatus.textContent = "Saved";
+        renderNav(); renderMain();
+      }).catch(function () {
+        el.panelStatus.textContent = "Not saved";
+      });
+    }, 450);
+  }
+
+  function immediatePatch(patch) {
+    const t = currentPanelTask();
+    if (!t) return;
+    Object.assign(t, patch);
+    fillPanel(t, true);
+    renderNav(); renderMain();
+    el.panelStatus.textContent = "Saving…";
+    patchTask(t.id, patch).then(function (row) {
+      if (row) upsertLocal(row);
+      el.panelStatus.textContent = "Saved";
+      renderNav(); renderMain();
+    }).catch(function () {
+      el.panelStatus.textContent = "Not saved";
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // SEARCH
+  // ---------------------------------------------------------------------
+  function openSearch() {
+    state.searchOpen = true;
+    state.lastFocused = document.activeElement;
+    el.searchOverlay.classList.add("open");
+    el.searchInput.value = "";
+    renderSearchResults("");
+    setTimeout(function () { el.searchInput.focus(); }, 10);
+  }
+  function closeSearch() {
+    state.searchOpen = false;
+    el.searchOverlay.classList.remove("open");
+    if (state.lastFocused && document.contains(state.lastFocused)) {
+      try { state.lastFocused.focus(); } catch (e) {}
+    }
+  }
+  function renderSearchResults(q) {
+    const query = q.trim().toLowerCase();
+    let results = state.tasks;
+    if (query) {
+      results = results.filter(function (t) {
+        return t.title.toLowerCase().indexOf(query) !== -1 || (t.notes || "").toLowerCase().indexOf(query) !== -1;
+      });
+    }
+    results = results.slice().sort(function (a, b) { return new Date(b.updated_at) - new Date(a.updated_at); }).slice(0, 40);
+    el.searchResults.innerHTML = "";
+    if (!results.length) {
+      el.searchResults.innerHTML = '<div class="search-empty">' + (query ? "No tasks match “" + escapeHtml(q) + "”" : "Nothing yet — type to search, or add a task first.") + "</div>";
+      return;
+    }
+    results.forEach(function (t) {
+      const b = document.createElement("button");
+      b.className = "search-result" + (t.completed ? " completed" : "");
+      const tag = t.completed ? "Completed" : (t.due_date ? fmtBadge(t.due_date) : "Inbox");
+      b.innerHTML = '<span class="sr-title">' + escapeHtml(t.title) + '</span><span class="sr-tag">' + tag + "</span>";
+      b.addEventListener("click", function () { closeSearch(); openPanel(t.id); });
+      el.searchResults.appendChild(b);
+    });
+  }
+
+  // ---------------------------------------------------------------------
+  // QUICK ADD DATE POPOVER
+  // ---------------------------------------------------------------------
+  function setQaDate(dateStr) {
+    state.qaDate = dateStr;
+    el.qaDateInput.value = dateStr || "";
+    el.qaDateChip.classList.toggle("set", !!dateStr);
+    el.qaDateLabel.textContent = dateStr ? fmtBadge(dateStr) : "No date";
+  }
+
+  // ---------------------------------------------------------------------
+  // THEME
+  // ---------------------------------------------------------------------
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  function resolveTheme() {
+    if (state.theme === "system") return media.matches ? "dark" : "light";
+    return state.theme;
+  }
+  function applyTheme() {
+    document.documentElement.setAttribute("data-theme", resolveTheme());
+    const icon = state.theme === "system" ? iconSystem() : state.theme === "dark" ? iconMoon() : iconSun();
+    const label = state.theme === "system" ? "System" : state.theme === "dark" ? "Dark" : "Light";
+    el.themeToggle.innerHTML = icon + "<span>" + label + "</span>";
+  }
+  function cycleTheme() {
+    state.theme = state.theme === "system" ? "light" : state.theme === "light" ? "dark" : "system";
+    applyTheme();
+    patchSettings({ theme: state.theme }).catch(function () {});
+  }
+  media.addEventListener("change", function () { if (state.theme === "system") applyTheme(); });
+
+  // ---------------------------------------------------------------------
+  // SYNC / TOAST
+  // ---------------------------------------------------------------------
+  let syncErrorTimer = null;
+  function setSync(status) {
+    el.syncPill.classList.remove("saving", "error");
+    if (status === "saving") { el.syncPill.classList.add("saving"); el.syncLabel.textContent = "Saving…"; }
+    else if (status === "error") { el.syncPill.classList.add("error"); el.syncLabel.textContent = "Connection error"; }
+    else { el.syncLabel.textContent = "Synced"; }
+  }
+  function showToast(msg, isError) {
+    el.toast.textContent = msg;
+    el.toast.classList.toggle("error", !!isError);
+    el.toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function () { el.toast.classList.remove("show"); }, 3200);
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; });
+  }
+
+  // ---------------------------------------------------------------------
+  // EVENTS
+  // ---------------------------------------------------------------------
+  el.quickAddForm.addEventListener("submit", function (e) { e.preventDefault(); createTaskFromQuickAdd(); });
+  el.qaPopover.querySelectorAll("[data-qa-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      const p = btn.dataset.qaPreset;
+      if (p === "today") setQaDate(todayStr());
+      else if (p === "tomorrow") setQaDate(addDays(todayStr(), 1));
+      else if (p === "nextweek") setQaDate(addDays(todayStr(), 7));
+      else setQaDate(null);
+      el.qaDateDetails.removeAttribute("open");
+      el.quickAddInput.focus();
+    });
+  });
+  el.qaDateInput.addEventListener("change", function () {
+    setQaDate(el.qaDateInput.value || null);
+  });
+
+  el.themeToggle.addEventListener("click", cycleTheme);
+
+  el.searchTrigger.addEventListener("click", openSearch);
+  el.searchInput.addEventListener("input", function () { renderSearchResults(el.searchInput.value); });
+  el.searchOverlay.addEventListener("click", function (e) { if (e.target === el.searchOverlay) closeSearch(); });
+
+  el.scrim.addEventListener("click", closePanel);
+  el.panelClose.addEventListener("click", closePanel);
+  el.panelTitle.addEventListener("input", function () {
+    autoGrow(el.panelTitle);
+    scheduleAutosave({ title: el.panelTitle.value });
+  });
+  el.panelNotes.addEventListener("input", function () {
+    scheduleAutosave({ notes: el.panelNotes.value });
+  });
+  el.panelDate.addEventListener("change", function () {
+    immediatePatch({ due_date: el.panelDate.value || null });
+  });
+  el.panelClearDate.addEventListener("click", function () {
+    immediatePatch({ due_date: null });
+  });
+  el.panelFocus.addEventListener("click", function () {
+    const t = currentPanelTask(); if (!t) return;
+    immediatePatch({ focus: !t.focus });
+  });
+  el.panelCompleted.addEventListener("click", function () {
+    const t = currentPanelTask(); if (!t) return;
+    immediatePatch(t.completed ? { completed: false, completed_at: null } : { completed: true, completed_at: new Date().toISOString() });
+  });
+  el.panelDelete.addEventListener("click", function () {
+    const t = currentPanelTask(); if (!t) return;
+    deleteTaskById(t.id);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    const tag = (document.activeElement && document.activeElement.tagName) || "";
+    const typing = tag === "INPUT" || tag === "TEXTAREA";
+
+    if (e.key === "Escape") {
+      if (state.searchOpen) { closeSearch(); return; }
+      if (state.panelTaskId) { el.panelTitle.blur(); closePanel(); return; }
+      if (document.activeElement === el.quickAddInput) { el.quickAddInput.blur(); return; }
+      return;
+    }
+    if (state.searchOpen || state.panelTaskId) return; // let those contexts handle their own keys
+    if (typing) return;
+
+    if (e.key === "/") { e.preventDefault(); openSearch(); }
+    else if (e.key.toLowerCase() === "c" || e.key.toLowerCase() === "n") { e.preventDefault(); el.quickAddInput.focus(); }
+    else if (["1", "2", "3", "4", "5"].indexOf(e.key) !== -1) {
+      setView(VIEWS[+e.key - 1].id);
+    }
+  });
+
+  // ---------------------------------------------------------------------
+  // INIT
+  // ---------------------------------------------------------------------
+  function init() {
+    renderNav();
+    renderMain();
+    applyTheme();
+
+    Promise.all([fetchSettings(), fetchTasks(), fetchSignals().catch(function () { return []; })]).then(function (results) {
+      const settings = results[0] && results[0][0];
+      const tasks = results[1] || [];
+      const signals = results[2] || [];
+      state.theme = (settings && settings.theme) || "system";
+      state.tasks = tasks;
+      state.signals = signals;
+      state.loading = false;
+      applyTheme();
+      renderNav();
+      renderMain();
+      renderAttention();
+    }).catch(function () {
+      state.loading = false;
+      el.listScroll.innerHTML = '<div class="empty-state"><div class="headline">Couldn’t load Flow</div><div class="sub">Check your connection and reload.</div></div>';
+      showToast("Couldn't load your tasks.", true);
+    });
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
