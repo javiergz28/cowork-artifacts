@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Multitrend Dashboard",
+  "schemaVersion": 1,
+  "description": "Panel de inteligencia comercial de Multitrend (Mercado Libre UY): KPIs de ventas, ranking de productos por rentabilidad y stock, alertas de quiebre, rendimiento de promociones y pendientes accionables. Se actualiza cada ciclo con los reportes de ML.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multitrend — Panel de Inteligencia Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --mt-green: #2BEA60;
+    --mt-green-dark: #25BF50;
+    --mt-green-light: #D5FBDF;
+    --mt-black: #0C0C0C;
+    --mt-white: #FFFFFF;
+    --surface: #ffffff;
+    --page: #f6f9f7;
+    --text-primary: #0C0C0C;
+    --text-secondary: #55625a;
+    --text-muted: #8b968f;
+    --border: rgba(12,12,12,0.08);
+    --grid: #ecf3ef;
+    --good: #0ca30c;
+    --warning: #fab219;
+    --critical: #d03b3b;
+    --shadow: 0 1px 2px rgba(12,12,12,.04), 0 8px 24px -12px rgba(12,12,12,.10);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 0 80px 0;
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: 'Rethink Sans', system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3, .num-hero, .brand-word { font-family: 'Outfit', system-ui, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 22px 40px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner { max-width: 1180px; margin: 0 auto; padding: 14px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .brand { display:flex; align-items:center; gap:9px; }
+  .brand .dot { width:11px; height:11px; border-radius:50%; background: var(--mt-green); box-shadow: 0 0 0 4px var(--mt-green-light); }
+  .brand-word { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
+  .brand-sub { font-size: 12px; color: var(--text-muted); margin-left: 4px; padding-left:10px; border-left: 1px solid var(--border); }
+  .update-pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:6px 12px; border-radius:999px; background: var(--mt-green-light); color: var(--mt-green-dark); font-weight:600; }
+  .update-pill::before { content:''; width:6px; height:6px; border-radius:50%; background: var(--mt-green-dark); }
+
+  header.hero { padding: 28px 0 8px; }
+  header.hero h1 { font-size: 26px; font-weight: 700; margin: 0 0 6px 0; letter-spacing:-0.01em; }
+  header.hero .meta { color: var(--text-secondary); font-size: 13.5px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0 22px; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); transition: transform .15s ease; }
+  .kpi:hover { transform: translateY(-2px); }
+  .kpi .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing:.04em; font-weight:600; }
+  .kpi .value { font-size: 23px; font-weight: 800; margin-top: 6px; letter-spacing:-0.01em; }
+  .kpi .sub { font-size: 11.5px; color: var(--text-secondary); margin-top:3px; }
+  .kpi.accent { background: linear-gradient(135deg, var(--mt-green) 0%, var(--mt-green-dark) 100%); border-color: transparent; }
+  .kpi.accent .label, .kpi.accent .sub { color: rgba(12,12,12,0.65); }
+  .kpi.accent .value { color: var(--mt-black); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: var(--shadow); }
+  .card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 14px; flex-wrap:wrap; }
+  .card h2 { font-size: 15.5px; margin: 0; font-weight:700; }
+  .card h2 .n { color: var(--text-muted); font-weight: 500; font-size: 12.5px; font-family:'Rethink Sans',sans-serif; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); font-weight: 700; padding: 8px; border-bottom: 1px solid var(--grid); cursor: pointer; user-select: none; white-space:nowrap; }
+  th:hover { color: var(--mt-green-dark); }
+  th .arrow { font-size:9px; opacity:.5; margin-left:2px; }
+  td { padding: 9px 8px; border-bottom: 1px solid var(--grid); vertical-align: middle; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.mono { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--text-secondary); }
+  tbody tr { transition: background .1s ease; }
+  tbody tr:hover td { background: var(--mt-green-light); }
+  .prod-link { color: var(--text-primary); text-decoration:none; font-weight:600; border-bottom: 1px solid transparent; }
+  .prod-link:hover { color: var(--mt-green-dark); border-bottom-color: var(--mt-green); }
+  .prod-link .ext { font-size:10px; opacity:.5; margin-left:3px; }
+  .confirmed-tag { display:inline-flex; align-items:center; gap:3px; font-size:10px; color: var(--mt-green-dark); font-weight:700; margin-left:6px; }
+
+  .badge { display:inline-block; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+
+  .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom: 14px; }
+  .search { flex: 1; min-width: 180px; position:relative; }
+  .search input { width:100%; padding: 9px 12px 9px 32px; border-radius: 10px; border: 1px solid var(--border); background: var(--page); font-size:13px; font-family: inherit; outline:none; }
+  .search input:focus { border-color: var(--mt-green); background: var(--surface); }
+  .search::before { content:'⌕'; position:absolute; left:11px; top:50%; transform:translateY(-50%); color: var(--text-muted); font-size:14px; }
+  .chip { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 12px; font-weight:600; cursor:pointer; color: var(--text-secondary); transition: all .12s ease; }
+  .chip:hover { border-color: var(--mt-green); }
+  .chip.active { background: var(--mt-black); color: var(--mt-white); border-color: var(--mt-black); }
+
+  .alert { display: flex; gap: 10px; padding: 13px 15px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; align-items: flex-start; }
+  .alert.critical { background: #fdf1f1; border: 1px solid rgba(208,59,59,.2); }
+  .alert.warning { background: #fffaeb; border: 1px solid rgba(250,178,25,.25); }
+  .alert.good { background: var(--mt-green-light); border: 1px solid rgba(37,191,80,.25); }
+  .alert .tag { font-weight:800; font-size:10.5px; text-transform:uppercase; padding: 3px 9px; border-radius: 6px; flex-shrink:0; margin-top:1px; }
+  .alert.critical .tag { background: var(--critical); color:#fff; }
+  .alert.warning .tag { background: var(--warning); color:#3a2c00; }
+  .alert.good .tag { background: var(--mt-green-dark); color:#fff; }
+  .alert ul { margin: 6px 0 0 18px; padding:0; }
+  .alert strong { font-weight:700; }
+
+  details.resolved { margin-top: 4px; }
+  details.resolved summary { cursor:pointer; font-size: 12.5px; color: var(--mt-green-dark); font-weight:700; padding: 6px 0; }
+  details.resolved ul { margin: 4px 0 0 18px; padding:0; font-size:12.5px; color: var(--text-secondary); line-height:1.7; }
+
+  .pendiente { display:flex; gap:12px; align-items:flex-start; padding: 12px 4px; border-bottom: 1px solid var(--grid); }
+  .pendiente:last-child { border-bottom:none; }
+  .pendiente .prio { flex-shrink:0; font-size: 10px; font-weight:800; text-transform:uppercase; padding:4px 9px; border-radius:7px; margin-top:1px; }
+  .prio.alta { background:#fdf1f1; color:var(--critical); }
+  .prio.media { background:#fffaeb; color:#8a6400; }
+  .prio.investigar { background: var(--mt-green-light); color: var(--mt-green-dark); }
+  .pendiente .txt strong { display:block; font-size:13.5px; margin-bottom:3px; }
+  .pendiente .txt span { font-size:12.5px; color: var(--text-secondary); line-height:1.5; }
+
+  .foot-note { font-size: 12px; color: var(--text-muted); line-height:1.7; }
+  .foot-note b { color: var(--text-secondary); }
+
+  .chart-tooltip-hint { font-size: 11px; color: var(--text-muted); margin-top:6px; }
+
+  @media (max-width: 900px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="dot"></span>
+      <span class="brand-word">Multitrend</span>
+      <span class="brand-sub">Panel comercial · Mercado Libre UY</span>
+    </div>
+    <span class="update-pill">Actualizado 16 de agosto de 2026</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <h1>Inteligencia comercial del ciclo</h1>
+    <div class="meta">Período: 31 jul - 15 ago 2026 · Reportes ML (Ventas, Evolución de negocio, Promociones) cruzados con el maestro STOCK_MT_FINAL</div>
+  </header>
+
+  <div class="kpi-grid">
+    <div class="kpi accent"><div class="label">Ventas brutas</div><div class="value">$ 102.595</div><div class="sub">16 días</div></div>
+    <div class="kpi"><div class="label">Unidades vendidas</div><div class="value">178</div><div class="sub">según reporte Negocio</div></div>
+    <div class="kpi"><div class="label">Conversión</div><div class="value">2,7%</div><div class="sub">5,564 visitas</div></div>
+    <div class="kpi"><div class="label">Ticket promedio</div><div class="value">$ 675</div><div class="sub">por venta</div></div>
+    <div class="kpi"><div class="label">Compradores nuevos</div><div class="value">99,2%</div><div class="sub">de 124 compradores</div></div>
+    <div class="kpi"><div class="label">Ventas con publicidad</div><div class="value">67,0%</div><div class="sub">de las ventas trackeadas</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Evolución diaria</h2></div>
+    <div class="two-col">
+      <div>
+        <h2 style="font-size:13px;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">Ventas brutas (UYU)</h2>
+        <div id="chart-ventas"></div>
+      </div>
+      <div>
+        <h2 style="font-size:13px;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">Visitas</h2>
+        <div id="chart-visitas"></div>
+      </div>
+    </div>
+    <div class="chart-tooltip-hint">Pasá el cursor sobre las barras para ver el detalle de cada día.</div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:12px;">Alertas del ciclo</h2>
+    <div class="alert good">
+      <span class="tag">Al día</span>
+      <div><strong>Los 9 SKU de Cocina que no matcheaban con el maestro ya están resueltos.</strong> Los 2 de "Apoya Ollas" (Gris/Negro) se corrigieron, y el "Molinillo" no era un error — es una publicación de catálogo de ML, por eso aparecía duplicada.</div>
+    </div>
+    <div class="alert good">
+      <span class="tag">Resuelto</span>
+      <div><strong>Llegó el reporte de Mercado Ads — ya se puede calcular ROAS/ACOS real.</strong> Período 31/07–15/08: inversión $ 19.254,58, ingresos atribuidos $ 80.384,75 → ACOS 23,95% / ROAS 4,17x. 127 ventas por publicidad (106 directas + 21 indirectas) sobre 3.545 clics y 1.021.726 impresiones. Detalle por anuncio en la tabla de abajo.</div>
+    </div>
+    <details class="resolved">
+      <summary>✓ 14 alertas resueltas con tu confirmación — ver detalle</summary>
+      <ul>
+        <li><strong>Auriculares Unicorn (PTSV0002):</strong> confirmaste 1 unidad restante. Coincide con el maestro, sin acción.</li>
+        <li><strong>Rascador Cama Gato (PMOT0005):</strong> confirmaste que se vendieron las 3 que había. Publicación pausada, maestro ya en 0 — sin acción.</li>
+        <li><strong>Teclado Imice Ak-100 (PTGC0001):</strong> confirmaste que se vendió la única unidad. Publicación pausada, maestro ya en 0 — sin acción.</li>
+        <li><strong>Auriculares Akz 08c (PTSV0007NEGR):</strong> confirmaste 4 unidades restantes — el maestro decía 1. <strong>Corregido a 4</strong> en la versión actualizada de STOCK_MT_FINAL.</li>
+        <li><strong>6 SKUs de Cocina corregidos en ML</strong> (PHCO0017, PHCO0021, PHCO0022, PHCO0023MARR, PHCO0024, PHCO0025) — verificado contra el reporte de Publicaciones del 12/08, ya matchean con el maestro y quedaron incorporados al ranking.</li>
+        <li><strong>Apoya Ollas Gris y Negro (PHCO0029GRIS / PHCO0029NEGR):</strong> confirmaste que ya están bien asignados, sin cruce de colores.</li>
+        <li><strong>Molinillo Eléctrico (MLU698157303 y MLU1474354232):</strong> confirmaste que es el mismo producto — es una publicación de catálogo de ML, la duplicación es esperada, no un error de datos.</li>
+        <li><strong>Reporte de Mercado Ads (16/08):</strong> subido y cruzado contra el ciclo 31/07–15/08 — ACOS/ROAS reales calculados por primera vez.</li>
+      </ul>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:8px;">Pendientes accionables <span class="n">(priorizados por impacto/urgencia)</span></h2>
+
+    <div class="pendiente">
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Despachar ventas por Mercado Envíos — vencimiento mañana 17/08</strong><span>Venta #2000017956049308 · Gestionador 2.0 Organizador De Cables Beige → Parque Miramar. Imprimir etiqueta y entregar al conductor.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Despachar ventas por Mercado Envíos — vencimiento lunes 17/08 (punto de despacho)</strong><span>Venta #2000017955066842 · Lámpara Led Aurora Boreal → Punta Gorda. Venta #2000014547067041 · Lámpara Led Aurora Boreal. Venta #2000017949088202, #2000017949746812 y #2000017951019702 · Comedero Bebedero Automático Perro Gato 2 en 1 (3 pedidos). Venta #2000014544578303 · 2 productos. Verificar en ML que no haya duplicados entre las notificaciones antes de despachar.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Coordinar entrega directa — Venta #2000017950342260</strong><span>5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones. No es Mercado Envíos: hay que contactar al comprador (Martin Gonzalez preguntó cuándo puede retirar, y confirmar que son 5 unidades).</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio media">Media</span>
+      <div class="txt"><strong>Revisar precio/costo de PHCO0011 (Mini Sartén)</strong><span>Es el producto #3 en volumen (14u) pero con el margen más bajo del top (30%). Candidato a subir precio o renegociar costo antes de invertir más en publicidad.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio investigar">Investigar</span>
+      <div class="txt"><strong>Frasco Flip Separador (PHCO0017) pierde plata en Mercado Ads</strong><span>ACOS 116,2% (invertís $726 para $625 de ingreso). Candidato a pausar la campaña o bajar la puja antes del próximo ciclo.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio investigar">Investigar</span>
+      <div class="txt"><strong>5 productos con stock alto (86-433u) y solo 1 venta en 16 días</strong><span>PAAA0002, PHDH0001LOVE, PHDH0001SATU, PHCO0012VERD, PMOT0003AMAR. Evaluar si son candidatos a promoción, bundle o liquidación.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio investigar">Investigar</span>
+      <div class="txt"><strong>Tasa de recompra casi nula (0,8%)</strong><span>123 de 124 compradores del período son nuevos. Es dato de este período, no necesariamente estructural — confirmar con más ciclos.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio investigar">Investigar</span>
+      <div class="txt"><strong>Revisar devolución en camino — Dispensador De Agua Automático USB Recargable Vmi Negro</strong><span>Mercado Libre avisó que la devolución está en camino (llegada estimada 14/08). Confirmar recepción y estado del producto cuando llegue.</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h2>Ranking de productos <span class="n">(41 SKU con venta en el período · click en un producto para abrir su publicación</span>)</h2>
+    </div>
+    <div class="toolbar">
+      <div class="search"><input id="search-input" type="text" placeholder="Buscar por nombre o SKU..."></div>
+      <button class="chip active" data-filter="Todos">Todos</button>
+      <button class="chip" data-filter="Estrella">Estrella</button>
+      <button class="chip" data-filter="Rentable y escalable">Rentable</button>
+      <button class="chip" data-filter="Alto volumen / bajo margen">Bajo margen</button>
+      <button class="chip" data-filter="Baja rotación / investigar">Investigar</button>
+      <button class="chip" data-filter="Riesgo de quiebre">Riesgo quiebre</button>
+    </div>
+    <table id="tabla-productos">
+      <thead>
+        <tr>
+          <th data-key="SKU">SKU <span class="arrow">↕</span></th>
+          <th data-key="NAME">Producto <span class="arrow">↕</span></th>
+          <th class="num" data-key="unidades_vendidas">Unid. <span class="arrow">↕</span></th>
+          <th class="num" data-key="stock_estimado_post_venta">Stock actual <span class="arrow">↕</span></th>
+          <th class="num" data-key="Margen bruto %">Margen % <span class="arrow">↕</span></th>
+          <th data-key="clasificacion">Clasificación <span class="arrow">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:12px;">Rendimiento de promociones</h2>
+    <table>
+      <thead><tr><th>Promoción</th><th>Estado</th><th class="num">Visitas</th><th class="num">Unid. vendidas</th><th class="num">Ventas brutas</th></tr></thead>
+      <tbody><tr>
+      <td>Potenciá tus ventas</td>
+      <td><span class="pill pill-live">Activa</span></td>
+      <td class="num">1.266</td>
+      <td class="num">24</td>
+      <td class="num">$ 16.501,93</td>
+    </tr>
+<tr>
+      <td>Dia del niño 2026</td>
+      <td><span class="pill pill-live">Activa</span></td>
+      <td class="num">1.971</td>
+      <td class="num">2</td>
+      <td class="num">$ 1.084,90</td>
+    </tr>
+<tr>
+      <td>Fecha doble 8/8</td>
+      <td><span class="pill pill-live">Activa</span></td>
+      <td class="num">2.600</td>
+      <td class="num">34</td>
+      <td class="num">$ 14.444,25</td>
+    </tr>
+<tr>
+      <td>Dia del niño</td>
+      <td><span class="pill pill-live">Activa</span></td>
+      <td class="num">1.104</td>
+      <td class="num">8</td>
+      <td class="num">$ 720,00</td>
+    </tr>
+<tr>
+      <td>Oferta relámpago</td>
+      <td><span class="pill pill-off">Finalizada</span></td>
+      <td class="num">70</td>
+      <td class="num">2</td>
+      <td class="num">$ 1.399,68</td>
+    </tr>
+<tr>
+      <td>Oferta relámpago</td>
+      <td><span class="pill pill-off">Finalizada</span></td>
+      <td class="num">306</td>
+      <td class="num">1</td>
+      <td class="num">$ 113,80</td>
+    </tr>
+<tr>
+      <td>Compartidas Iluminacion</td>
+      <td><span class="pill pill-off">Finalizada</span></td>
+      <td class="num">401</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td>ofertas por 24hs 8/8</td>
+      <td><span class="pill pill-off">Finalizada</span></td>
+      <td class="num">86</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+    </tr>
+<tr>
+      <td>Oferta relámpago</td>
+      <td><span class="pill pill-off">no data</span></td>
+      <td class="num">13</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+    </tr></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Rendimiento de Mercado Ads <span class="n">(31/07–15/08 · $ 19.254,58 invertidos → $ 80.384,75 atribuidos · ACOS 23,95% · ROAS 4,17x)</span></h2></div>
+    <table>
+      <thead><tr><th>Anuncio</th><th class="num">Impr.</th><th class="num">Clics</th><th class="num">CPC</th><th class="num">Inversión</th><th class="num">Ingresos</th><th class="num">ACOS</th><th class="num">ROAS</th><th class="num">Ventas</th></tr></thead>
+      <tbody>
+        <tr><td>Cesto Plegable Para Ropa Sucia Portátil</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.978,43</td><td class="num">$ 4.312,00</td><td class="num">45,9%</td><td class="num">2,18x</td><td class="num">4</td></tr>
+        <tr><td>Caja De Arena Inteligente Para Gatos</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.884,76</td><td class="num">$ 0,00</td><td class="num">—</td><td class="num">—</td><td class="num">0</td></tr>
+        <tr><td>Auriculares Unicorn Ah-902a</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.840,04</td><td class="num">$ 6.300,00</td><td class="num">29,2%</td><td class="num">3,42x</td><td class="num">5</td></tr>
+        <tr><td>Tapete Sanitario Césped Sintético</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.344,68</td><td class="num">$ 8.666,24</td><td class="num">15,5%</td><td class="num">6,44x</td><td class="num">4</td></tr>
+        <tr><td>Lámpara Led Aurora Boreal</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.296,50</td><td class="num">$ 9.483,56</td><td class="num">13,7%</td><td class="num">7,31x</td><td class="num">19</td></tr>
+        <tr><td>Comedero Bebedero Automático 2 en 1</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.108,04</td><td class="num">$ 5.647,50</td><td class="num">19,6%</td><td class="num">5,10x</td><td class="num">13</td></tr>
+        <tr><td>Sartén Antiadherente Para Huevos</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 1.000,38</td><td class="num">$ 6.114,12</td><td class="num">16,4%</td><td class="num">6,11x</td><td class="num">10</td></tr>
+        <tr><td>Rascador Cama Gato Doble Nivel</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 842,50</td><td class="num">$ 3.339,00</td><td class="num">25,2%</td><td class="num">3,96x</td><td class="num">3</td></tr>
+        <tr><td>Frasco Flip Separador (Multitrend)</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 726,33</td><td class="num">$ 625,00</td><td class="num">116,2%</td><td class="num">0,86x</td><td class="num">3</td></tr>
+        <tr><td>Rascador Sisal Para Gatos</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$ 635,51</td><td class="num">$ 2.100,00</td><td class="num">30,3%</td><td class="num">3,30x</td><td class="num">3</td></tr>
+      </tbody>
+    </table>
+    <div class="chart-tooltip-hint">Top 10 anuncios por inversión, de 96 en el reporte. El Frasco Flip es el único con ACOS &gt;100% (pierde plata en publicidad) — candidato a pausar o bajar puja.</div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin-bottom:10px;">Notas de calidad de datos</h2>
+    <div class="foot-note">
+      <p><b>Período de Ventas UY más amplio que el resto:</b> el archivo trae datos desde el 10/06/2026; este panel lo recorta a 31/07–15/08 para poder comparar contra los otros reportes.</p>
+      <p><b>Fila fantasma en "Negocio":</b> una fila sin fecha con el valor 74 repetido en 3 columnas — artefacto de exportación, excluido del cálculo.</p>
+      <p><b>Reporte "Producto"</b> es en realidad una serie diaria a nivel cuenta (igual que "Negocio"), no un desglose por SKU — quedó fuera del cruce.</p>
+      <p><b>El stock del maestro parece tener drift conocido</b> — de los 4 casos que confirmaste, 1 estaba desactualizado (Akz 08c). Vale la pena que definamos juntos si de acá en más yo recalculo el stock automáticamente cada ciclo, o si vos lo seguís ajustando a mano y yo solo alerto discrepancias.</p>
+      <p><b>Dos formas distintas de medir "ventas por publicidad" que no coinciden:</b> el KPI de arriba (67,0%) sale de la atribución de ML en el reporte de Negocio/Ventas UY; el reporte de Mercado Ads recién cargado marca 127 ventas atribuidas sobre 152 del período (83,6%). Probablemente midan cosas distintas (ej. atribución por sesión vs. por click de anuncio) — no las mezclé ni elegí una como "la correcta". Si querés, en el próximo ciclo investigo por qué difieren.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PRODUCTOS = [{"SKU": "PMCU0004", "unidades_vendidas": 18.0, "ordenes": 18.0, "ingresos_directos": 7852.5, "COD": "PMCU0004", "NAME": "Comedero Y Bebedero 2 En 1 Para Perros Y Gatos - Dispensador", "CATEGORY": "Mascotas", "STOCK": 32.0, "Alerta": "OK", "Precio ML": 450.0, "Costo UYU": 124.0428168, "Margen bruto %": 0.524349296, "Estado ML": "Activa", "stock_estimado_post_venta": 14.0, "clasificacion": "Estrella", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1412556516", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHDH0004", "unidades_vendidas": 18.0, "ordenes": 16.0, "ingresos_directos": 10382.79, "COD": "PHDH0004", "NAME": "Lámpara Led Aurora Boreal  Efecto Relajante De Luces Rgb", "CATEGORY": "Decoración hogar", "STOCK": 34.0, "Alerta": "OK", "Precio ML": 684.0, "Costo UYU": 175.24079999999998, "Margen bruto %": 0.5438000000000001, "Estado ML": "Activa", "stock_estimado_post_venta": 16.0, "clasificacion": "Estrella", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-882392434", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0011", "unidades_vendidas": 14.0, "ordenes": 10.0, "ingresos_directos": 8416.68, "COD": "PHCO0011", "NAME": "Mini Sartén Antiadherente 5 Cm Para Huevos-panqueques", "CATEGORY": "Cocina", "STOCK": 26.0, "Alerta": "OK", "Precio ML": 650.0, "Costo UYU": 324.65664000000004, "Margen bruto %": 0.3005282461538461, "Estado ML": "Activa", "stock_estimado_post_venta": 12.0, "clasificacion": "Alto volumen / bajo margen", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697313474", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMOT0006", "unidades_vendidas": 6.0, "ordenes": 5.0, "ingresos_directos": 980.0, "COD": "PMOT0006", "NAME": "Mxsimedarby 2pzs Guantes Quita Pelo Mascotas Grande Negro", "CATEGORY": "Mascotas", "STOCK": 44.0, "Alerta": "OK", "Precio ML": 390.0, "Costo UYU": 34.1166168, "Margen bruto %": 0.7125214953846154, "Estado ML": "Activa", "stock_estimado_post_venta": 38.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1412556404", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PTSV0002", "unidades_vendidas": 5.0, "ordenes": 5.0, "ingresos_directos": 6300.0, "COD": "PTSV0002", "NAME": "Auriculares Unicorn Ah-902a", "CATEGORY": "Tecnologia", "STOCK": 1.0, "Alerta": "OK", "Precio ML": 1260.0, "Costo UYU": 630.0, "Margen bruto %": 0.3, "Estado ML": "Activa", "stock_estimado_post_venta": 1.0, "clasificacion": "Confirmado OK", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1461981790", "Estado ML_m": "Activa", "confirmado_usuario": true, "nota_correccion": "Confirmado por Javi: quedaba 1 (había 5 antes del ciclo). Coincide con el maestro."}, {"SKU": "PHCO0009BLAN", "unidades_vendidas": 5.0, "ordenes": 5.0, "ingresos_directos": 497.74, "COD": "PHCO0009BLAN", "NAME": "Dispensador Y Organizador De Huevos Para Heladera Y Cocina", "CATEGORY": "Cocina", "STOCK": 290.0, "Alerta": "OK", "Precio ML": 270.0, "Costo UYU": 62.02602, "Margen bruto %": 0.570274, "Estado ML": "Activa", "stock_estimado_post_venta": 285.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698239606", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHOR0003", "unidades_vendidas": 4.0, "ordenes": 3.0, "ingresos_directos": 4312.0, "COD": "PHOR0003", "NAME": "Cesto Para Ropa Sucia Portátil Con Asas Color Durazno", "CATEGORY": "Decoración hogar", "STOCK": 46.0, "Alerta": "OK", "Precio ML": 1120.0, "Costo UYU": 310.1116536, "Margen bruto %": 0.523114595, "Estado ML": "Activa", "stock_estimado_post_venta": 42.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1396835940", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMCU0003VERD", "unidades_vendidas": 4.0, "ordenes": 2.0, "ingresos_directos": 0.0, "COD": "PMCU0003VERD", "NAME": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "CATEGORY": "Mascotas", "STOCK": 6.0, "Alerta": "OK", "Precio ML": 75.0, "Costo UYU": 28.59192, "Margen bruto %": 0.4187744, "Estado ML": "Activa", "stock_estimado_post_venta": 2.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884301986", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMOT0007", "unidades_vendidas": 4.0, "ordenes": 4.0, "ingresos_directos": 8666.24, "COD": "PMOT0007", "NAME": "Tapete Sanitario Césped Sintético Para Perros 64x51 Cm", "CATEGORY": "Mascotas", "STOCK": 46.0, "Alerta": "OK", "Precio ML": 2200.0, "Costo UYU": 605.04192, "Margen bruto %": 0.5249809454545454, "Estado ML": "Activa", "stock_estimado_post_venta": 42.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-693763327", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0024", "unidades_vendidas": 4.0, "ordenes": NaN, "ingresos_directos": NaN, "COD": NaN, "NAME": "Magic Brush Cepillo De Limpieza 5 En 1", "CATEGORY": NaN, "STOCK": 23.0, "Alerta": "OK", "Precio ML": 625.0, "Costo UYU": 155.87208, "Margen bruto %": 0.5506046720000001, "Estado ML": "Activa", "stock_estimado_post_venta": 19.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884381452", "Estado ML_m": NaN, "confirmado_usuario": true, "nota_correccion": "SKU corregido en ML (era PHC00024), match confirmado con el maestro vía reporte de Publicaciones."}, {"SKU": "PHCO0025", "unidades_vendidas": 4.0, "ordenes": NaN, "ingresos_directos": NaN, "COD": NaN, "NAME": "Tetera De Vidrio Resistente Al Calor Con Infusor De Té", "CATEGORY": NaN, "STOCK": 46.0, "Alerta": "OK", "Precio ML": 571.0, "Costo UYU": 142.406208, "Margen bruto %": 0.5506020875656743, "Estado ML": "Activa", "stock_estimado_post_venta": 42.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884537514", "Estado ML_m": NaN, "confirmado_usuario": true, "nota_correccion": "SKU corregido en ML (era PHC00025), match confirmado con el maestro vía reporte de Publicaciones."}, {"SKU": "PMOT0005", "unidades_vendidas": 3.0, "ordenes": 3.0, "ingresos_directos": 3339.0, "COD": "PMOT0005", "NAME": "Rascador Cama Gato Doble Nivel Infinito Reductor Estrés", "CATEGORY": "Mascotas", "STOCK": 0.0, "Alerta": "OK", "Precio ML": 1480.0, "Costo UYU": 369.573624, "Margen bruto %": 0.5502880918918919, "Estado ML": "Inactiva", "stock_estimado_post_venta": 0.0, "clasificacion": "Sin stock (pausada)", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884548334", "Estado ML_m": "Inactiva", "confirmado_usuario": true, "nota_correccion": "Confirmado por Javi: había 3, se vendieron 3. Publicación pausada. Stock inicial del maestro estaba desactualizado, ya corregido a 0."}, {"SKU": "PHDH0005", "unidades_vendidas": 3.0, "ordenes": 3.0, "ingresos_directos": 1244.19, "COD": "PHDH0005", "NAME": "Lámpara Halo Mesa Multitrend Sunset Lamp Elegante Y Moderna", "CATEGORY": "Decoración hogar", "STOCK": 197.0, "Alerta": "OK", "Precio ML": 430.0, "Costo UYU": 131.89175999999998, "Margen bruto %": 0.4932749767441861, "Estado ML": "Activa", "stock_estimado_post_venta": 194.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-880989136", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0017", "unidades_vendidas": 3.0, "ordenes": NaN, "ingresos_directos": NaN, "COD": NaN, "NAME": "Frasco Flip Separador De Alimentos Y Liquido Multitrend", "CATEGORY": NaN, "STOCK": 10.0, "Alerta": "OK", "Precio ML": 810.0, "Costo UYU": 245.33712, "Margen bruto %": 0.4971146666666666, "Estado ML": "Activa", "stock_estimado_post_venta": 7.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-882389536", "Estado ML_m": NaN, "confirmado_usuario": true, "nota_correccion": "SKU corregido en ML (era PHC00017), match confirmado con el maestro vía reporte de Publicaciones."}, {"SKU": "PHCO0022", "unidades_vendidas": 3.0, "ordenes": NaN, "ingresos_directos": NaN, "COD": NaN, "NAME": "5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones", "CATEGORY": NaN, "STOCK": 396.0, "Alerta": "OK", "Precio ML": 400.0, "Costo UYU": 23.058000000000003, "Margen bruto %": 0.742355, "Estado ML": "Activa", "stock_estimado_post_venta": 393.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-880896958", "Estado ML_m": NaN, "confirmado_usuario": true, "nota_correccion": "SKU corregido en ML (era PHC00022), match confirmado con el maestro vía reporte de Publicaciones."}, {"SKU": "PHDH0001ASTR", "unidades_vendidas": 3.0, "ordenes": 3.0, "ingresos_directos": 506.0, "COD": "PHDH0001ASTR", "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 42.0, "Alerta": "OK", "Precio ML": 395.0, "Costo UYU": 97.76592, "Margen bruto %": 0.5524913417721519, "Estado ML": "Activa", "stock_estimado_post_venta": 39.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0001", "unidades_vendidas": 2.0, "ordenes": 2.0, "ingresos_directos": 590.0, "COD": "PHCO0001", "NAME": "Dispensador De Agua Automático Usb Recargable Vmi", "CATEGORY": "Cocina", "STOCK": 97.0, "Alerta": "OK", "Precio ML": 295.0, "Costo UYU": 110.6784, "Margen bruto %": 0.4248189830508475, "Estado ML": "Activa", "stock_estimado_post_venta": 95.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-699478638", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PAAA0001VERD", "unidades_vendidas": 2.0, "ordenes": 1.0, "ingresos_directos": 288.0, "COD": "PAAA0001VERD", "NAME": "Ksd Manopla De Microfibra Multifuncional Para Auto Y Casa", "CATEGORY": "Autos", "STOCK": 27.0, "Alerta": "OK", "Precio ML": 160.0, "Costo UYU": 59.02848, "Margen bruto %": 0.431072, "Estado ML": "Activa", "stock_estimado_post_venta": 25.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698277334", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0010", "unidades_vendidas": 2.0, "ordenes": 1.0, "ingresos_directos": 990.0, "COD": "PHCO0010", "NAME": "Dispensador Vmi Para Papel Film Y Aluminio Con Cortador", "CATEGORY": "Cocina", "STOCK": 130.0, "Alerta": "OK", "Precio ML": 550.0, "Costo UYU": 165.09528, "Margen bruto %": 0.4998267636363636, "Estado ML": "Activa", "stock_estimado_post_venta": 128.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-699478666", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0008", "unidades_vendidas": 2.0, "ordenes": 2.0, "ingresos_directos": 2301.0, "COD": "PHCO0008", "NAME": "Centrifugadora De Frutas Y Verduras - Salad Spinner - 5 L", "CATEGORY": "Cocina", "STOCK": 47.0, "Alerta": "OK", "Precio ML": 1180.0, "Costo UYU": 258.2496, "Margen bruto %": 0.5811444067796611, "Estado ML": "Activa", "stock_estimado_post_venta": 45.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-699324588", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PTGC0002", "unidades_vendidas": 2.0, "ordenes": 2.0, "ingresos_directos": 3320.0, "COD": "PTGC0002", "NAME": "Teclado Gamer Imice Gk-700 Retroiluminado Con Apoya Muñeca", "CATEGORY": "Tecnologia", "STOCK": 5.0, "Alerta": "OK", "Precio ML": 1660.0, "Costo UYU": 830.0, "Margen bruto %": 0.3, "Estado ML": "Activa", "stock_estimado_post_venta": 3.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1461927248", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMOT0004", "unidades_vendidas": 2.0, "ordenes": 2.0, "ingresos_directos": 1400.0, "COD": "PMOT0004", "NAME": "Rascador Sisal Para Gatos Cama Y Juguete De Rascar Para Gato", "CATEGORY": "Mascotas", "STOCK": 48.0, "Alerta": "OK", "Precio ML": 700.0, "Costo UYU": 147.386736, "Margen bruto %": 0.5894475199999999, "Estado ML": "Activa", "stock_estimado_post_venta": 46.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884436698", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMOT0001", "unidades_vendidas": 2.0, "ordenes": 1.0, "ingresos_directos": 0.0, "COD": "PMOT0001", "NAME": "Removedor De Pelo Para Mascotas Pet Fountain - 4 Unidades", "CATEGORY": "Mascotas", "STOCK": 472.0, "Alerta": "OK", "Precio ML": 175.0, "Costo UYU": 66.40704, "Margen bruto %": 0.4205312, "Estado ML": "Activa", "stock_estimado_post_venta": 470.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697287242", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMCU0003NEGR", "unidades_vendidas": 2.0, "ordenes": 1.0, "ingresos_directos": 0.0, "COD": "PMCU0003NEGR", "NAME": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "CATEGORY": "Mascotas", "STOCK": 3.0, "Alerta": "OK", "Precio ML": 75.0, "Costo UYU": 28.59192, "Margen bruto %": 0.4187744, "Estado ML": "Activa", "stock_estimado_post_venta": 1.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884548970", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMCU0003ROJO", "unidades_vendidas": 2.0, "ordenes": 1.0, "ingresos_directos": 0.0, "COD": "PMCU0003ROJO", "NAME": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "CATEGORY": "Mascotas", "STOCK": 7.0, "Alerta": "OK", "Precio ML": 75.0, "Costo UYU": 28.59192, "Margen bruto %": 0.4187744, "Estado ML": "Activa", "stock_estimado_post_venta": 5.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884470894", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0021", "unidades_vendidas": 2.0, "ordenes": NaN, "ingresos_directos": NaN, "COD": NaN, "NAME": "Calendario Pizarra Magnética Multitrend 21x29,7 Cm Compacta", "CATEGORY": NaN, "STOCK": 48.0, "Alerta": "OK", "Precio ML": 1250.0, "Costo UYU": 187.23096, "Margen bruto %": 0.650215232, "Estado ML": "Activa", "stock_estimado_post_venta": 46.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-881040054", "Estado ML_m": NaN, "confirmado_usuario": true, "nota_correccion": "SKU corregido en ML (era PHC00021), match confirmado con el maestro vía reporte de Publicaciones."}, {"SKU": "PMCA0003", "unidades_vendidas": 2.0, "ordenes": 2.0, "ingresos_directos": 2039.86, "COD": "PMCA0003", "NAME": "Cama Tipo Banana Para Mascota Pequeña", "CATEGORY": "Mascotas", "STOCK": 49.0, "Alerta": "OK", "Precio ML": 1060.0, "Costo UYU": 294.22008, "Margen bruto %": 0.5224338867924527, "Estado ML": "Activa", "stock_estimado_post_venta": 47.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-693763467", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0030", "unidades_vendidas": 2.0, "ordenes": 2.0, "ingresos_directos": 351.5, "COD": "PHCO0030", "NAME": "Picadora Manual 1.5l Con Cuerda - Procesador De Alimentos", "CATEGORY": "Cocina", "STOCK": 97.0, "Alerta": "OK", "Precio ML": 370.0, "Costo UYU": 100.7911296, "Margen bruto %": 0.5275915416216217, "Estado ML": "Activa", "stock_estimado_post_venta": 95.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-694198565", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PAAA0003", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 515.0, "COD": "PAAA0003", "NAME": "Cenicero Para Puerta Del Auto  Resistente Al Viento", "CATEGORY": "Autos", "STOCK": 8.0, "Alerta": "OK", "Precio ML": 515.0, "Costo UYU": 193.133808, "Margen bruto %": 0.4249828970873787, "Estado ML": "Activa", "stock_estimado_post_venta": 7.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884303380", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0002PAND", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 200.0, "COD": "PHCO0002PAND", "NAME": "Babero Silicona Hyundai Hy-w003 Varios Colores", "CATEGORY": "Cocina", "STOCK": 8.0, "Alerta": "OK", "Precio ML": 200.0, "Costo UYU": 66.40704, "Margen bruto %": 0.4679648, "Estado ML": "Activa", "stock_estimado_post_venta": 7.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-704261762", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PAAA0002", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 0.0, "COD": "PAAA0002", "NAME": "Toalla De Microfibra Para Limpieza Auto Linna - X 4 Unidades", "CATEGORY": "Autos", "STOCK": 433.0, "Alerta": "OK", "Precio ML": 260.0, "Costo UYU": 47.96064, "Margen bruto %": 0.615536, "Estado ML": "Activa", "stock_estimado_post_venta": 432.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698277484", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHDH0001LOVE", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 253.0, "COD": "PHDH0001LOVE", "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 86.0, "Alerta": "OK", "Precio ML": 395.0, "Costo UYU": 97.76592, "Margen bruto %": 0.5524913417721519, "Estado ML": "Activa", "stock_estimado_post_venta": 85.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0004GRCL", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 482.0, "COD": "PHCO0004GRCL", "NAME": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "CATEGORY": "Cocina", "STOCK": 13.0, "Alerta": "OK", "Precio ML": 590.0, "Costo UYU": 304.3656, "Margen bruto %": 0.2841261016949153, "Estado ML": "Activa", "stock_estimado_post_venta": 12.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696559194", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PMOT0003AMAR", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 180.5, "COD": "PMOT0003AMAR", "NAME": "Pelota De Juguete Para Mascotas Interactiva Con Velocidades", "CATEGORY": "Mascotas", "STOCK": 66.0, "Alerta": "OK", "Precio ML": 190.0, "Costo UYU": 47.038320000000006, "Margen bruto %": 0.5524298947368421, "Estado ML": "Activa", "stock_estimado_post_venta": 65.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884431970", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0004VEAQ", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 482.0, "COD": "PHCO0004VEAQ", "NAME": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "CATEGORY": "Cocina", "STOCK": 13.0, "Alerta": "OK", "Precio ML": 590.0, "Costo UYU": 304.3656, "Margen bruto %": 0.2841261016949153, "Estado ML": "Activa", "stock_estimado_post_venta": 12.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696559194", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0012VERD", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 0.0, "COD": "PHCO0012VERD", "NAME": "Pelador De Verduras Y Frutas Genérica 20 Cm Abs", "CATEGORY": "Cocina", "STOCK": 114.0, "Alerta": "OK", "Precio ML": 90.0, "Costo UYU": 20.29104, "Margen bruto %": 0.5745439999999999, "Estado ML": "Activa", "stock_estimado_post_venta": 113.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-645895169", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHCO0004BLAN", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 482.0, "COD": "PHCO0004BLAN", "NAME": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "CATEGORY": "Cocina", "STOCK": 12.0, "Alerta": "OK", "Precio ML": 590.0, "Costo UYU": 304.3656, "Margen bruto %": 0.2841261016949153, "Estado ML": "Activa", "stock_estimado_post_venta": 11.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696559194", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PHDH0001SATU", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 253.0, "COD": "PHDH0001SATU", "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 47.0, "Alerta": "OK", "Precio ML": 395.0, "Costo UYU": 97.76592, "Margen bruto %": 0.5524913417721519, "Estado ML": "Activa", "stock_estimado_post_venta": 46.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "Estado ML_m": "Activa", "confirmado_usuario": false, "nota_correccion": ""}, {"SKU": "PTSV0007NEGR", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 1015.49, "COD": "PTSV0007NEGR", "NAME": "Auriculares Vincha Inalámbricos Akz 08c Para Niños", "CATEGORY": "Tecnologia", "STOCK": 1.0, "Alerta": "OK", "Precio ML": 1160.0, "Costo UYU": 580.0, "Margen bruto %": 0.3, "Estado ML": "Activa", "stock_estimado_post_venta": 4.0, "clasificacion": "Confirmado OK", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1461983784", "Estado ML_m": "Activa", "confirmado_usuario": true, "nota_correccion": "Confirmado por Javi: quedan 4. Maestro decía 1 — CORREGIDO a 4."}, {"SKU": "PTGC0001", "unidades_vendidas": 1.0, "ordenes": 1.0, "ingresos_directos": 1500.0, "COD": "PTGC0001", "NAME": "Teclado Imice Ak-100 Retroiluminado Qwerty", "CATEGORY": "Tecnologia", "STOCK": 0.0, "Alerta": "OK", "Precio ML": 1500.0, "Costo UYU": 750.0, "Margen bruto %": 0.3, "Estado ML": "Inactiva", "stock_estimado_post_venta": 0.0, "clasificacion": "Sin stock (pausada)", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696045949", "Estado ML_m": "Inactiva", "confirmado_usuario": true, "nota_correccion": "Confirmado por Javi: se vendió la única unidad. Publicación pausada. Coincide con el maestro."}, {"SKU": "PHCO0023MARR", "unidades_vendidas": 1.0, "ordenes": NaN, "ingresos_directos": NaN, "COD": NaN, "NAME": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca", "CATEGORY": NaN, "STOCK": 7.0, "Alerta": "OK", "Precio ML": 720.0, "Costo UYU": 178.93008, "Margen bruto %": 0.551486, "Estado ML": "Activa", "stock_estimado_post_venta": 6.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884521848", "Estado ML_m": NaN, "confirmado_usuario": true, "nota_correccion": "SKU corregido en ML (era PHC00023MARR), match confirmado con el maestro vía reporte de Publicaciones."}];
+const DAILY = [{"Fecha": "31/07/26", "Visitas": 270, "Cantidad de ventas": 10, "Unidades vendidas": 11, "Ventas brutas": 3836}, {"Fecha": "01/08/26", "Visitas": 344, "Cantidad de ventas": 10, "Unidades vendidas": 12, "Ventas brutas": 7652}, {"Fecha": "02/08/26", "Visitas": 335, "Cantidad de ventas": 5, "Unidades vendidas": 5, "Ventas brutas": 3684}, {"Fecha": "03/08/26", "Visitas": 407, "Cantidad de ventas": 10, "Unidades vendidas": 11, "Ventas brutas": 7715}, {"Fecha": "04/08/26", "Visitas": 390, "Cantidad de ventas": 12, "Unidades vendidas": 13, "Ventas brutas": 6445}, {"Fecha": "05/08/26", "Visitas": 421, "Cantidad de ventas": 10, "Unidades vendidas": 11, "Ventas brutas": 8241}, {"Fecha": "06/08/26", "Visitas": 336, "Cantidad de ventas": 11, "Unidades vendidas": 13, "Ventas brutas": 6457}, {"Fecha": "07/08/26", "Visitas": 302, "Cantidad de ventas": 7, "Unidades vendidas": 7, "Ventas brutas": 5690}, {"Fecha": "08/08/26", "Visitas": 328, "Cantidad de ventas": 6, "Unidades vendidas": 7, "Ventas brutas": 3861}, {"Fecha": "09/08/26", "Visitas": 357, "Cantidad de ventas": 14, "Unidades vendidas": 17, "Ventas brutas": 8006}, {"Fecha": "10/08/26", "Visitas": 476, "Cantidad de ventas": 17, "Unidades vendidas": 21, "Ventas brutas": 11575}, {"Fecha": "11/08/26", "Visitas": 473, "Cantidad de ventas": 6, "Unidades vendidas": 6, "Ventas brutas": 3010}, {"Fecha": "12/08/26", "Visitas": 401, "Cantidad de ventas": 12, "Unidades vendidas": 17, "Ventas brutas": 9371}, {"Fecha": "13/08/26", "Visitas": 384, "Cantidad de ventas": 8, "Unidades vendidas": 9, "Ventas brutas": 8665}, {"Fecha": "14/08/26", "Visitas": 299, "Cantidad de ventas": 14, "Unidades vendidas": 18, "Ventas brutas": 8387}, {"Fecha": "15/08/26", "Visitas": 41, "Cantidad de ventas": 0, "Unidades vendidas": 0, "Ventas brutas": 0}];
+
+// ---------- Charts (SVG bars con tooltip) ----------
+function barChart(container, values, labels, opts) {
+  const w = container.clientWidth || 500, h = 170;
+  const padL=6, padR=6, padT=8, padB=22;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const n = values.length, gap = 4;
+  const barW = (plotW - gap*(n-1)) / n;
+  const maxV = Math.max(...values, 1);
+  let bars = '';
+  values.forEach((v,i) => {
+    const bh = (v/maxV) * plotH;
+    const x = padL + i*(barW+gap);
+    const y = padT + (plotH - bh);
+    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${opts.color}" class="bar" data-label="${labels[i]}" data-value="${opts.fmt(v)}"><title>${labels[i]}: ${opts.fmt(v)}</title></rect>`;
+  });
+  const baseline = `<line x1="${padL}" y1="${padT+plotH}" x2="${w-padR}" y2="${padT+plotH}" stroke="#e1e0d9" stroke-width="1"/>`;
+  const lblFirst = `<text x="${padL}" y="${h-6}" font-size="10" fill="#8b968f" font-family="Rethink Sans, sans-serif">${labels[0]}</text>`;
+  const lblLast = `<text x="${w-padR}" y="${h-6}" font-size="10" fill="#8b968f" text-anchor="end" font-family="Rethink Sans, sans-serif">${labels[n-1]}</text>`;
+  container.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" xmlns="http://www.w3.org/2000/svg">${baseline}${bars}${lblFirst}${lblLast}</svg>
+    <style>.bar{transition:opacity .1s} .bar:hover{opacity:.72;cursor:pointer}</style>`;
+}
+barChart(document.getElementById('chart-ventas'), DAILY.map(d=>d['Ventas brutas']), DAILY.map(d=>d['Fecha']), {color:'#2BEA60', fmt: v => '$'+v.toLocaleString('es-UY')});
+barChart(document.getElementById('chart-visitas'), DAILY.map(d=>d['Visitas']), DAILY.map(d=>d['Fecha']), {color:'#0C0C0C', fmt: v => v.toLocaleString('es-UY')+' visitas'});
+
+// ---------- Tabla interactiva ----------
+const badgeColors = {
+  "Estrella": ["#0ca30c","#eafbea"],
+  "Rentable y escalable": ["#25BF50","#D5FBDF"],
+  "Alto volumen / bajo margen": ["#fab219","#fff8e6"],
+  "Baja rotación / investigar": ["#8b968f","#f2f2f0"],
+  "Riesgo de quiebre": ["#d03b3b","#fdf1f1"],
+  "Estable": ["#55625a","#f2f2f0"],
+  "Confirmado OK": ["#25BF50","#D5FBDF"],
+  "Sin stock (pausada)": ["#8b968f","#f2f2f0"],
+};
+
+let sortKey = 'unidades_vendidas', sortDir = -1, activeFilter = 'Todos', searchTerm = '';
+
+function render() {
+  let rows = PRODUCTOS.filter(p => {
+    if (activeFilter !== 'Todos' && p.clasificacion !== activeFilter) return false;
+    if (searchTerm) {
+      const norm = str => String(str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const s = norm(searchTerm);
+      if (!(norm(p.NAME).includes(s) || norm(p.SKU).includes(s))) return false;
+    }
+    return true;
+  });
+  rows.sort((a,b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (typeof av === 'string') { av = (av||'').toLowerCase(); bv = (bv||'').toLowerCase(); return av < bv ? -1*sortDir : av > bv ? 1*sortDir : 0; }
+    av = av==null? -Infinity : av; bv = bv==null? -Infinity: bv;
+    return (av - bv) * sortDir;
+  });
+  const tbody = document.getElementById('tabla-body');
+  tbody.innerHTML = rows.map(p => {
+    const stockPost = p.stock_estimado_post_venta;
+    let stockStyle = '';
+    if (stockPost <= 0) stockStyle = 'color:#d03b3b;font-weight:700;';
+    else if (stockPost <= 5) stockStyle = 'color:#c98500;font-weight:700;';
+    const margen = p['Margen bruto %'] != null ? (p['Margen bruto %']*100).toFixed(1).replace('.',',')+'%' : '—';
+    const [fg,bg] = badgeColors[p.clasificacion] || ['#55625a','#f2f2f0'];
+    const link = p['Enlace ML'] ? `<a class="prod-link" href="${p['Enlace ML']}" target="_blank" rel="noopener">${p.NAME||''}<span class="ext">↗</span></a>` : (p.NAME||'');
+    const confirmedTag = p.confirmado_usuario ? `<span class="confirmed-tag">✓ confirmado</span>` : '';
+    return `<tr>
+      <td class="mono">${p.SKU||''}</td>
+      <td>${link}${confirmedTag}</td>
+      <td class="num">${(p.unidades_vendidas||0).toFixed(0)}</td>
+      <td class="num" style="${stockStyle}">${stockPost!=null? stockPost.toFixed(0):'—'}</td>
+      <td class="num">${margen}</td>
+      <td><span class="badge" style="color:${fg};background:${bg};">${p.clasificacion||''}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+document.querySelectorAll('#tabla-productos th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = -1; }
+    render();
+  });
+});
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    render();
+  });
+});
+document.getElementById('search-input').addEventListener('input', e => { searchTerm = e.target.value; render(); });
+
+render();
+</script>
+
+</body>
+</html>
