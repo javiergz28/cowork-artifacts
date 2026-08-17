@@ -98,6 +98,8 @@
   .pill { display:inline-block; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
   .pill-live { background: var(--mt-green-light); color: var(--mt-green-dark); }
   .pill-off { background: #f2f2f0; color: var(--text-secondary); }
+  .pill-warn { background: #fffaeb; color: #8a6400; }
+  .pill-bad { background: #fdf1f1; color: var(--critical); }
 
   .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom: 14px; }
   .search { flex: 1; min-width: 180px; position:relative; }
@@ -155,7 +157,7 @@
       <span class="brand-word">Multitrend</span>
       <span class="brand-sub">Panel comercial · Mercado Libre UY</span>
     </div>
-    <span class="update-pill">Actualizado 16 de agosto de 2026</span>
+    <span class="update-pill">Actualizado 17 de agosto de 2026</span>
   </div>
 </div>
 
@@ -163,7 +165,7 @@
 
   <header class="hero">
     <h1>Inteligencia comercial del ciclo</h1>
-    <div class="meta">Período: 9–16 ago 2026 · Reportes ML (Ventas UY, Evolución de negocio, Promociones, Publicaciones, Mercado Ads) cruzados con el maestro STOCK_MT_FINAL</div>
+    <div class="meta">Período: 9–16 ago 2026 · Reportes ML (Ventas UY, Evolución de negocio, Promociones, Desempeño de producto, Publicaciones, Mercado Ads) cruzados con el maestro STOCK_MT_FINAL<br>Actualización 17/08: se incorporaron los reportes de <b>envíos en agencias</b>, <b>envíos Flex</b> y <b>fichas técnicas</b>, que en el pase del 16/08 habían quedado fuera del análisis.</div>
   </header>
 
   <div class="kpi-grid">
@@ -173,6 +175,7 @@
     <div class="kpi"><div class="label">Ticket promedio</div><div class="value">$ 670</div><div class="sub">por venta</div></div>
     <div class="kpi"><div class="label">Compradores nuevos</div><div class="value">98,4%</div><div class="sub">de 64 compradores</div></div>
     <div class="kpi"><div class="label">Ads (últ. semana)</div><div class="value">4,58x</div><div class="sub">ROAS ponderado · $7.383 invertidos</div></div>
+    <div class="kpi"><div class="label">Envíos a tiempo</div><div class="value" style="color:var(--critical)">85%</div><div class="sub">agencias, últ. 4 sem · umbral ML 90%</div></div>
   </div>
 
   <div class="card">
@@ -188,6 +191,78 @@
       </div>
     </div>
     <div class="chart-tooltip-hint">Pasá el cursor sobre las barras para ver el detalle de cada día. El 16/08 es día parcial (reporte cortado a las 14:41 hs).</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Reputación de envíos <span class="n">(reporte del 10/08 · semana 3–9 ago y ventana 13 jul–9 ago · dato de estado, no del ciclo de ventas)</span></h2></div>
+
+    <div class="alert critical">
+      <span class="tag">Reputación</span>
+      <div><strong>ML está degradando la exposición de las publicaciones por incumplimiento de despacho.</strong>
+      <ul>
+        <li>Texto literal del reporte de agencias: <em>«Como alcanzaste menos del 90% en las últimas 4 semanas, tus publicaciones tienen una exposición muy mala y sin destaque.»</em></li>
+        <li>Esto no es una métrica logística: es una <b>variable de tráfico</b>. Menos destaque = menos impresiones orgánicas = menos visitas, con el mismo catálogo y el mismo precio.</li>
+      </ul></div>
+    </div>
+
+    <table>
+      <thead><tr><th>Canal</th><th>Ventana</th><th class="num">Envíos</th><th class="num">Cumplidos</th><th class="num">%</th><th>Exposición según ML</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Agencias / puntos de despacho</td><td>3–9 ago (última semana)</td>
+          <td class="num">20 de 22</td><td class="num">18</td><td class="num">90%</td>
+          <td><span class="pill pill-bad">Muy mala, sin destaque</span></td>
+        </tr>
+        <tr>
+          <td>Agencias / puntos de despacho</td><td>13 jul–9 ago (4 semanas)</td>
+          <td class="num">41 de 43</td><td class="num">35</td><td class="num" style="color:var(--critical);font-weight:700">85%</td>
+          <td><span class="pill pill-bad">Muy mala, sin destaque</span></td>
+        </tr>
+        <tr>
+          <td>Mercado Envíos Flex</td><td>3–9 ago (última semana)</td>
+          <td class="num">32 de 32</td><td class="num">29</td><td class="num">90%</td>
+          <td><span class="pill pill-warn">Regular, sin destaque</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="chart-tooltip-hint">"Envíos de 20 de 22" = ML excluyó 2 del cálculo. El % del panel es el del encabezado del reporte, revalidado recalculándolo desde el detalle.</div>
+
+    <div class="two-col" style="margin-top:18px;">
+      <div>
+        <h3 style="font-size:13px;margin:0 0 8px;">Qué falta para volver al umbral</h3>
+        <div class="foot-note">
+          <p><b>Agencias, ventana de 4 semanas:</b> 35 de 41 cumplidos. Para llegar a 90% hacían falta <b>37</b> — es decir, <b>2 despachos más a tiempo en 4 semanas</b>. La penalización no viene de un problema masivo, viene de un puñado de envíos.</p>
+          <p><b>Los incumplimientos son por poco margen:</b> el Rascador Cama Gato (#47677044198) se despachó <b>71 minutos</b> después del límite, y cuenta exactamente igual que uno de un día entero. La Centrífuga (#47702076753) se pasó por una tarde. Es un problema de <b>hora de corte</b>, no de capacidad.</p>
+          <p><b>El corte de ML es a las 17:15 hs</b> en la mayoría de los envíos de la ventana. Los dos incumplimientos de la última semana se despacharon 18:26 y a la mañana siguiente.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:13px;margin:0 0 8px;">Flex — 3 envíos que afectaron la reputación</h3>
+        <table>
+          <thead><tr><th>Zona</th><th>Producto</th><th>Qué pasó</th></tr></thead>
+          <tbody>
+            <tr><td>Zona 10</td><td>Centrífuga Secador de Lechuga</td><td><span style="color:var(--critical);font-weight:600">Demorado y cancelado por el comprador</span> — venta perdida, no solo demora</td></tr>
+            <tr><td>Zona 3</td><td>Magic Brush Cepillo 5 en 1</td><td>Entregado 2 días tarde (4/08 → 6/08)</td></tr>
+            <tr><td>Zona 6</td><td>Lámpara Led Aurora Boreal</td><td>Entregado 1 día tarde (4/08 → 5/08)</td></tr>
+          </tbody>
+        </table>
+        <div class="chart-tooltip-hint" style="margin-top:8px;">Concentración por zona: <b>Zona 6 mueve 17 de los 32 envíos Flex (53%)</b> con 1 solo fallo. Zona 10: 4 envíos, 1 fallo. Zona 3: 1 envío, 1 fallo. Con este volumen no alcanza para concluir que haya una zona problemática — hay que acumular más ciclos.</div>
+      </div>
+    </div>
+
+    <div class="alert warning" style="margin-top:16px;">
+      <span class="tag">Se encadena</span>
+      <div><strong>Conexión con los despachos pendientes de este ciclo</strong>
+      <ul>
+        <li>Las <b>20 ventas sin despachar</b> listadas más abajo (algunas del 9/08, con 7 días de atraso al 16/08) van a aparecer como incumplimientos en el <b>próximo</b> reporte de envíos. El indicador que hoy está en 85% empeora salvo que se despachen ya.</li>
+        <li>La Centrífuga aparece dos veces: incumplida en agencias (despacho tarde) y cancelada por el comprador en Flex. Es el producto con peor performance de entrega del período.</li>
+        <li><b>Mix de canal del ciclo 9–16/08</b> (Ventas UY): Flex 37 ventas (54%), Correo y puntos de despacho 22 (32%), acuerdo con el comprador 9 (13%). Flex pesa más que agencias en volumen, pero es agencias el canal que está gatillando la penalización.</li>
+      </ul></div>
+    </div>
+
+    <div class="foot-note" style="margin-top:12px;">
+      <p><b>Hipótesis, no conclusión:</b> la conversión del ciclo (2,87%) y las 2.826 visitas podrían estar afectadas por la baja exposición. <b>No está demostrado</b> — no se comparó contra la tendencia de visitas previa a la penalización ni se aisló el efecto de Ads (que explica ~78% de la facturación). Para validarlo: registrar visitas orgánicas vs. pagas por ciclo y ver si se recuperan cuando el indicador vuelva sobre 90%.</p>
+    </div>
   </div>
 
   <div class="card">
@@ -221,10 +296,6 @@
 
     <div class="pendiente">
       <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Confirmar stock real de 5 SKU en riesgo de quiebre</strong><span>PHDH0004, PMCU0004, PTSV0002, PMCU0003NEGR, PMCU0003VERD. Sin esto no se puede confiar en el maestro para reponer ni para seguir vendiendo sin sobreventa.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
       <div class="txt"><strong>Despachar 20 ventas pendientes</strong><span>Las más atrasadas: venta #2000017837463130 (Lámpara 3D, 9/08, "Acuerdas la entrega"), #2000017863578352 (Dispensador huevos, 10/08), #2000017896496608 (Frasco tarro, 12/08), #2000017914899974 (Smartwatch, 13/08), y 5 lámparas 3D del 14/08 (#2000017934770010, 934778256, 934770012, 934778260, 934774482). Verificar en ML antes de despachar por si ya se gestionaron.</span></div>
     </div>
     <div class="pendiente">
@@ -248,8 +319,24 @@
       <div class="txt"><strong>"Potenciá tus ventas" no es una promoción puntual</strong><span>Su vigencia es del 3/08/2026 al 3/02/2027 (6 meses) — probablemente sea un descuento permanente del club/programa de Mercado Libre, no una campaña que Multitrend decide activar. Confirmar qué es exactamente antes de sumarla junto a las promociones puntuales (Fecha doble, Día del niño) en el análisis de impacto.</span></div>
     </div>
     <div class="pendiente">
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Recuperar el 90% de envíos a tiempo — hoy 85% en la ventana de 4 semanas</strong><span>ML tiene las publicaciones en "exposición muy mala, sin destaque". Faltan solo 2 despachos a tiempo más en 4 semanas para volver al umbral. Acción concreta: despachar antes de las 17:15 hs (el corte de ML), no sobre la hora — los dos incumplimientos de la última semana fueron por 71 minutos y por una tarde.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Completar fichas técnicas de Lámparas y Bebederos antes del 23/08</strong><span>Son las 2 categorías más vendidas del ciclo (54 de las ~96 unidades) y las peores en completitud: Lámparas 20,1% y Bebederos 59,8%, con 220 campos vacíos entre ambas. Fecha límite que marca ML: 23 de agosto. Completar esas dos cubre el 56% de las unidades vendidas.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio media">Media</span>
+      <div class="txt"><strong>Revisar la performance de entrega de la Centrífuga Secador de Lechuga</strong><span>Es el único producto que falla en los dos canales: despacho tarde en agencias (#47702076753) y en Flex una venta demorada que el comprador terminó cancelando (#47710607605, Zona 10). Verificar si hay un problema de disponibilidad física o de armado del paquete.</span></div>
+    </div>
+    <div class="pendiente">
       <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>Dos reportes de envíos (Flex y estándar) recibidos, del período 03–09/08 — no se cruzaron con este ciclo</strong><span>Miden cumplimiento de fecha de entrega y reputación, no ventas ni stock. Quedan afuera de este análisis por ser de un período anterior y una métrica distinta (calidad de envío, no comercial). Avisame si querés que los sume al panel en el próximo ciclo.</span></div>
+      <div class="txt"><strong>¿La baja exposición está afectando las visitas?</strong><span>Hipótesis sin validar. Requiere separar visitas orgánicas de visitas pagas por ciclo y comparar contra la tendencia previa a la penalización. Hoy Ads explica ~78% de la facturación, lo que enmascara cualquier caída orgánica.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio investigar">Investigar</span>
+      <div class="txt"><strong>Publicaciones con ficha vacía que además no venden</strong><span>574 de los 845 campos faltantes están en publicaciones sin ninguna venta este ciclo. Puede ser causa (no rankean porque la ficha está incompleta) o consecuencia (no se completó la ficha porque el producto no importa). Test barato: completar la ficha de 3 de ellas y medir visitas 2 ciclos después.</span></div>
     </div>
   </div>
 
@@ -359,9 +446,70 @@
     <div class="chart-tooltip-hint">Contribución neta estimada (inferencia, no dato exacto): con el margen % promedio ponderado de lo vendido este ciclo (47,1%), el margen bruto generado por los $33.829 atribuidos a Ads ronda $15.938 — contra $7.383 invertidos, deja una contribución neta positiva estimada de ~$8.555 en la semana. No es comparable 1 a 1 con el ROAS/ACOS del ciclo anterior porque ese cálculo fue por producto y este es agregado por campaña.</div>
   </div>
 
+
+  <div class="card">
+    <div class="card-head"><h2>Salud de catálogo — fichas técnicas <span class="n">(export del 16/08 · fecha límite de ML: 23 de agosto)</span></h2></div>
+
+    <div class="alert warning">
+      <span class="tag">Deadline 23/08</span>
+      <div><strong>Completitud global 68,0% — 845 campos de atributo vacíos sobre 149 publicaciones y 54 categorías.</strong>
+      <ul>
+        <li>Los atributos incompletos degradan el matcheo a catálogo de ML y el ranking interno de búsqueda. No es una tarea administrativa: afecta cuánto te ven.</li>
+        <li><b>Priorizar por facturación, no por cantidad de huecos:</b> las 2 categorías con más ventas del ciclo (Lámparas y Bebederos, 54 unidades entre ambas) son también de las peores en completitud.</li>
+        <li>424 campos faltantes están en categorías que sí vendieron; 421 en categorías sin ventas este ciclo.</li>
+      </ul></div>
+    </div>
+
+    <table>
+      <thead><tr><th>Categoría</th><th class="num">Unid. vendidas</th><th class="num">Publicaciones</th><th class="num">Completitud</th><th class="num">Campos vacíos</th></tr></thead>
+      <tbody>
+<tr><td>Lamparas de mesa y escritorio</td><td class="num">32</td><td class="num">9</td><td class="num" style="color:var(--critical);font-weight:700">20,1%</td><td class="num">115</td></tr>
+<tr><td>Bebederos y comederos para perros y gatos</td><td class="num">22</td><td class="num">9</td><td class="num" style="color:var(--critical);font-weight:700">59,8%</td><td class="num">105</td></tr>
+<tr><td>Auriculares</td><td class="num">5</td><td class="num">16</td><td class="num" style="color:#8a6400;font-weight:700">83,6%</td><td class="num">42</td></tr>
+<tr><td>Sartenes, woks, planchas y budineras</td><td class="num">6</td><td class="num">2</td><td class="num" style="color:var(--good);font-weight:700">83,3%</td><td class="num">7</td></tr>
+<tr><td>Cepillos para mascotas</td><td class="num">4</td><td class="num">2</td><td class="num" style="color:var(--good);font-weight:700">92,3%</td><td class="num">2</td></tr>
+<tr><td>Contenedores de alimentos</td><td class="num">3</td><td class="num">2</td><td class="num" style="color:#8a6400;font-weight:700">73,7%</td><td class="num">10</td></tr>
+<tr><td>Teclados para computadoras</td><td class="num">2</td><td class="num">2</td><td class="num" style="color:#8a6400;font-weight:700">66,7%</td><td class="num">16</td></tr>
+<tr><td>Otros</td><td class="num">2</td><td class="num">7</td><td class="num" style="color:var(--critical);font-weight:700">12,7%</td><td class="num">55</td></tr>
+<tr><td>Parlantes</td><td class="num">0</td><td class="num">17</td><td class="num" style="color:#8a6400;font-weight:700">80,9%</td><td class="num">107</td></tr>
+<tr><td>Baberos para bebés</td><td class="num">0</td><td class="num">5</td><td class="num" style="color:var(--critical);font-weight:700">15,8%</td><td class="num">80</td></tr>
+<tr><td>Paños de limpieza</td><td class="num">0</td><td class="num">5</td><td class="num" style="color:var(--critical);font-weight:700">15,7%</td><td class="num">59</td></tr>
+<tr><td>Tazas</td><td class="num">0</td><td class="num">3</td><td class="num" style="color:var(--critical);font-weight:700">25,9%</td><td class="num">40</td></tr>
+      </tbody>
+    </table>
+    <div class="chart-tooltip-hint">Top 12 de 54 categorías, ordenadas por unidades vendidas en el ciclo. Se midió solo sobre columnas de tipo ATTRIBUTE (las FIXED las completa ML). Cuentan como vacías las celdas nulas y los placeholders del tipo "Escribe el código".</div>
+
+    <div class="foot-note" style="margin-top:14px;">
+      <p><b>Caso a mirar — Lámpara 3D (PHDH0001*):</b> cada variante tiene <b>16 atributos vacíos</b>, y las variantes LOVE, SATU y GISP son justamente las que el ciclo pasado quedaron marcadas como "stock alto y solo 1 venta". La Lámpara Aurora (PHDH0004), del mismo rubro pero con 18 unidades vendidas, tiene solo 6 campos vacíos. <b>Es una correlación, no una causa demostrada</b> — pero es la hipótesis más barata de testear del panel.</p>
+      <p><b>Ya al 100%:</b> Saleros y pimenteros, Pelotas de juguete para mascotas, Artículos de cocina. <b>Peores:</b> Otros (12,7%), Paños de limpieza (15,7%), Baberos (15,8%), Lámparas (20,1%).</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Archivos del ciclo <span class="n">(inventario — ningún archivo recibido queda sin destino declarado)</span></h2></div>
+    <table>
+      <thead><tr><th>Archivo</th><th>Tipo</th><th>Período que cubre</th><th>Destino</th></tr></thead>
+      <tbody>
+        <tr><td>20260816_Ventas_UY_…_1441hs</td><td>Ventas UY (detalle transaccional)</td><td>9–16 ago</td><td><span class="pill pill-live">Procesado</span></td></tr>
+        <tr><td>Reporte_evolucion_negocio_…</td><td>Evolución de negocio (serie diaria de cuenta)</td><td>9–16 ago</td><td><span class="pill pill-live">Procesado</span></td></tr>
+        <tr><td>Reporte_desempeño_producto_…</td><td>Desempeño de producto (serie diaria de cuenta, no por SKU)</td><td>9–16 ago</td><td><span class="pill pill-live">Procesado</span></td></tr>
+        <tr><td>Reporte_rendimiento_promociones_…</td><td>Promociones</td><td>9–16 ago</td><td><span class="pill pill-live">Procesado</span></td></tr>
+        <tr><td>Publicaciones_20260816_1438</td><td>Publicaciones (SKU, stock, precio, estado)</td><td>Foto al 16/08</td><td><span class="pill pill-warn">Referencia</span> — verificación de SKU</td></tr>
+        <tr><td>reportcampaigns_report…</td><td>Mercado Ads, agrupado por campaña</td><td>16 jul–15 ago (semanal)</td><td><span class="pill pill-live">Procesado</span></td></tr>
+        <tr><td>reporte_de_envios_20260810</td><td>Envíos en agencias de ML</td><td>3–9 ago y 13 jul–9 ago</td><td><span class="pill pill-live">Procesado</span> — estado de cuenta</td></tr>
+        <tr><td>reporte_de_envios_flex_20260810</td><td>Envíos Flex</td><td>3–9 ago</td><td><span class="pill pill-live">Procesado</span> — estado de cuenta</td></tr>
+        <tr><td>Fichas_tecnicas_20260816_1440</td><td>Planilla de atributos de catálogo (54 categorías)</td><td>Foto al 16/08</td><td><span class="pill pill-live">Procesado</span> — salud de catálogo</td></tr>
+        <tr><td>STOCK_MT_FINAL</td><td>Maestro de costos, margen y stock (Drive)</td><td>Versión 16/08 19:38</td><td><span class="pill pill-live">Procesado</span></td></tr>
+      </tbody>
+    </table>
+    <div class="chart-tooltip-hint">Los 3 últimos reportes de ML se incorporaron el 17/08: en el pase del 16/08 habían quedado clasificados como "fuera de alcance" sin que nadie confirmara esa decisión. El inventario existe para que eso no se repita.</div>
+  </div>
+
   <div class="card">
     <h2 style="margin-bottom:10px;">Notas de calidad de datos</h2>
     <div class="foot-note">
+      <p><b>Reportes de envíos y fichas técnicas — período distinto al del ciclo:</b> los reportes de envíos cubren 3–9 ago (y 13 jul–9 ago), anterior al ciclo comercial 9–16 ago. No se sumaron a ninguna métrica de ventas: se muestran como <b>estado vigente de la cuenta</b>, que es lo que son. Las fichas técnicas son una foto al 16/08 y no tienen período.</p>
+      <p><b>Estados de venta cancelados:</b> el reporte de Ventas UY usa tres redacciones distintas para lo mismo ("Cancelada por el comprador", "Cancelada. No despaches", "Venta cancelada. No despaches."). Filtrar por prefijo deja pasar la tercera y desalinea el conteo de unidades — parte de la discrepancia 99 vs 93 podría venir de ahí.</p>
       <p><b>Discrepancia de unidades entre reportes:</b> "Evolución de negocio" da 99 unidades vendidas en el período; "Ventas UY" (tras excluir canceladas) da 93. No se concilió — falta confirmar el motivo (ver Pendientes).</p>
       <p><b>Reporte de promociones con formato numérico en español:</b> las columnas de visitas venían como texto con punto de miles ("1.233"), que si se leen como decimal dan un número 1000 veces más chico. Se corrigió al procesar, pero es un formato a tener en cuenta si alguien abre el archivo directo en una herramienta que no distinga texto de número.</p>
       <p><b>17 filas de "Ventas UY" pertenecen a paquetes multi-producto</b> donde el ingreso queda en la fila del paquete y no en la fila de cada SKU — el ranking usa unidades × Precio ML del maestro para estimar ingresos por producto en esos casos, no el ingreso real de la venta.</p>
