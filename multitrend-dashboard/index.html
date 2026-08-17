@@ -170,7 +170,7 @@
 
   <div class="kpi-grid">
     <div class="kpi accent"><div class="label">Ventas brutas</div><div class="value">$ 54.282</div><div class="sub">8 días (reporte Negocio)</div></div>
-    <div class="kpi"><div class="label">Unidades vendidas</div><div class="value">99</div><div class="sub">Negocio · Ventas UY da 93, ver nota</div></div>
+    <div class="kpi"><div class="label">Unidades vendidas</div><div class="value">93</div><div class="sub">netas · 99 brutas − 6 canceladas</div></div>
     <div class="kpi"><div class="label">Conversión</div><div class="value">2,9%</div><div class="sub">2.826 visitas</div></div>
     <div class="kpi"><div class="label">Ticket promedio</div><div class="value">$ 670</div><div class="sub">por venta</div></div>
     <div class="kpi"><div class="label">Compradores nuevos</div><div class="value">98,4%</div><div class="sub">de 64 compradores</div></div>
@@ -194,7 +194,7 @@
   </div>
 
   <div class="card">
-    <div class="card-head"><h2>Reputación de envíos <span class="n">(reporte del 10/08 · semana 3–9 ago y ventana 13 jul–9 ago · dato de estado, no del ciclo de ventas)</span></h2></div>
+    <div class="card-head"><h2>Envíos — volumen y reputación <span class="n">(volumen del ciclo 9–16 ago · reputación según reporte del 10/08, dato de estado)</span></h2></div>
 
     <div class="alert critical">
       <span class="tag">Reputación</span>
@@ -256,8 +256,33 @@
       <ul>
         <li>Las <b>20 ventas sin despachar</b> listadas más abajo (algunas del 9/08, con 7 días de atraso al 16/08) van a aparecer como incumplimientos en el <b>próximo</b> reporte de envíos. El indicador que hoy está en 85% empeora salvo que se despachen ya.</li>
         <li>La Centrífuga aparece dos veces: incumplida en agencias (despacho tarde) y cancelada por el comprador en Flex. Es el producto con peor performance de entrega del período.</li>
-        <li><b>Mix de canal del ciclo 9–16/08</b> (Ventas UY): Flex 37 ventas (54%), Correo y puntos de despacho 22 (32%), acuerdo con el comprador 9 (13%). Flex pesa más que agencias en volumen, pero es agencias el canal que está gatillando la penalización.</li>
+        <li><b>Flex pesa más en cantidad de envíos (53,8%), pero correo mueve más unidades</b> — ver el desglose de canales abajo. La penalización de exposición la está gatillando el canal de agencias, que es justamente donde se concentran los pedidos más grandes.</li>
       </ul></div>
+    </div>
+
+
+    <div style="margin-top:18px;">
+      <h3 style="font-size:13px;margin:0 0 8px;">Canales de entrega del ciclo 9–16/08 <span class="n" style="font-weight:400">(65 envíos efectivos · 93 unidades)</span></h3>
+      <table>
+        <thead><tr><th>Canal</th><th class="num">Envíos</th><th class="num">% de envíos</th><th class="num">Unidades</th><th class="num">Unid. por envío</th><th class="num">Paq. multiproducto</th></tr></thead>
+        <tbody>
+          <tr><td><b>Mercado Envíos Flex</b> <span class="n">(entrega propia)</span></td><td class="num">35</td><td class="num">53,8%</td><td class="num">41</td><td class="num">1,17</td><td class="num">1</td></tr>
+          <tr><td><b>Correo y puntos de despacho</b> <span class="n">(agencias)</span></td><td class="num">21</td><td class="num">32,3%</td><td class="num">43</td><td class="num" style="font-weight:700">2,05</td><td class="num">5</td></tr>
+          <tr><td><b>Entrega en persona</b> <span class="n">(acuerdo con el comprador)</span></td><td class="num">9</td><td class="num">13,8%</td><td class="num">9</td><td class="num">1,00</td><td class="num">0</td></tr>
+          <tr style="border-top:2px solid var(--grid)"><td><b>Total</b></td><td class="num"><b>65</b></td><td class="num">100%</td><td class="num"><b>93</b></td><td class="num">1,43</td><td class="num">6</td></tr>
+          <tr><td class="n">Cancelados (no se despacharon)</td><td class="num n">3</td><td class="num n">—</td><td class="num n">6</td><td class="num n">—</td><td class="num n">2</td></tr>
+        </tbody>
+      </table>
+      <div class="chart-tooltip-hint">Contado por envío físico, no por fila del reporte: los 6 paquetes multiproducto ocupan varias filas en Ventas UY pero son un solo envío. Cancelados: 2 por Flex (3 unidades) y 1 por correo (3 unidades).</div>
+
+      <div class="alert warning" style="margin-top:12px;">
+        <span class="tag">A mirar</span>
+        <div><strong>Correo mueve menos envíos que Flex pero más unidades.</strong> 21 envíos contra 35, y sin embargo 43 unidades contra 41: <b>5 de los 6 paquetes multiproducto salen por correo</b>, y el promedio por envío es 2,05 contra 1,17 de Flex. O sea que los pedidos más grandes se concentran en el canal que hoy está penalizado por incumplimiento. Es el peor lugar donde tener el problema — <b>inferencia a partir del mix, no una causa comprobada</b>: puede ser que los pedidos grandes elijan correo por costo de envío, o que se agrupen ahí por decisión operativa. Vale confirmarlo antes de mover nada.</div>
+      </div>
+
+      <div class="foot-note" style="margin-top:10px;">
+        <p><b>Las 9 entregas en persona</b> (13,8% de los envíos) quedan fuera de todo reporte de reputación de ML: no las mide ni el reporte de agencias ni el de Flex. Son 1 unidad cada una, sin excepción. Si el volumen sube, conviene llevar registro propio — hoy es un punto ciego del panel.</p>
+      </div>
     </div>
 
     <div class="foot-note" style="margin-top:12px;">
@@ -270,6 +295,18 @@
     <div class="alert good">
       <span class="tag">Resuelto</span>
       <div><strong>Javi confirmó el stock real de los 5 SKU que habían quedado en 0 o negativo:</strong> PHDH0004 → 25 (era estimado en -1, pasa a Estrella), PMCU0004 → 25 (era -2, pasa a Estrella), PMCU0003NEGR → 3, PMCU0003VERD → 6 (ambos Estables). <strong>PTSV0002 (Auriculares Unicorn) confirmado en 0 — la publicación ya está pausada</strong>, sin acción pendiente.</div>
+    </div>
+    <div class="alert critical">
+      <span class="tag">Reputación</span>
+      <div><strong>ML tiene las publicaciones en "exposición muy mala, sin destaque":</strong> 85% de envíos a tiempo en la ventana de 4 semanas, contra un umbral de 90%. Faltaban <b>2 despachos a tiempo</b> para volver al umbral. Detalle en Reputación de envíos, arriba.</div>
+    </div>
+    <div class="alert warning">
+      <span class="tag">Deadline 23/08</span>
+      <div><strong>Fichas técnicas al 68% de completitud, con fecha límite de ML el 23 de agosto.</strong> Las dos categorías más vendidas del ciclo (Lámparas 20,1% y Bebederos 59,8%) están entre las peores. Detalle en Salud de catálogo, abajo.</div>
+    </div>
+    <div class="alert good">
+      <span class="tag">Resuelto</span>
+      <div><strong>Se resolvió la discrepancia 99 vs 93 unidades.</strong> No era un problema de datos: al parsear Ventas UY, los paquetes multi-producto ponen el estado en la fila cabecera y las unidades en las filas hijas. Bien parseado, Ventas UY da <b>99 unidades brutas — el mismo número que el reporte Negocio</b> — de las cuales <b>6 están canceladas</b> (2 paquetes completos y 1 venta suelta), dejando <b>93 netas</b>. Los dos reportes coincidían desde el principio: uno mostraba bruto y el otro neto.</div>
     </div>
     <div class="alert warning">
       <span class="tag">Despachos</span>
@@ -296,19 +333,27 @@
 
     <div class="pendiente">
       <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Despachar 20 ventas pendientes</strong><span>Las más atrasadas: venta #2000017837463130 (Lámpara 3D, 9/08, "Acuerdas la entrega"), #2000017863578352 (Dispensador huevos, 10/08), #2000017896496608 (Frasco tarro, 12/08), #2000017914899974 (Smartwatch, 13/08), y 5 lámparas 3D del 14/08 (#2000017934770010, 934778256, 934770012, 934778260, 934774482). Verificar en ML antes de despachar por si ya se gestionaron.</span></div>
+      <div class="txt"><strong>Despachar 20 ventas pendientes</strong><span>Las más atrasadas: venta #2000017837463130 (Lámpara 3D, 9/08, "Acuerdas la entrega"), #2000017863578352 (Dispensador huevos, 10/08), #2000017896496608 (Frasco tarro, 12/08), #2000017914899974 (Smartwatch, 13/08), y 5 lámparas 3D del 14/08 (#2000017934770010, 934778256, 934770012, 934778260, 934774482). Verificar en ML antes de despachar por si ya se gestionaron. <b>Además de la venta en sí, son los incumplimientos del próximo reporte de envíos.</b></span></div>
     </div>
     <div class="pendiente">
       <span class="prio alta">Alta</span>
       <div class="txt"><strong>Coordinar entrega directa — venta #2000017950342260</strong><span>5pcs Soporte Pared Adhesivo. No es Mercado Envíos ("Acuerdas la entrega") — contactar al comprador para coordinar.</span></div>
     </div>
     <div class="pendiente">
-      <span class="prio media">Media</span>
-      <div class="txt"><strong>Revisar discrepancia de unidades entre reportes: 99 (Negocio) vs 93 (Ventas UY)</strong><span>Diferencia de 6 unidades entre el reporte de evolución de negocio y el detalle transaccional de Ventas UY, incluso después de excluir canceladas. Puede deberse a que ambos reportes se generaron en momentos distintos del día — confirmar si es así o si hay ventas que un reporte cuenta y el otro no.</span></div>
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Recuperar el 90% de envíos a tiempo — hoy 85% en la ventana de 4 semanas</strong><span>ML tiene las publicaciones en "exposición muy mala, sin destaque". Faltan solo 2 despachos a tiempo más en 4 semanas para volver al umbral. Acción concreta: despachar antes de las 17:15 hs (el corte de ML), no sobre la hora — los dos incumplimientos de la última semana fueron por 71 minutos y por una tarde.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio alta">Alta</span>
+      <div class="txt"><strong>Completar fichas técnicas de Lámparas y Bebederos antes del 23/08</strong><span>Son las 2 categorías más vendidas del ciclo (51 de las 93 unidades netas) y las peores en completitud: Lámparas 20,1% y Bebederos 59,8%, con 220 campos vacíos entre ambas. Fecha límite que marca ML: 23 de agosto. Completar esas dos cubre el 55% de las unidades vendidas.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio media">Media</span>
       <div class="txt"><strong>Pedir el reporte de Mercado Ads "por publicación" además del "por campañas"</strong><span>El de campañas no permite cruzar inversión por producto contra margen — es el nivel de detalle que sí tuvimos el ciclo pasado y que permitió encontrar el caso del Frasco Flip perdiendo plata en Ads.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio media">Media</span>
+      <div class="txt"><strong>Revisar la performance de entrega de la Centrífuga Secador de Lechuga</strong><span>Es el único producto que falla en los dos canales: despacho tarde en agencias (#47702076753) y en Flex una venta demorada que el comprador terminó cancelando (#47710607605, Zona 10). Verificar si hay un problema de disponibilidad física o de armado del paquete.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio investigar">Investigar</span>
@@ -319,18 +364,6 @@
       <div class="txt"><strong>"Potenciá tus ventas" no es una promoción puntual</strong><span>Su vigencia es del 3/08/2026 al 3/02/2027 (6 meses) — probablemente sea un descuento permanente del club/programa de Mercado Libre, no una campaña que Multitrend decide activar. Confirmar qué es exactamente antes de sumarla junto a las promociones puntuales (Fecha doble, Día del niño) en el análisis de impacto.</span></div>
     </div>
     <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Recuperar el 90% de envíos a tiempo — hoy 85% en la ventana de 4 semanas</strong><span>ML tiene las publicaciones en "exposición muy mala, sin destaque". Faltan solo 2 despachos a tiempo más en 4 semanas para volver al umbral. Acción concreta: despachar antes de las 17:15 hs (el corte de ML), no sobre la hora — los dos incumplimientos de la última semana fueron por 71 minutos y por una tarde.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Completar fichas técnicas de Lámparas y Bebederos antes del 23/08</strong><span>Son las 2 categorías más vendidas del ciclo (54 de las ~96 unidades) y las peores en completitud: Lámparas 20,1% y Bebederos 59,8%, con 220 campos vacíos entre ambas. Fecha límite que marca ML: 23 de agosto. Completar esas dos cubre el 56% de las unidades vendidas.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio media">Media</span>
-      <div class="txt"><strong>Revisar la performance de entrega de la Centrífuga Secador de Lechuga</strong><span>Es el único producto que falla en los dos canales: despacho tarde en agencias (#47702076753) y en Flex una venta demorada que el comprador terminó cancelando (#47710607605, Zona 10). Verificar si hay un problema de disponibilidad física o de armado del paquete.</span></div>
-    </div>
-    <div class="pendiente">
       <span class="prio investigar">Investigar</span>
       <div class="txt"><strong>¿La baja exposición está afectando las visitas?</strong><span>Hipótesis sin validar. Requiere separar visitas orgánicas de visitas pagas por ciclo y comparar contra la tendencia previa a la penalización. Hoy Ads explica ~78% de la facturación, lo que enmascara cualquier caída orgánica.</span></div>
     </div>
@@ -338,7 +371,7 @@
       <span class="prio investigar">Investigar</span>
       <div class="txt"><strong>Publicaciones con ficha vacía que además no venden</strong><span>574 de los 845 campos faltantes están en publicaciones sin ninguna venta este ciclo. Puede ser causa (no rankean porque la ficha está incompleta) o consecuencia (no se completó la ficha porque el producto no importa). Test barato: completar la ficha de 3 de ellas y medir visitas 2 ciclos después.</span></div>
     </div>
-  </div>
+</div>
 
   <div class="card">
     <div class="card-head">
@@ -455,7 +488,7 @@
       <div><strong>Completitud global 68,0% — 845 campos de atributo vacíos sobre 149 publicaciones y 54 categorías.</strong>
       <ul>
         <li>Los atributos incompletos degradan el matcheo a catálogo de ML y el ranking interno de búsqueda. No es una tarea administrativa: afecta cuánto te ven.</li>
-        <li><b>Priorizar por facturación, no por cantidad de huecos:</b> las 2 categorías con más ventas del ciclo (Lámparas y Bebederos, 54 unidades entre ambas) son también de las peores en completitud.</li>
+        <li><b>Priorizar por facturación, no por cantidad de huecos:</b> las 2 categorías con más ventas del ciclo (Lámparas y Bebederos, <b>51 de las 93 unidades netas — 55%</b>) son también de las peores en completitud.</li>
         <li>424 campos faltantes están en categorías que sí vendieron; 421 en categorías sin ventas este ciclo.</li>
       </ul></div>
     </div>
@@ -463,7 +496,7 @@
     <table>
       <thead><tr><th>Categoría</th><th class="num">Unid. vendidas</th><th class="num">Publicaciones</th><th class="num">Completitud</th><th class="num">Campos vacíos</th></tr></thead>
       <tbody>
-<tr><td>Lamparas de mesa y escritorio</td><td class="num">32</td><td class="num">9</td><td class="num" style="color:var(--critical);font-weight:700">20,1%</td><td class="num">115</td></tr>
+<tr><td>Lamparas de mesa y escritorio</td><td class="num">29</td><td class="num">9</td><td class="num" style="color:var(--critical);font-weight:700">20,1%</td><td class="num">115</td></tr>
 <tr><td>Bebederos y comederos para perros y gatos</td><td class="num">22</td><td class="num">9</td><td class="num" style="color:var(--critical);font-weight:700">59,8%</td><td class="num">105</td></tr>
 <tr><td>Auriculares</td><td class="num">5</td><td class="num">16</td><td class="num" style="color:#8a6400;font-weight:700">83,6%</td><td class="num">42</td></tr>
 <tr><td>Sartenes, woks, planchas y budineras</td><td class="num">6</td><td class="num">2</td><td class="num" style="color:var(--good);font-weight:700">83,3%</td><td class="num">7</td></tr>
@@ -477,7 +510,7 @@
 <tr><td>Tazas</td><td class="num">0</td><td class="num">3</td><td class="num" style="color:var(--critical);font-weight:700">25,9%</td><td class="num">40</td></tr>
       </tbody>
     </table>
-    <div class="chart-tooltip-hint">Top 12 de 54 categorías, ordenadas por unidades vendidas en el ciclo. Se midió solo sobre columnas de tipo ATTRIBUTE (las FIXED las completa ML). Cuentan como vacías las celdas nulas y los placeholders del tipo "Escribe el código".</div>
+    <div class="chart-tooltip-hint">Top 12 de 54 categorías, ordenadas por unidades netas vendidas en el ciclo. Se midió solo sobre columnas de tipo ATTRIBUTE (las FIXED las completa ML). Cuentan como vacías las celdas nulas y los placeholders del tipo "Escribe el código".</div>
 
     <div class="foot-note" style="margin-top:14px;">
       <p><b>Caso a mirar — Lámpara 3D (PHDH0001*):</b> cada variante tiene <b>16 atributos vacíos</b>, y las variantes LOVE, SATU y GISP son justamente las que el ciclo pasado quedaron marcadas como "stock alto y solo 1 venta". La Lámpara Aurora (PHDH0004), del mismo rubro pero con 18 unidades vendidas, tiene solo 6 campos vacíos. <b>Es una correlación, no una causa demostrada</b> — pero es la hipótesis más barata de testear del panel.</p>
@@ -510,7 +543,7 @@
     <div class="foot-note">
       <p><b>Reportes de envíos y fichas técnicas — período distinto al del ciclo:</b> los reportes de envíos cubren 3–9 ago (y 13 jul–9 ago), anterior al ciclo comercial 9–16 ago. No se sumaron a ninguna métrica de ventas: se muestran como <b>estado vigente de la cuenta</b>, que es lo que son. Las fichas técnicas son una foto al 16/08 y no tienen período.</p>
       <p><b>Estados de venta cancelados:</b> el reporte de Ventas UY usa tres redacciones distintas para lo mismo ("Cancelada por el comprador", "Cancelada. No despaches", "Venta cancelada. No despaches."). Filtrar por prefijo deja pasar la tercera y desalinea el conteo de unidades — parte de la discrepancia 99 vs 93 podría venir de ahí.</p>
-      <p><b>Discrepancia de unidades entre reportes:</b> "Evolución de negocio" da 99 unidades vendidas en el período; "Ventas UY" (tras excluir canceladas) da 93. No se concilió — falta confirmar el motivo (ver Pendientes).</p>
+      <p><b>Discrepancia de unidades entre reportes — RESUELTA (17/08):</b> "Evolución de negocio" da 99 unidades y "Ventas UY" daba 93. No había inconsistencia: en Ventas UY los paquetes multiproducto ponen el estado en la fila cabecera y las unidades en las filas hijas, así que un filtro de cancelados aplicado fila por fila descartaba mal. Parseado por envío en vez de por fila: <b>99 unidades brutas (idéntico a Negocio) − 6 canceladas = 93 netas</b>. Negocio informa bruto, el neto sale de Ventas UY. Las 6 canceladas son 2 paquetes completos (#2000014525684689 y #2000014519411015) y la venta suelta #2000017842263642.</p>
       <p><b>Reporte de promociones con formato numérico en español:</b> las columnas de visitas venían como texto con punto de miles ("1.233"), que si se leen como decimal dan un número 1000 veces más chico. Se corrigió al procesar, pero es un formato a tener en cuenta si alguien abre el archivo directo en una herramienta que no distinga texto de número.</p>
       <p><b>17 filas de "Ventas UY" pertenecen a paquetes multi-producto</b> donde el ingreso queda en la fila del paquete y no en la fila de cada SKU — el ranking usa unidades × Precio ML del maestro para estimar ingresos por producto en esos casos, no el ingreso real de la venta.</p>
       <p><b>Reporte de Mercado Ads de este ciclo es "por campañas", no "por publicación"</b> como el ciclo anterior — impide el cruce exacto de margen por producto publicitado (ver alerta arriba).</p>
