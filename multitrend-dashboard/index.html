@@ -157,7 +157,7 @@
       <span class="brand-word">Multitrend</span>
       <span class="brand-sub">Panel comercial · Mercado Libre UY</span>
     </div>
-    <span class="update-pill">Actualizado 19 de agosto de 2026</span>
+    <span class="update-pill">Actualizado 24 de agosto de 2026</span>
   </div>
 </div>
 
@@ -323,58 +323,73 @@
       <span class="tag">Nuevo reporte</span>
       <div><strong>Llegó un reporte no visto antes: "Rendimiento de publicaciones"</strong> (visitas y ventas por SKU/publicación, 1–19 ago). Se incorporó al análisis como <code>procesar</code>. Sus totales (188 unidades) no coinciden exactamente con Ventas UY/Negocio (202 brutas / 194 netas) — diferencia de 14 unidades sin explicar todavía; ver Notas de calidad de datos.</div>
     </div>
-    <details class="resolved">
-      <summary>✓ 10 SKU con error de tipeo corregidos automáticamente — ver detalle</summary>
+    <div class="alert good">
+      <span class="tag">Cerrado</span>
+      <div><strong>Los SKU de las publicaciones ya están corregidos. El tema se cierra.</strong> Javi corrigió el SKU en las publicaciones de ML; las ventas que aparecían con la forma vieja (<code>PHC0####</code>, sin la "O") son <b>anteriores al cambio</b>. La última venta con SKU mal cargado es del <b>12/08/2026</b> — no hay ninguna posterior.
       <ul>
-        <li><strong>PHC00025 → PHCO0025</strong> (Tetera de Vidrio), <strong>PHC00022 → PHCO0022</strong> (5pcs Soporte Pared), <strong>PHC00024 → PHCO0024</strong> (Magic Brush) y <strong>PHC00023MARR → PHCO0023MARR</strong> (Lunchera marrón) — <b>nuevos este ciclo</b>, mismo patrón de siempre (falta la "O" tras "PHC"), verificados por ITEM_ID ML contra el maestro antes de aplicar.</li>
-        <li><strong>Venta sin SKU en Ventas UY</strong> (Gestionador 2.0 Organizador de Cables, MLU880947316) — asignado a <b>PHDH0002BEIG</b> cruzando el ITEM_ID de la publicación contra el maestro.</li>
-        <li>Los 6 ya conocidos de ciclos anteriores (PHC00021, PHCO00032, PHC00017, PHCO0029G/N, PHC00027) se siguen aplicando automáticamente — no volvieron a fallar este ciclo salvo que hubiera venta con ese error, que no la hubo.</li>
+        <li><b>Corrección a este mismo panel:</b> los 4 SKU que el pase del 19/08 registró como "typos nuevos" (PHC00025, PHC00022, PHC00024, PHC00023MARR) <b>no eran nuevos</b>. Son ventas del 4 al 8 de agosto que se recontaron porque ese reporte vino con ventana "mes a la fecha 1–19 ago" en lugar de solo el ciclo. Parecía que el problema se repetía ciclo a ciclo; era el mismo histórico entrando dos veces.</li>
+        <li><b>Tazas Kobe</b> (MLU696654652) y <b>Molinillo</b>: revisados a mano por Javi, ambos correctos. El cambio del Molinillo se hizo después de la venta que lo mostraba mal.</li>
+        <li><b>Se reabre solo si</b> aparece una venta con SKU mal cargado con fecha <b>posterior al 12/08/2026</b>.</li>
       </ul>
-    </details>
+      </div>
+    </div>
+    <div class="alert warning">
+      <span class="tag">Nuevo</span>
+      <div><strong>Tecnología: 38 publicaciones activas y 108 unidades de stock en total.</strong> Es la categoría con más SKU publicados y, de lejos, la de menos stock — menos de 3 unidades por publicación. Comparación: Cocina 50 SKU / 2.866 unidades, Mascotas 22 / 1.434, Deco hogar 23 / 1.357, Autos 8 / 604. No es un quiebre todavía, pero es un tercio del catálogo publicado sobre una base muy fina. Dato del maestro STOCK_MT_FINAL al 24/08.</div>
+    </div>
   </div>
 
   <div class="card">
-    <h2 style="margin-bottom:8px;">Pendientes accionables <span class="n">(priorizados por impacto/urgencia)</span></h2>
+    <h2 style="margin-bottom:4px;">Qué hacer ahora <span class="n">(ordenado por impacto — cada uno dice qué hacer, por qué, y cómo saber que terminaste)</span></h2>
+    <p style="font-size:12.5px;color:var(--text-secondary);margin:0 0 10px;">Las cuatro de arriba son las que mueven la aguja esta semana. Si solo hacés una, que sea la primera: la reputación de envíos afecta la exposición de <b>todas</b> las publicaciones, no de una.</p>
 
     <div class="pendiente">
       <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Recuperar el 90% de envíos a tiempo en agencias — hoy 55% semana / 73% en 4 semanas</strong><span>Causa identificada: un despacho en lote el 10/08 a las 19:35 hs (9 ventas juntas, vencimientos entre el 7 y el 10/08 a las 16:15 hs). Acción concreta: no dejar acumular ventas sin despachar — despachar todos los días antes de las 17:15 hs, no en lotes. Faltan 7 despachos a tiempo en la última semana y 11 en las 4 semanas para volver al umbral.</span></div>
+      <div class="txt"><strong>Despachá todos los días antes de las 17:15. Nunca en lote.</strong><span><b>Por qué:</b> Agencias está en <b>55%</b> la última semana y <b>73%</b> en las 4 semanas; el umbral de ML es 90%. Por debajo, ML baja la exposición de todo el catálogo. La caída no fue por capacidad: 9 despachos salieron juntos el 10/08 a las 19:35, con vencimientos entre el 7 y el 10/08 a las 16:15.<br><b>Listo cuando:</b> Sumás 7 despachos a tiempo en la semana y 11 en las 4 semanas. Ahí volvés al 90%.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio alta">Alta</span>
-      <div class="txt"><strong>2 SKU nuevos sin stock: PTGC0002 (Teclado Gamer) y PHCO0023VERD (Lunchera verde)</strong><span>Ambos llegaron a 0 con la venta de este ciclo. Confirmar si hay reposición en camino o si corresponde pausar la publicación mientras tanto (como se hizo con PTSV0002).</span></div>
+      <div class="txt"><strong>Decidí hoy: reponés PTGC0002 y PHCO0023VERD, o pausás las dos publicaciones.</strong><span><b>Por qué:</b> Los dos quedaron en stock 0 con la venta de este ciclo (Teclado Gamer Imice Gk-700 y Lunchera Tupper verde). Una publicación activa sin stock termina en una venta que no podés despachar — y la reputación ya está en 55%.<br><b>Listo cuando:</b> Las dos publicaciones tienen stock cargado, o están pausadas.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Completar fichas técnicas de Bebederos y Lámparas — siguen sin tocarse, deadline el 23 o 26/08 (a confirmar)</strong><span>68,0% de completitud global, sin cambios respecto al ciclo pasado. Bebederos (59,8%) y Lámparas (20,1%) son las categorías más vendidas del mes (117 de 194 unidades, 60%) y siguen entre las peores. El texto de ayuda de ML cambió de "23 de agosto" a "26 de agosto" — confirmar con Javi si es un deadline fijo o rotativo antes de asumir cuál rige.</span></div>
+      <div class="txt"><strong>Completá las fichas técnicas de Bebederos y Lámparas. Solo esas dos.</strong><span><b>Por qué:</b> La completitud global sigue en <b>68,0%</b>, idéntica al 16/08 campo por campo: no se completó ni un atributo. Esas dos categorías son <b>117 de las 194 unidades del mes (60%)</b> y están entre las peores (Bebederos 59,8%, Lámparas 20,1%). El deadline de ML decía 23/08 y ahora dice 26/08 — ya venció o vence esta semana.<br><b>Listo cuando:</b> Las dos categorías pasan de 90% de completitud. El resto del catálogo puede esperar.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Decidir qué hacer con "Caja De Arena Inteligente" en Ads</strong><span>$1.864,59 invertidos este período, 0 ventas — van ~$3.750 acumulados en dos ciclos sin una sola venta atribuida. Pausar el anuncio o revisar precio/imagen/competencia antes de seguir invirtiendo ahí.</span></div>
+      <div class="txt"><strong>Pausá el anuncio de "Caja De Arena Inteligente".</strong><span><b>Por qué:</b> No es un anuncio de bajo rendimiento: es de rendimiento <b>cero</b>. $1.864,59 este período y $1.885 el anterior — <b>~$3.750 sin una sola venta atribuida</b> en dos ciclos seguidos. Seguir invirtiendo ahí es tirar plata mientras no cambie nada del producto.<br><b>Listo cuando:</b> El anuncio está pausado. Se reactiva solo si cambiás precio, foto principal o título.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio media">Media</span>
-      <div class="txt"><strong>Revisar los 51 anuncios con contribución neta negativa (61% de los que tienen margen conocido)</strong><span>Suman -$4.499 en el período. Con Ads ahora por publicación, se puede priorizar por magnitud de pérdida — no todos son iguales, algunos son pérdidas chicas de productos que igual convienen mantener visibles.</span></div>
+      <div class="txt"><strong>Ordená los 51 anuncios con pérdida por monto y pausá los 10 peores.</strong><span><b>Por qué:</b> 61% de los anuncios con margen conocido (51 de 84) tienen contribución neta negativa, -$4.499 en el período. No todos pesan igual: algunos son pérdidas chicas de productos que igual conviene mantener visibles. Ahora que Ads viene por publicación se puede ordenar por pérdida real y cortar donde duele.<br><b>Listo cuando:</b> Los 10 que más pierden están pausados y la pérdida del próximo período baja de $4.499.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio media">Media</span>
-      <div class="txt"><strong>Confirmar por qué el correo sigue concentrando los pedidos más grandes</strong><span>9 de los 12 paquetes multiproducto del mes salen por correo (1,52 unid./envío contra 1,21 de Flex) — segundo ciclo seguido con el mismo patrón. ¿Costo de envío, decisión operativa, o restricción de Flex para pedidos grandes?</span></div>
+      <div class="txt"><strong>Subí el precio de PHCO0011 (Mini Sartén) o sacalo de las campañas.</strong><span><b>Por qué:</b> Margen <b>30,1%</b>, el más bajo entre los más vendidos. Señalado hace 3 ciclos sin resolverse. Cada unidad que vendés suma facturación y casi nada de ganancia — y si además está en Ads, puede estar dando negativo.<br><b>Listo cuando:</b> El margen sube arriba de 40%, o el producto sale de las campañas pagas.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio media">Media</span>
-      <div class="txt"><strong>PHCO0011 (Mini Sartén) sigue siendo de los de menor margen entre los más vendidos</strong><span>13 unidades en el mes, margen 30,1% — señalado hace 3 ciclos, sigue sin resolverse.</span></div>
+      <div class="txt"><strong>Definí con Seba por qué los pedidos grandes salen por correo.</strong><span><b>Por qué:</b> 9 de los 12 paquetes multiproducto del mes salieron por agencias (1,52 unidades por envío contra 1,21 de Flex). Los pedidos más valiosos se están yendo justo por el canal penalizado. Segundo ciclo seguido con el mismo patrón, así que no es casualidad.<br><b>Listo cuando:</b> Sabés si es por costo de envío, decisión operativa o límite de Flex. Con eso se decide si conviene moverlos.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio media">Media</span>
+      <div class="txt"><strong>Guardá el reporte de Publicaciones en Drive, en la misma carpeta que STOCK_MT_FINAL.</strong><span><b>Por qué:</b> Es el único archivo que permite chequear el SKU de las 149 publicaciones contra el maestro por ITEM_ID. Sin él, verificar que los SKU están bien depende de revisarlos a mano, uno por uno.<br><b>Listo cuando:</b> El archivo está en Drive junto al maestro. A partir de ahí el chequeo es automático cada ciclo.</span></div>
+    </div>
+    <div class="pendiente">
+      <span class="prio media">Media</span>
+      <div class="txt"><strong>Revisá cuáles de las 38 publicaciones de Tecnología tienen stock real.</strong><span><b>Por qué:</b> 38 SKU publicados contra 108 unidades totales — menos de 3 por publicación. Cocina, en comparación, tiene 2.866 unidades con 50 SKU. Es un tercio del catálogo publicado sobre una base muy fina, y ya sabés lo que cuesta una venta que no podés despachar.<br><b>Listo cuando:</b> Sabés cuáles tienen stock, y las que no están pausadas o con reposición pedida.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>Diferencia de 14 unidades entre "Rendimiento de publicaciones" (188) y Ventas UY/Negocio (202/194)</strong><span>Reporte nuevo este ciclo. Puede deberse a publicaciones sin SKU asignado en ese reporte (5 filas detectadas) o a un corte de fecha distinto. No afecta las cifras que ya usa el panel (que vienen de Ventas UY y Negocio, que sí concilian entre sí), pero conviene entender la diferencia antes de usar ese reporte para ranking en vez de solo referencia.</span></div>
+      <div class="txt"><strong>Entendé la diferencia de 14 unidades entre "Rendimiento de publicaciones" (188) y Ventas UY/Negocio (202 brutas / 194 netas).</strong><span><b>Por qué:</b> Reporte nuevo, primera vez que se usa. Puede ser por publicaciones sin SKU asignado (5 filas detectadas) o por un corte de fecha distinto. No afecta las cifras del panel — esas salen de Ventas UY y Negocio, que sí concilian entre sí.<br><b>Listo cuando:</b> Sabés de dónde salen las 14 unidades. Recién ahí ese reporte se puede usar para ranking y no solo como referencia.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>"Potenciá tus ventas" sigue sin confirmarse qué es</strong><span>Vigencia 3/08/2026–3/02/2027 (6 meses) — sigue pareciendo un descuento permanente del club de ML, no una campaña puntual. $25.537 en ventas brutas asociadas en lo que va del mes, el monto más alto de todas las promociones.</span></div>
+      <div class="txt"><strong>Confirmá qué es "Potenciá tus ventas": campaña puntual o descuento permanente del club de ML.</strong><span><b>Por qué:</b> Vigencia 3/08/2026–3/02/2027, seis meses. Tiene <b>$25.537</b> en ventas brutas asociadas, el monto más alto de todas las promociones. Si es un descuento permanente, no se puede analizar con la misma vara que "Fecha doble" o "Día del niño" — el incremental se mide distinto.<br><b>Listo cuando:</b> Sabés cuál de las dos es. Cambia cómo se calcula el margen real de esas ventas.</span></div>
     </div>
     <div class="pendiente">
       <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>¿La baja exposición en agencias está afectando las visitas?</strong><span>Hipótesis sin validar todavía. Requiere separar visitas orgánicas de pagas por ciclo. Hoy Ads explica ~61% de las unidades vendidas, lo que enmascara cualquier caída orgánica.</span></div>
+      <div class="txt"><strong>¿La baja exposición en agencias te está costando visitas?</strong><span><b>Por qué:</b> Hipótesis sin validar. Hoy Ads explica ~61% de las unidades vendidas, y eso enmascara cualquier caída de tráfico orgánico. Si la exposición está pegando, lo estás pagando en Ads sin verlo.<br><b>Listo cuando:</b> Tenés visitas orgánicas y pagas separadas por ciclo, y podés comparar contra una ventana anterior a la penalización.</span></div>
     </div>
 </div>
 
@@ -569,6 +584,18 @@
 
   <div class="card">
     <h2 style="margin-bottom:10px;">Notas de calidad de datos</h2>
+    <div class="alert good" style="margin-top:10px;">
+      <span class="tag">Fuente de verdad</span>
+      <div><strong>El maestro de SKU es STOCK_MT_FINAL y la convención correcta es <code>PHCO</code>.</strong> Auditado el 24/08: <b>139 SKU, 0 en la forma vieja <code>PHC0####</code>, sin inconsistencias</b>. El archivo <code>Productos categorias y enlaces.xlsx</code> está desactualizado y tiene 13 SKU en la forma vieja — <b>no usarlo como referencia de SKU</b>.</div>
+    </div>
+    <div class="alert warning" style="margin-top:10px;">
+      <span class="tag">Regla de proceso</span>
+      <div><strong>Antes de marcar un hallazgo como "nuevo", comparar la fecha del dato contra el corte del ciclo anterior — no solo el identificador.</strong> Los reportes de ML a veces vienen por ciclo y a veces "mes a la fecha". Cuando vienen ampliados, los datos viejos entran de nuevo y parecen nuevos: fue exactamente lo que pasó con los 4 SKU del pase del 19/08. Vale para cualquier hallazgo, no solo SKU.</div>
+    </div>
+    <div class="alert good" style="margin-top:10px;">
+      <span class="tag">Herramienta</span>
+      <div><strong>El parseo de los reportes ahora corre con el toolkit <code>mt</code> v1.0.0</strong> (repo <code>cowork-artifacts</code>, carpeta <code>mt-toolkit/</code>). Resuelve de una vez las trampas que se venían re-descubriendo cada ciclo: paquetes multiproducto contados por envío y no por fila (validado 17 de 17, 0 huérfanos), encabezados duplicados de Ventas UY desambiguados por grupo, cancelados detectados por substring, y números en formato uruguayo. <b>Todavía convive con el proceso actual</b> — se migra la skill del ciclo recién después de correr un ciclo completo en paralelo y comparar cifras.</div>
+    </div>
     <div class="foot-note">
       <p><b>Los reportes de "mes a la fecha" cambiaron de ventana respecto al ciclo anterior:</b> Ventas UY, Negocio, Producto, Publicaciones y Promociones venían recortados al ciclo (p.ej. 9–16 ago) y esta vez vienen 1–19 ago completo. Para no duplicar lo ya contado, el <b>descuento de stock</b> usa solo las ventas con fecha posterior al corte del ciclo anterior (16/08 14:41 hs) — 24 unidades. Los <b>totales del panel</b> (KPIs, ranking, promociones) usan el período completo 1–19 ago tal como lo entrega ML, no solo el incremento.</p>
       <p><b>Envíos de agencias y Flex — período distinto al ciclo:</b> cubren 10–16 ago (y 20 jul–16 ago), no 1–19 ago. Se muestran como <b>estado vigente de la cuenta</b>, no se suman a ninguna métrica de ventas.</p>
