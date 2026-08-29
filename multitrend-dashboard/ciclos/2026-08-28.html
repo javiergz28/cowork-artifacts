@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cierre de agosto Multitrend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Rethink+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --mt-green:#2BEA60; --mt-green-dark:#25BF50; --mt-green-light:#D5FBDF; --mt-black:#0C0C0C;
+  --page:#f6f9f7; --surface:#ffffff; --surface-2:#fbfdfc;
+  --text-primary:#0C0C0C; --text-secondary:#55625a; --text-muted:#8b968f;
+  --border:rgba(12,12,12,.09); --border-strong:rgba(12,12,12,.16); --grid:#e8f0eb;
+  --good:#0ca30c; --warning:#c8871a; --critical:#d03b3b; --info:#2F6DB5;
+  --good-bg:#e8f7e8; --warning-bg:#fdf3e0; --critical-bg:#fbeaea; --info-bg:#e9f0fa;
+  --c1:#1F9E45; --c2:#2F6DB5; --c3:#C8871A; --c4:#7A5AA8;
+  --shadow:0 1px 2px rgba(12,12,12,.04), 0 8px 24px -14px rgba(12,12,12,.12);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#0d110f; --surface:#151a17; --surface-2:#1a201c;
+    --text-primary:#eef3ef; --text-secondary:#a8b5ac; --text-muted:#7d8a81;
+    --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.20); --grid:#232a26;
+    --good:#4ec94e; --warning:#e0a63c; --critical:#f0706e; --info:#6fa3e0;
+    --good-bg:#16281a; --warning-bg:#2b2317; --critical-bg:#2e1a1a; --info-bg:#172230;
+    --c1:#46C46C; --c2:#6FA3E0; --c3:#E0A63C; --c4:#A98AD6;
+    --mt-green-light:#1c2f22;
+    --shadow:0 1px 2px rgba(0,0,0,.30), 0 10px 28px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0d110f; --surface:#151a17; --surface-2:#1a201c;
+  --text-primary:#eef3ef; --text-secondary:#a8b5ac; --text-muted:#7d8a81;
+  --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.20); --grid:#232a26;
+  --good:#4ec94e; --warning:#e0a63c; --critical:#f0706e; --info:#6fa3e0;
+  --good-bg:#16281a; --warning-bg:#2b2317; --critical-bg:#2e1a1a; --info-bg:#172230;
+  --c1:#46C46C; --c2:#6FA3E0; --c3:#E0A63C; --c4:#A98AD6;
+  --mt-green-light:#1c2f22;
+  --shadow:0 1px 2px rgba(0,0,0,.30), 0 10px 28px -16px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--text-primary);
+  font-family:'Rethink Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.num{font-family:'Outfit',system-ui,sans-serif}
+h1,h2,h3{text-wrap:balance}
+.num{font-variant-numeric:tabular-nums}
+a{color:var(--info);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--mt-green-dark);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 72px}
+
+/* header */
+header.top{background:var(--mt-black);color:#fff;padding:34px 0 30px;margin-bottom:26px;
+  border-bottom:3px solid var(--mt-green)}
+header.top .wrap{padding-bottom:0}
+.eyebrow{font-family:'Outfit';font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--mt-green);margin-bottom:10px}
+header.top h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.08;color:#fff}
+header.top p.sub{color:#b6c4bb;margin-top:10px;font-size:15px;max-width:62ch}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.meta-chip{font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;
+  background:rgba(255,255,255,.08);color:#dfeee5;border:1px solid rgba(255,255,255,.13)}
+
+/* secciones */
+section{margin-top:38px;scroll-margin-top:16px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.sec-head h2{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.sec-head .note{font-size:12.5px;color:var(--text-muted)}
+.lede{color:var(--text-secondary);font-size:14.5px;max-width:78ch;margin-bottom:16px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:860px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}}
+.card,.kpi,.act,.alert{min-width:0;overflow-wrap:anywhere}
+
+/* kpi */
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 17px;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;gap:3px}
+.kpi .lab{font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted)}
+.kpi .val{font-family:'Outfit';font-size:27px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi .foot{font-size:12.5px;color:var(--text-secondary)}
+.kpi.hero{background:linear-gradient(150deg,var(--mt-green-light),var(--surface) 70%);
+  border-color:var(--mt-green-dark)}
+.kpi.hero .val{font-size:32px;color:var(--mt-green-dark)}
+.delta{font-size:12.5px;font-weight:700}
+.up{color:var(--good)} .down{color:var(--critical)} .flat{color:var(--text-muted)}
+
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 9px;
+  border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.p-good{background:var(--good-bg);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+.p-warn{background:var(--warning-bg);color:var(--warning);border-color:color-mix(in srgb,var(--warning) 30%,transparent)}
+.p-crit{background:var(--critical-bg);color:var(--critical);border-color:color-mix(in srgb,var(--critical) 30%,transparent)}
+.p-info{background:var(--info-bg);color:var(--info);border-color:color-mix(in srgb,var(--info) 30%,transparent)}
+.p-mute{background:var(--surface-2);color:var(--text-muted);border-color:var(--border)}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+
+/* tablas */
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:620px}
+th{text-align:left;font-family:'Outfit';font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-muted);padding:11px 12px;border-bottom:1px solid var(--border);background:var(--surface-2);
+  position:sticky;top:0;z-index:1;white-space:nowrap}
+th.s{cursor:pointer;user-select:none}
+th.s:hover{color:var(--text-primary)}
+th.s::after{content:'';opacity:.35;margin-left:5px}
+th.s[data-dir="asc"]::after{content:'▲';opacity:.9}
+th.s[data-dir="desc"]::after{content:'▼';opacity:.9}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--surface-2)}
+.r{text-align:right;font-variant-numeric:tabular-nums}
+.mono{font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--text-secondary)}
+
+/* controles */
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:12px}
+input[type=search],select{font-family:inherit;font-size:13.5px;padding:8px 12px;border-radius:9px;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--text-primary);min-width:0}
+input[type=search]{flex:1 1 220px;max-width:340px}
+input[type=search]::placeholder{color:var(--text-muted)}
+
+/* alertas */
+.alert{border:1px solid var(--border);border-left:4px solid var(--text-muted);border-radius:10px;
+  padding:14px 16px;background:var(--surface);margin-bottom:10px;box-shadow:var(--shadow)}
+.alert.crit{border-left-color:var(--critical)}
+.alert.warn{border-left-color:var(--warning)}
+.alert.ok{border-left-color:var(--good)}
+.alert.info{border-left-color:var(--info)}
+.alert h4{font-size:15px;font-weight:700;margin-bottom:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.alert p{font-size:13.5px;color:var(--text-secondary)}
+.alert p+p{margin-top:6px}
+details.resueltas{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;box-shadow:var(--shadow)}
+details.resueltas summary{cursor:pointer;font-weight:700;font-family:'Outfit';font-size:14px;color:var(--text-secondary)}
+details.resueltas summary:hover{color:var(--text-primary)}
+details.resueltas ul{margin:12px 0 0 18px;font-size:13.5px;color:var(--text-secondary)}
+details.resueltas li{margin-bottom:7px}
+
+/* acciones */
+.act{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+  box-shadow:var(--shadow);border-top:3px solid var(--text-muted)}
+.act.alta{border-top-color:var(--critical)}
+.act.media{border-top-color:var(--warning)}
+.act.inv{border-top-color:var(--info)}
+.act h4{font-size:15.5px;font-weight:700;margin-bottom:8px;line-height:1.3}
+.act .why,.act .done{font-size:13px;color:var(--text-secondary);display:flex;gap:7px;margin-top:5px}
+.act .k{font-weight:700;color:var(--text-muted);flex:none;font-family:'Outfit';font-size:11.5px;
+  letter-spacing:.05em;text-transform:uppercase;padding-top:2px;min-width:76px}
+
+/* charts */
+.chart{width:100%;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto}
+.axis{font-size:10.5px;fill:var(--text-muted);font-family:'Rethink Sans'}
+.gl{stroke:var(--grid);stroke-width:1}
+.tip{position:fixed;pointer-events:none;background:var(--mt-black);color:#fff;font-size:12px;padding:7px 10px;
+  border-radius:8px;opacity:0;transition:opacity .12s;z-index:60;white-space:nowrap;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);font-variant-numeric:tabular-nums}
+:root[data-theme="dark"] .tip,:root:not([data-theme="light"]) .tip{border:1px solid var(--border-strong)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--text-secondary);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:3px;flex:none}
+
+/* barra completitud */
+.bar{height:7px;background:var(--grid);border-radius:99px;overflow:hidden;min-width:70px}
+.bar>i{display:block;height:100%;border-radius:99px}
+
+/* footer */
+footer{margin-top:46px;padding-top:20px;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-muted)}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)}
+ul.clean{margin-left:18px;font-size:13.5px;color:var(--text-secondary)}
+ul.clean li{margin-bottom:6px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<!-- mt-nav: barra de navegación del histórico de reportes -->
+<div id="mt-nav"></div>
+<script src="../assets/nav.js" defer></script>
+
+<div class="tip" id="tip"></div>
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Multitrend Uruguay · Mercado Libre</div>
+    <h1>Cierre de agosto 2026</h1>
+    <p class="sub">Rentabilidad real del mes calculada con las comisiones y costos de envío del propio reporte de ventas, no estimadas. Todo el período comparable es <strong>1–27 de agosto</strong>.</p>
+    <div class="meta-row">
+      <span class="meta-chip">Datos al 28/08/2026 11:03 hs</span>
+      <span class="meta-chip">13 archivos procesados</span>
+      <span class="meta-chip">202 envíos · 269 unidades netas</span>
+      <span class="meta-chip">Ventana 1–27 ago (27 días)</span>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+
+<!-- VEREDICTO -->
+<section id="veredicto">
+  <div class="sec-head"><h2>El mes en una línea</h2><span class="note">Hecho · calculado sobre columnas del reporte de ventas</span></div>
+  <div class="card" style="border-left:4px solid var(--critical)">
+    <p style="font-size:16.5px;line-height:1.6">
+      Agosto cerró con <strong>$56.762 de contribución neta</strong> sobre $153.159 de ingresos — un mes rentable.
+      Pero terminó con <strong>los dos productos que generaron el 32% de la facturación en cero y pausados</strong>,
+      y con las visitas cayendo 35% entre la primera y la última semana.
+      El costo de seguir sin reponerlos es de <strong>~$1.062 por día</strong>: en 30 días equivale al 56% de todo lo que agosto dejó.
+    </p>
+  </div>
+</section>
+
+<!-- KPIs -->
+<section id="kpis">
+  <div class="sec-head"><h2>Resultado del mes</h2><span class="note">Fuente: Ventas UY + Desempeño de producto</span></div>
+  <div class="grid g4">
+    <div class="kpi hero"><span class="lab">Contribución neta</span><span class="val num" id="k-contrib"></span><span class="foot">después de COGS, comisión, envíos y Ads</span></div>
+    <div class="kpi"><span class="lab">Ingresos por productos</span><span class="val num" id="k-ing"></span><span class="foot">sin envíos cobrados</span></div>
+    <div class="kpi"><span class="lab">Neto liquidado por ML</span><span class="val num" id="k-neto"></span><span class="foot">lo que efectivamente entra</span></div>
+    <div class="kpi"><span class="lab">Carga de ML</span><span class="val num" id="k-carga"></span><span class="foot">comisión + costo fijo + envíos</span></div>
+  </div>
+  <div class="grid g4" style="margin-top:14px">
+    <div class="kpi"><span class="lab">Unidades netas</span><span class="val num">269</span><span class="foot">278 brutas − 9 canceladas</span></div>
+    <div class="kpi"><span class="lab">Visitas totales</span><span class="val num">15.689</span><span class="foot">9.184 visitantes únicos</span></div>
+    <div class="kpi"><span class="lab">Conversión</span><span class="val num">1,52%</span><span class="foot">239 ventas sobre visitas</span></div>
+    <div class="kpi"><span class="lab">Ticket promedio</span><span class="val num">$668</span><span class="foot">GMV $159.659</span></div>
+  </div>
+</section>
+
+<!-- P&L -->
+<section id="pnl">
+  <div class="sec-head"><h2>De la facturación a la plata que queda</h2><span class="note">Hecho, salvo COGS (maestro) e inversión de Ads (reporte por anuncios)</span></div>
+  <p class="lede">Este es el cálculo que faltaba en los ciclos anteriores. Hasta ahora la contribución se estimaba aplicando el «Margen bruto %» del maestro. El reporte de Ventas UY trae columnas propias de <strong>cargo por venta, costo fijo, costos de envío, descuentos y reembolsos</strong>, así que la comisión real es dato, no supuesto.</p>
+  <div class="grid g2" style="align-items:start">
+    <div class="card"><div class="chart" id="waterfall"></div></div>
+    <div class="tw"><table style="min-width:0"><tbody id="pnl-tabla"></tbody></table></div>
+  </div>
+  <div class="grid g3" style="margin-top:14px">
+    <div class="kpi"><span class="lab">Margen de contribución</span><span class="val num">37,1%</span><span class="foot">sobre ingresos por productos</span></div>
+    <div class="kpi"><span class="lab">Se queda Mercado Libre</span><span class="val num">25,3%</span><span class="foot">$38.723 de comisión, costo fijo y envío</span></div>
+    <div class="kpi"><span class="lab">Se lleva la publicidad</span><span class="val num">16,5%</span><span class="foot">$25.324 invertidos en Ads</span></div>
+  </div>
+</section>
+
+<!-- QUIEBRE -->
+<section id="quiebre">
+  <div class="sec-head"><h2>Los dos motores del mes quedaron en cero</h2><span class="note">Hecho (maestro + Publicaciones 28/08) · pérdida diaria = inferencia</span></div>
+  <p class="lede">PMCU0004 y PHDH0004 explican 94 de las 269 unidades del mes y $49.136 de facturación. Los dos figuran hoy como <strong>Inactiva</strong> en Mercado Libre y con stock 0 en depósito. Además vendieron 5 unidades <em>después</em> de llegar a cero, así que el déficit es real, no un desfasaje de registro.</p>
+  <div class="grid g2" id="quiebre-cards"></div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--critical)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Qué cuesta cada día que siguen pausados</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">Tomando el ritmo de venta de los últimos 7 días con stock y el margen unitario del maestro: <strong class="num">$1.062 por día</strong> · <strong class="num">$7.431 por semana</strong> · <strong class="num">$31.847 en 30 días</strong>. Es una <strong>inferencia</strong>: supone que la demanda se mantiene y que la publicación recupera su posición al reactivarse. El dato duro es el ritmo (1,57 y 1,86 u/día) y el margen unitario ($235,96 y $371,96).</p>
+  </div>
+</section>
+
+<!-- TRAFICO -->
+<section id="trafico">
+  <div class="sec-head"><h2>Evolución diaria</h2><span class="note">Fuente: Desempeño de producto · 27 días completos</span></div>
+  <p class="lede">Dos escalas distintas, dos gráficos — visitas y facturación no comparten eje. El 28/08 está incompleto (reporte generado 11:03 hs) y el 29/08 vino en blanco: los dos quedaron fuera.</p>
+  <div class="card"><div class="chart" id="ch-visitas"></div>
+    <div class="legend"><span><i class="sw" style="background:var(--c2)"></i>Visitas totales</span><span><i class="sw" style="background:var(--text-muted);opacity:.45"></i>Visitantes únicos</span></div>
+  </div>
+  <div class="card" style="margin-top:14px"><div class="chart" id="ch-gmv"></div>
+    <div class="legend"><span><i class="sw" style="background:var(--c1)"></i>Ventas brutas del día (UYU)</span></div>
+  </div>
+  <div class="grid g4" style="margin-top:14px" id="semanas"></div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--warning)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">La caída de visitas es real, pero menor de lo que parece a simple vista</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">Sumando visitas por semana, la semana 4 cae 45% contra la 1 — pero la semana 4 tiene <strong>6 días, no 7</strong>. Medido por promedio diario la caída es de <strong>35,5%</strong> (670,9 → 432,7 visitas/día). Sigue siendo grande y el quiebre empieza en la semana 3, que sí tiene 7 días (−23,4%).</p>
+    <p style="font-size:13.5px;color:var(--text-secondary)"><strong>Hipótesis</strong> (no demostrada): la exposición penalizada por envíos y la pausa de las dos publicaciones más visitadas explican buena parte. <strong>Métrica que lo validaría:</strong> visitas de PMCU0004 y PHDH0004 aisladas del resto en el reporte de rendimiento de publicaciones, comparadas contra el resto del catálogo en la misma ventana.</p>
+  </div>
+</section>
+<!-- ENVIOS -->
+<section id="envios">
+  <div class="sec-head"><h2>Reputación de envíos</h2><span class="note">Estado de cuenta al 24/08 — no cubre el 24 al 28</span></div>
+  <p class="lede">Esto no es logística, es tráfico: Mercado Libre baja la exposición de todas las publicaciones cuando el cumplimiento de 4 semanas queda debajo del 90%.</p>
+  <div class="grid g3" id="env-cards"></div>
+  <div class="card" style="margin-top:14px">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:4px">Semana a semana: la operación ya se arregló</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary);margin-bottom:14px">El promedio de 4 semanas está en 78% por una sola semana mala: la del 3 al 9 de agosto, con 9 de 19 despachos a tiempo. Fue el lote único del 10/08 a las 19:35 hs que ya está documentado. Las dos semanas siguientes dieron 95% y 100%.</p>
+    <div class="chart" id="ch-envios"></div>
+  </div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--info)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Cuándo se levanta la penalización</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">Faltan <strong>8 despachos a tiempo</strong> para llegar a 63/70 (90%). Pero no alcanza con sumar: hay que esperar a que la semana del 3–9 de agosto salga de la ventana móvil de 4 semanas. <strong>Proyección</strong> (inferencia, supone ~19 envíos semanales y 100% sostenido): al 31/08 el indicador daría ~84%, y recién alrededor del <strong>7 de septiembre</strong> cruzaría el 90%. Hasta entonces la exposición sigue penalizada aunque no se falle ni un despacho.</p>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:10px">Canales de entrega · 1–27 ago</h4>
+      <div class="tw" style="box-shadow:none;border:none"><table style="min-width:0"><thead><tr><th>Canal</th><th class="r">Envíos</th><th class="r">%</th><th class="r">Unid.</th><th class="r">U/envío</th><th class="r">Paq.</th></tr></thead><tbody id="canales"></tbody></table></div>
+      <p style="font-size:12.5px;color:var(--text-muted);margin-top:10px">Cuarto ciclo seguido con el mismo patrón: correo mueve menos envíos que Flex pero más unidades por envío (1,53 vs 1,25) y concentra 11 de los 21 paquetes multiproducto. Los pedidos grandes siguen saliendo por el canal penalizado.</p>
+    </div>
+    <div class="card">
+      <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:10px">Punto ciego</h4>
+      <p style="font-size:13.5px;color:var(--text-secondary)">Las <strong>20 entregas en persona</strong> (9,9% de los envíos) no las mide ningún reporte de reputación de Mercado Libre — ni agencias ni Flex. Bajó respecto del 10,7% del corte anterior, así que por ahora no crece.</p>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin-top:10px"><strong>Inconsistencia del propio reporte de Flex:</strong> el encabezado dice «Excelente, con destaque» y aclara «como sólo tuviste 1 demora», pero el detalle lista <strong>2 envíos</strong> con «Afectó tu reputación: Sí» (Zona 10 el 20/08 y Zona 7 el 19/08), y el porcentaje informado es 90%. Se publica el texto literal de ML; la diferencia queda anotada.</p>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin-top:10px"><strong>Además, este archivo de Flex es el mismo del ciclo del 24/08</strong> — mismos 21 envíos, mismas 2 demoras. No aporta datos nuevos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RANKING -->
+<section id="ranking">
+  <div class="sec-head"><h2>Ranking de productos</h2><span class="note">58 SKU con venta · buscá, filtrá y ordená</span></div>
+  <p class="lede">La <strong>contribución</strong> es una estimación: ingreso del SKU menos su costo del maestro, y al resultado se le descuenta el 25,3% de carga de ML medido a nivel cuenta este mes. No incluye publicidad por producto. Los criterios de clasificación están al pie de la tabla.</p>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Buscar por SKU, nombre o categoría…" aria-label="Buscar productos">
+    <select id="f-clase" aria-label="Filtrar por clasificación"><option value="">Todas las clasificaciones</option></select>
+    <select id="f-estado" aria-label="Filtrar por estado en ML"><option value="">Todos los estados</option></select>
+    <span class="mono" id="cuenta"></span>
+  </div>
+  <div class="tw"><table id="t-sku">
+    <thead><tr>
+      <th class="s" data-k="sku">SKU</th><th class="s" data-k="nombre">Producto</th>
+      <th class="s r" data-k="u">Unid.</th><th class="s r" data-k="ing">Ingresos</th>
+      <th class="s r" data-k="contrib">Contrib. est.</th><th class="s r" data-k="mb%">Margen</th>
+      <th class="s r" data-k="ads_pct">% Ads</th><th class="s r" data-k="stock">Stock</th>
+      <th class="s" data-k="estado_ml">Estado ML</th><th class="s" data-k="clase">Clasificación</th>
+    </tr></thead><tbody id="tb-sku"></tbody></table></div>
+  <p style="font-size:12.5px;color:var(--text-muted);margin-top:10px">
+    <strong>Criterios:</strong> Estrella = ≥8 unidades y margen ≥45%. Alto volumen / bajo margen = ≥8 unidades y margen &lt;35%. Rentable y escalable = ≥3 unidades y margen ≥50%. Baja rotación / investigar = ≤1 unidad con stock &gt;30. Riesgo de quiebre = stock ≤0. El resto, Estable. «% Ads» es la proporción de unidades del SKU marcadas como venta por publicidad en Ventas UY. La tabla suma <strong>267 unidades</strong>, no 269: hay una venta de 2 unidades del «Gestionador 2.0 Organizador de Cables Beige» (MLU880947316, 12/08) sin SKU cargado en la publicación, que queda fuera del ranking pero dentro de los totales del mes.
+  </p>
+</section>
+
+<!-- ADS -->
+<section id="ads">
+  <div class="sec-head"><h2>Mercado Ads</h2><span class="note">Reporte por anuncios · 1–27 ago</span></div>
+  <div class="grid g4">
+    <div class="kpi"><span class="lab">Inversión</span><span class="val num">$25.324</span><span class="foot">99 anuncios</span></div>
+    <div class="kpi"><span class="lab">ROAS de cuenta</span><span class="val num">4,75×</span><span class="foot">ACOS 21,1%</span></div>
+    <div class="kpi"><span class="lab">Contribución neta</span><span class="val num" style="color:var(--good)">+$22.370</span><span class="foot">85 anuncios con margen conocido</span></div>
+    <div class="kpi"><span class="lab">Quemado sin ventas</span><span class="val num" style="color:var(--critical)">$5.272</span><span class="foot">68 anuncios, 20,8% de la inversión</span></div>
+  </div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--critical)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Un ROAS de 4,75× sigue escondiendo 53 anuncios que pierden plata</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">De los 85 anuncios con margen conocido, <strong>53 (62%) tienen contribución neta negativa</strong>, −$5.230 en total. La cuenta cierra positiva porque un puñado de anuncios muy rentables la sostiene: la Lámpara Aurora sola aporta +$8.780. Es el <strong>tercer mes consecutivo</strong> con el mismo 61–62%.</p>
+    <p style="font-size:13.5px;color:var(--text-secondary)"><strong>Y el que más aporta es justamente el que quedó sin stock.</strong> Mercado Libre ya deshabilitó solo los anuncios de las publicaciones agotadas — no se está quemando plata ahí — pero se apagó la mejor fuente de contribución de la cuenta.</p>
+  </div>
+  <div class="grid g2" style="margin-top:14px;align-items:start">
+    <div>
+      <h4 style="font-family:'Outfit';font-size:14px;margin-bottom:9px" class="tag">Los 8 que más plata queman sin vender</h4>
+      <div class="tw"><table style="min-width:0"><thead><tr><th>Anuncio</th><th class="r">Inversión</th><th class="r">Clics</th></tr></thead><tbody id="ads-mal"></tbody></table></div>
+    </div>
+    <div>
+      <h4 style="font-family:'Outfit';font-size:14px;margin-bottom:9px" class="tag">Los 8 de mayor contribución neta</h4>
+      <div class="tw"><table style="min-width:0"><thead><tr><th>Anuncio</th><th class="r">Contrib.</th><th class="r">ROAS</th></tr></thead><tbody id="ads-bien"></tbody></table></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--warning)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">«Caja de Arena Inteligente»: tercer mes seguido sin una sola venta</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">$1.865,60 este mes, 93 clics, cero ventas. Acumula <strong>~$5.615 en tres ciclos</strong> ($1.885 el 31/07–15/08, $1.865 el 1–19/08 y $1.866 ahora) sin generar ninguna venta. Es el ítem más caro y más fácil de resolver del panel.</p>
+    <p style="font-size:13.5px;color:var(--text-secondary)">Aparte, el <strong>Frasco Flip Separador</strong> quemó $981 con <strong>138 clics y 0 ventas</strong>. 138 personas entraron a la publicación y ninguna compró: eso no se arregla bajando la puja, se arregla en la publicación (precio, fotos, título o ficha).</p>
+  </div>
+</section>
+<!-- PROMOS -->
+<section id="promos">
+  <div class="sec-head"><h2>Promociones y cupones</h2><span class="note">Las promociones se solapan: no sumar columnas</span></div>
+  <p class="lede">Una misma venta puede contar en más de una promoción, así que el total del mes no sale de sumar esta tabla. Lo comparable es la conversión de cada una contra el 1,52% general de la cuenta.</p>
+  <div class="tw"><table><thead><tr><th>Promoción</th><th>Vigencia</th><th>Estado</th><th class="r">Visitas</th><th class="r">Unid.</th><th class="r">Conv.</th><th class="r">Ventas brutas</th></tr></thead><tbody id="tb-promos"></tbody></table></div>
+  <h3 style="font-size:16px;margin:22px 0 10px">Cupones</h3>
+  <div class="grid g3" id="cupones"></div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--critical)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Se apagó el mejor cupón y el reemplazo no arrancó</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">«Nuevos Seguidores» venció el 24/08 después de generar <strong>46 unidades y $28.643 brutos</strong> con $2.854 de descuento absorbido (10,0% del bruto, exactamente el nominal). Su reemplazo, «PARALOSQUESIGUEN», lleva <strong>4 cupones aplicados y 0 canjeados</strong> en 5 días. Cambió el descuento (10% → 5%), el mínimo de compra ($1.000 → $1.200) y la audiencia (nuevos seguidores → seguidores existentes) todo junto.</p>
+    <p style="font-size:13.5px;color:var(--text-secondary)"><strong>Sigue sin poder medirse la incrementalidad</strong> — cuántas de esas 46 unidades habrían pasado igual. Es el mismo pendiente del ciclo anterior, sin dato nuevo que lo resuelva.</p>
+    <p style="font-size:13.5px;color:var(--text-secondary)">El cupón de carritos abandonados lleva <strong>242 aplicaciones y 1 canje (0,4%)</strong>. Costó $55,65 y trajo $1.113, así que no molesta — pero 0,4% dice que el 5% OFF con mínimo de $800 no mueve a nadie a volver.</p>
+  </div>
+</section>
+
+<!-- CATALOGO -->
+<section id="catalogo">
+  <div class="sec-head"><h2>Salud de catálogo</h2><span class="note">Fichas técnicas · 54 categorías · 150 publicaciones</span></div>
+  <div class="grid g4">
+    <div class="kpi"><span class="lab">Completitud global</span><span class="val num" style="color:var(--good)">78,2%</span><span class="foot">era 68,0% el 19/08</span></div>
+    <div class="kpi"><span class="lab">Campos vacíos</span><span class="val num">583</span><span class="foot">sobre 2.678 atributos</span></div>
+    <div class="kpi"><span class="lab">Fecha límite de ML</span><span class="val num" style="font-size:23px">4 de sept.</span><span class="foot">se corrió otra vez</span></div>
+    <div class="kpi"><span class="lab">Publicaciones de catálogo</span><span class="val num">149<span style="font-size:16px;color:var(--text-muted)"> / 157</span></span><span class="foot">solo 8 son propias</span></div>
+  </div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--good)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Confirmado: la fecha límite es rotativa</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">Venía como hipótesis desde el 19/08. La secuencia ya es concluyente: <strong>23 ago → 26 ago → 31 ago → 4 sep</strong>. Mercado Libre corre el plazo cada vez que se genera el export, así que no es una fecha de corte real. <strong>Consecuencia práctica:</strong> conviene priorizar las fichas por facturación, no por urgencia del cartel.</p>
+  </div>
+  <div class="tw" style="margin-top:14px"><table><thead><tr><th>Categoría</th><th class="r">Pubs</th><th class="r">Unid. vendidas</th><th class="r">Completitud</th><th style="width:130px">&nbsp;</th><th class="r">Vacíos</th></tr></thead><tbody id="tb-fichas"></tbody></table></div>
+  <p style="font-size:12.5px;color:var(--text-muted);margin-top:10px">Ordenado por unidades vendidas: primero lo que ya vende. Se miden solo las columnas de tipo <code>ATTRIBUTE</code>; los placeholders de ML («Escribe el código», «Selecciona…») cuentan como vacíos. Se muestran las categorías con venta y las 6 peores sin venta.</p>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--warning)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Lámparas sigue siendo el agujero grande</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)"><strong>Lámparas de mesa y escritorio</strong>: 68 unidades vendidas — la categoría #1 del mes — con <strong>31,9% de completitud</strong> y 98 campos vacíos. Mejoró desde el 20,1% del 19/08, pero sigue siendo la peor de todas las que venden. <strong>Bebederos</strong> subió de 59,8% a <strong>77,0%</strong> con 59 unidades. Entre las dos son 127 de las 269 unidades netas del mes (47%).</p>
+  </div>
+</section>
+
+<!-- ESTADO PUBLICACIONES -->
+<section id="publicaciones">
+  <div class="sec-head"><h2>Estado de las publicaciones</h2><span class="note">Foto del 28/08 11:05 hs · pedido dejado en el repo el 24/08</span></div>
+  <p class="lede">Esto responde la nota que dejaste en <code>multitrend-dashboard/Para revisar</code>: qué publicaciones son de catálogo, y diferenciar Activa / Inactiva / Sin stock para que eso ordene prioridades.</p>
+  <div class="grid g4">
+    <div class="kpi"><span class="lab">Activas</span><span class="val num" style="color:var(--good)">106</span><span class="foot">con exposición</span></div>
+    <div class="kpi"><span class="lab">Inactivas</span><span class="val num" style="color:var(--critical)">20</span><span class="foot">sin visibilidad</span></div>
+    <div class="kpi"><span class="lab">Sin stock en depósito</span><span class="val num" style="color:var(--critical)">14</span><span class="foot">todas inactivas</span></div>
+    <div class="kpi"><span class="lab">Filas de variantes</span><span class="val num">31</span><span class="foot">sin estado propio</span></div>
+  </div>
+  <div class="tw" style="margin-top:14px"><table><thead><tr><th>SKU</th><th>Publicación</th><th class="r">Vendidas ago.</th><th class="r">Stock ML</th><th>Estado</th></tr></thead><tbody id="tb-inact"></tbody></table></div>
+  <p style="font-size:12.5px;color:var(--text-muted);margin-top:10px"><strong>149 de 157 publicaciones son de catálogo de Mercado Libre</strong> (tienen número de producto asignado). Eso explica por qué la ficha técnica pesa tanto: en catálogo, los atributos deciden si tu publicación gana o pierde la caja de compra frente a otro vendedor del mismo producto.</p>
+</section>
+
+<!-- STOCK -->
+<section id="stock">
+  <div class="sec-head"><h2>Stock recalculado</h2><span class="note">Solo ventas posteriores al corte del 24/08 20:08 hs</span></div>
+  <p class="lede">El maestro ya tenía descontadas las ventas hasta el 24/08. Descontar el mes completo habría duplicado el descuento, así que se aplicaron únicamente las <strong>20 unidades vendidas después de ese corte</strong>.</p>
+  <div class="tw"><table><thead><tr><th>SKU</th><th>Producto</th><th class="r">Stock anterior</th><th class="r">Vendidas</th><th class="r">Stock nuevo</th></tr></thead><tbody id="tb-stock"></tbody></table></div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--info)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">Dos arreglos aplicados al maestro</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">1 · La hoja <strong>Historial</strong> tenía un hueco de 988 filas vacías: el pase del 24/08 escribió a partir de la fila 1001 en vez de la 13, porque el Google Sheet trae 1.000 filas en blanco. Quedó compactada en 42 filas contiguas.</p>
+    <p style="font-size:13.5px;color:var(--text-secondary)">2 · Cuatro SKU tienen el texto <strong>«NO VINO»</strong> en la columna STOCK (PTSV0003, PTSV0006, PTSP0011, PTSP0012, todos con Estado ML «No recibido»). No es un error, pero rompe cualquier suma automática de stock. Quedaron sin tocar y anotados acá.</p>
+  </div>
+</section>
+<!-- ALERTAS -->
+<section id="alertas">
+  <div class="sec-head"><h2>Alertas del cierre</h2><span class="note">Lo ya resuelto está plegado abajo</span></div>
+  <div class="alert crit"><h4><span class="pill p-crit"><i class="dot"></i>Crítico</span> Los dos productos estrella terminaron el mes en cero y pausados</h4>
+    <p>PMCU0004 (49 u) y PHDH0004 (45 u) son el 35% de las unidades y el 32% de la facturación del mes. Hoy están Inactivas en ML con stock 0 en depósito, y vendieron 5 unidades más de las que había: el déficit es real.</p>
+    <p>Costo estimado de cada día sin reponer: <strong>$1.062 de contribución</strong>. En 30 días, $31.847 — el 56% de todo lo que agosto dejó.</p></div>
+  <div class="alert crit"><h4><span class="pill p-crit"><i class="dot"></i>Crítico</span> «Caja de Arena Inteligente» va por el tercer mes sin una sola venta</h4>
+    <p>$1.865,60 este mes con 93 clics y 0 ventas. Acumulado de tres ciclos: <strong>~$5.615 quemados</strong>. Se venía señalando desde el 15/08 y sigue activo.</p></div>
+  <div class="alert warn"><h4><span class="pill p-warn"><i class="dot"></i>Atención</span> Las visitas cayeron 35,5% por día entre la semana 1 y la 4</h4>
+    <p>670,9 → 432,7 visitas diarias. El quiebre arranca en la semana 3 (−23,4%), que tiene 7 días completos, así que no es efecto del mes cortado. Se cruza con dos causas posibles y no comprobadas: exposición penalizada por envíos y pausa de las publicaciones más visitadas.</p></div>
+  <div class="alert warn"><h4><span class="pill p-warn"><i class="dot"></i>Atención</span> Venció el mejor cupón del mes y el reemplazo no arrancó</h4>
+    <p>«Nuevos Seguidores» (46 u, $28.643) terminó el 24/08. «PARALOSQUESIGUEN» lleva 4 aplicados y 0 canjeados en 5 días, con tres variables cambiadas a la vez.</p></div>
+  <div class="alert warn"><h4><span class="pill p-warn"><i class="dot"></i>Atención</span> 62% de los anuncios con margen conocido pierden plata</h4>
+    <p>53 de 85, −$5.230. Tercer mes consecutivo en el mismo porcentaje. La cuenta cierra en +$22.370 solo porque unos pocos anuncios muy rentables la sostienen — y el que más aporta (Lámpara Aurora, +$8.780) quedó deshabilitado por falta de stock.</p></div>
+  <div class="alert info"><h4><span class="pill p-info"><i class="dot"></i>Hallazgo</span> El toolkit <code>mt</code> cuenta mal los paquetes cancelados</h4>
+    <p>Primera corrida en paralelo contra el proceso manual. Coinciden exacto en unidades brutas (278), paquetes multiproducto (23) y entregas en persona (20). <strong>Difieren en cancelados:</strong> el toolkit detecta 4 y el proceso manual 6.</p>
+    <p>Causa: cuando un paquete se cancela entero, la cabecera conserva el estado «Paquete de N productos» y solo las filas hijas dicen «Cancelada». El toolkit mira la cabecera y da esos dos paquetes por vendidos. Efecto: <strong>+5 unidades netas (274 vs 269), +2 envíos y ~$600 de ingresos de más</strong>. <strong>No migrar la skill a v6 hasta corregirlo.</strong></p></div>
+  <div class="alert warn"><h4><span class="pill p-warn"><i class="dot"></i>Atención</span> 7 SKU vendieron por una publicación distinta a la que apunta el maestro</h4>
+    <p>18 SKU tienen dos publicaciones (duplicación de catálogo, esperable). Pero en 7 casos las ventas del mes entraron por la publicación hermana. El más importante es PMCU0004: sus 49 unidades salieron por MLU694199365 y el maestro enlaza MLU1412556516. Mientras siga así, revisar «la publicación» de un producto puede llevar a la equivocada.</p></div>
+  <div class="alert ok"><h4><span class="pill p-good"><i class="dot"></i>Mejora</span> Los despachos en agencias volvieron al 100%</h4>
+    <p>18 de 18 a tiempo en la última semana medida. El promedio de 4 semanas sigue en 78% porque arrastra la semana del 3 al 9 de agosto (9 de 19). La operación ya está corregida; falta que el tiempo saque esa semana de la ventana.</p></div>
+  <div class="alert ok"><h4><span class="pill p-good"><i class="dot"></i>Mejora</span> Salud de catálogo subió de 68,0% a 78,2%</h4>
+    <p>Bebederos pasó de 59,8% a 77,0% y Lámparas de 20,1% a 31,9%. Quedan 583 campos vacíos; Lámparas sigue siendo la peor categoría con ventas.</p></div>
+  <details class="resueltas"><summary>Resuelto o cerrado — no requiere acción (7)</summary>
+    <ul>
+      <li><strong>SKU en forma vieja <code>PHC0####</code> — cerrado, confirmado otra vez.</strong> Aparecen 12 ventas con SKU mal cargado en la ventana, pero <strong>la más reciente es del 12/08/2026</strong>, anterior a la corrección que hiciste. La regla dice reabrir solo si hay una posterior al 12/08: no la hay. Se aplicaron las 10 correcciones conocidas y no se cuenta como hallazgo nuevo.</li>
+      <li><strong>Fecha límite de fichas técnicas: era rotativa.</strong> 23 ago → 26 ago → 31 ago → 4 sep. Hipótesis abierta desde el 19/08, ahora concluyente.</li>
+      <li><strong>Hueco de 988 filas en la hoja Historial del maestro</strong> — corregido en el Excel entregado, quedó compactado en 42 filas.</li>
+      <li><strong>Maestro vs. depósito de ML: ya casi no hay diferencias.</strong> El 24/08 había 39 SKU con desvío ≥1; hoy quedan 3 con desvío ≥3. El maestro está sano.</li>
+      <li><strong>Correr el toolkit <code>mt</code> en paralelo</strong> — hecho en este cierre. Resultado arriba.</li>
+      <li><strong>Reporte de Mercado Ads «por publicación»</strong> — llegó en el formato útil (por anuncios), se pudo cruzar contra margen por SKU.</li>
+      <li><strong>Backlog de despachos</strong> — sin ventas atrasadas sin despachar al cierre del período.</li>
+    </ul>
+  </details>
+</section>
+
+<!-- QUE HACER -->
+<section id="acciones">
+  <div class="sec-head"><h2>Qué hacer ahora</h2><span class="note">Ordenado por prioridad, no por orden de descubrimiento</span></div>
+  <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--critical);margin:16px 0 10px;font-family:'Outfit'">Alta — impacto grande, esfuerzo bajo o medio</h3>
+  <div class="grid g2" id="acc-alta"></div>
+  <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--warning);margin:22px 0 10px;font-family:'Outfit'">Media</h3>
+  <div class="grid g2" id="acc-media"></div>
+  <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--info);margin:22px 0 10px;font-family:'Outfit'">Investigar — evidencia insuficiente para decidir</h3>
+  <div class="grid g2" id="acc-inv"></div>
+</section>
+
+<!-- ARCHIVOS -->
+<section id="archivos">
+  <div class="sec-head"><h2>Archivos del ciclo</h2><span class="note">13 recibidos · 13 con destino declarado</span></div>
+  <div class="tw"><table><thead><tr><th>Archivo</th><th>Tipo identificado</th><th>Período</th><th>Destino</th></tr></thead><tbody id="tb-arch"></tbody></table></div>
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--warning)">
+    <h4 style="font-family:'Outfit';font-size:15px;margin-bottom:7px">No llegó: Reporte de evolución de negocio</h4>
+    <p style="font-size:13.5px;color:var(--text-secondary)">Es el único habitual que falta. No bloqueó el cierre porque «Desempeño de producto» trae la misma serie diaria a nivel cuenta, pero sin él no hay corte por rango de precios ni por tipo de comprador — así que este mes no se puede decir qué proporción de compradores fue nueva. Se registra como dato faltante, no se estima.</p>
+  </div>
+</section>
+
+<!-- CALIDAD -->
+<section id="calidad">
+  <div class="sec-head"><h2>Notas de calidad de datos</h2><span class="note">Lo que hubo que corregir para que los números cierren</span></div>
+  <div class="card"><ul class="clean">
+    <li><strong>Conciliación de unidades: cierra exacto.</strong> «Desempeño de producto» informa 278 unidades y Ventas UY bien parseado da 278 brutas. Las 9 canceladas (6 envíos) dan 269 netas. Se publican las dos cifras etiquetadas.</li>
+    <li><strong>Dos filas fantasma en la serie diaria.</strong> El 28/08 vino incompleto (reporte generado 11:03 hs: 64 visitantes únicos, 0 visitas totales) y el 29/08 vino entero en cero — una fecha futura. Ambas fuera de todos los cálculos. La ventana comparable quedó en 1–27 ago.</li>
+    <li><strong>Dos archivos de campañas de Ads son byte-idénticos</strong> (mismo MD5). Se procesó uno solo; sumarlos habría duplicado la inversión.</li>
+    <li><strong>El reporte de Flex es el mismo del ciclo del 24/08</strong> — mismos 21 envíos, mismas 2 demoras, mismas zonas. No aporta datos nuevos y no se contó dos veces.</li>
+    <li><strong>Contradicción interna del reporte de Flex:</strong> el encabezado dice «Excelente, con destaque / sólo tuviste 1 demora», el detalle lista 2 envíos que afectaron reputación y el porcentaje informado es 90%. Se publica el texto literal de ML.</li>
+    <li><strong>Los reportes de envíos son estado de cuenta al 24/08</strong> — no cubren del 24 al 28. Cada bloque lleva su ventana aclarada.</li>
+    <li><strong>La columna de ventas brutas del reporte diario está rotulada «(ARS)»</strong> pero los valores son pesos uruguayos: coinciden con Ventas UY. Es un error de etiqueta del export de ML.</li>
+    <li><strong>Mercado Libre no cuadra su propia columna «Total».</strong> La suma de los componentes que el reporte lista (ingresos, envíos, comisión, costo fijo, costos de envío, descuentos y reembolsos) da $135.665,59, pero la columna Total dice $132.164,98 — <strong>$3.500,61 sin desglosar</strong>. Se toma el Total de ML como cifra buena (es lo que se cobra) y el residuo se publica como línea propia en vez de repartirlo o esconderlo.</li>
+    <li><strong>18 SKU tienen dos publicaciones cada uno</strong> (duplicación de catálogo de ML, esperable con 149 de 157 publicaciones en catálogo). En <strong>7 de ellos las ventas entraron por la publicación que NO está enlazada en el maestro</strong> — incluido PMCU0004, cuyas 49 unidades salieron por MLU694199365 mientras el maestro apunta a MLU1412556516. Los enlaces del ranking son coherentes con el maestro, pero pueden llevar a la publicación hermana. No se tocó ningún mapeo: hay que confirmarlo antes.</li>
+    <li><strong>Una venta sin SKU:</strong> 2 unidades de «Gestionador 2.0 Organizador de Cables Beige» (MLU880947316) el 12/08, sin SKU cargado en la publicación. Fuera del ranking por SKU, dentro de los totales.</li>
+    <li><strong>Cuatro SKU tienen «NO VINO» en la columna STOCK del maestro</strong> (PTSV0003, PTSV0006, PTSP0011, PTSP0012). Estado ML «No recibido». Rompe sumas automáticas de stock.</li>
+    <li><strong>Supuesto documentado, todavía sin confirmar:</strong> el «Margen bruto %» del maestro se toma como neto de comisión y logística. En este cierre se usó solo para el margen por producto — el P&L del mes sale de las columnas reales de Ventas UY, así que ya no depende de ese supuesto.</li>
+    <li><strong>11 envíos con reembolso, devolución o mediación</strong> (14 unidades, −$5.201 en anulaciones sobre $7.205 de ingreso original). No se sabe si esa mercadería volvió al stock: no se asumió que sí.</li>
+  </ul></div>
+</section>
+
+<footer>
+  <p><strong>Multitrend Uruguay</strong> — cierre de agosto 2026. Datos de Mercado Libre al 28/08/2026 11:03 hs, ventana comparable 1–27 de agosto.</p>
+  <p style="margin-top:6px">Hechos = leídos directamente de los reportes. Inferencias = calculadas a partir de ellos, con el supuesto a la vista. Hipótesis = pendientes de validar, siempre con la métrica que las validaría.</p>
+</footer>
+</div>
+<script>
+const D = {"periodo": "1–27 de agosto de 2026", "generado": "28/08/2026 11:03 hs", "pnl": {"ing": 153158.93000000005, "ingenv": 20993.0, "cargo": -22779.730000000003, "fijo": -4565.0, "cenv": -11378.0, "desc": 5437.800000000003, "anul": -5201.41, "total": 132164.9800000001, "cogs": 50078.95528559996, "ads": 25323.97, "contrib": 56762.05471440015, "resid": -3500.61, "carga": 38722.73}, "kpi": {"gmv": 159658.53, "visitas": 15689, "vis_u": 9120, "ventas": 239, "unidades_brutas": 278, "unidades_netas": 269, "envios": 202, "envios_canc": 6, "conv": 1.52, "ticket": 668.03}, "serie": [{"f": "01/08", "vt": 677, "vu": 344, "v": 10, "g": 7652.0, "u": 12}, {"f": "02/08", "vt": 621, "vu": 335, "v": 5, "g": 3684.0, "u": 5}, {"f": "03/08", "vt": 745, "vu": 407, "v": 10, "g": 7715.0, "u": 11}, {"f": "04/08", "vt": 716, "vu": 390, "v": 12, "g": 6445.0, "u": 13}, {"f": "05/08", "vt": 829, "vu": 421, "v": 10, "g": 8241.0, "u": 11}, {"f": "06/08", "vt": 663, "vu": 336, "v": 11, "g": 6457.0, "u": 13}, {"f": "07/08", "vt": 445, "vu": 302, "v": 7, "g": 5690.0, "u": 7}, {"f": "08/08", "vt": 531, "vu": 328, "v": 6, "g": 3861.0, "u": 7}, {"f": "09/08", "vt": 693, "vu": 357, "v": 14, "g": 8006.0, "u": 17}, {"f": "10/08", "vt": 816, "vu": 476, "v": 17, "g": 11575.0, "u": 21}, {"f": "11/08", "vt": 766, "vu": 473, "v": 6, "g": 3010.0, "u": 6}, {"f": "12/08", "vt": 740, "vu": 401, "v": 12, "g": 9371.0, "u": 17}, {"f": "13/08", "vt": 662, "vu": 384, "v": 8, "g": 8665.0, "u": 9}, {"f": "14/08", "vt": 592, "vu": 299, "v": 14, "g": 8387.0, "u": 18}, {"f": "15/08", "vt": 562, "vu": 328, "v": 8, "g": 4239.0, "u": 9}, {"f": "16/08", "vt": 454, "vu": 252, "v": 3, "g": 1546.0, "u": 3}, {"f": "17/08", "vt": 554, "vu": 319, "v": 14, "g": 8306.0, "u": 15}, {"f": "18/08", "vt": 547, "vu": 319, "v": 2, "g": 3209.0, "u": 2}, {"f": "19/08", "vt": 445, "vu": 260, "v": 8, "g": 4850.0, "u": 10}, {"f": "20/08", "vt": 547, "vu": 338, "v": 13, "g": 7976.0, "u": 13}, {"f": "21/08", "vt": 488, "vu": 302, "v": 7, "g": 4586.0, "u": 10}, {"f": "22/08", "vt": 415, "vu": 250, "v": 5, "g": 6993.0, "u": 10}, {"f": "23/08", "vt": 606, "vu": 421, "v": 13, "g": 7936.0, "u": 14}, {"f": "24/08", "vt": 333, "vu": 217, "v": 6, "g": 2942.0, "u": 6}, {"f": "25/08", "vt": 344, "vu": 256, "v": 2, "g": 740.0, "u": 2}, {"f": "26/08", "vt": 510, "vu": 337, "v": 8, "g": 4037.0, "u": 9}, {"f": "27/08", "vt": 388, "vu": 268, "v": 8, "g": 3538.0, "u": 8}], "semanas": [{"l": "Sem 1", "r": "01–07 ago", "vd": 670.9, "v": 4696, "ventas": 65, "gmv": 45884}, {"l": "Sem 2", "r": "08–14 ago", "vd": 685.7, "v": 4800, "ventas": 77, "gmv": 52876}, {"l": "Sem 3", "r": "15–21 ago", "vd": 513.9, "v": 3597, "ventas": 55, "gmv": 34712}, {"l": "Sem 4", "r": "22–27 ago", "vd": 432.7, "v": 2596, "ventas": 42, "gmv": 26187}], "canales": [{"c": "Mercado Envíos Flex", "e": 110, "u": 138, "p": 10}, {"c": "Correo y puntos de despacho", "e": 72, "u": 110, "p": 11}, {"c": "Acuerdo con el comprador", "e": 20, "u": 21, "p": 0}], "sku": [{"sku": "PMCU0004", "nombre": "Comedero Y Bebedero 2 En 1 Para Perros Y Gatos - Dispensador", "cat": "Mascotas", "u": 49, "ing": 21622.5, "costo_u": 124.0428168, "cogs": 6078.1, "mb%": 52.434929600000004, "stock": 0.0, "estado": "Pausada", "item": "MLU694199365", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1412556516", "ads_u": 37, "ventas": 40, "ult": "2026-08-27", "prim": "2026-08-01", "clase": "Riesgo de quiebre", "contrib": 11611.67, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 76}, {"sku": "PHDH0004", "nombre": "Lámpara Led Aurora Boreal  Efecto Relajante De Luces Rgb", "cat": "Decoración hogar", "u": 45, "ing": 27514.21, "costo_u": 175.2408, "cogs": 7885.84, "mb%": 54.379999999999995, "stock": 0.0, "estado": "Pausada", "item": "MLU882392434", "enlace": "https://articulo.mercadolibre.com.uy/MLU-882392434", "ads_u": 25, "ventas": 41, "ult": "2026-08-26", "prim": "2026-08-03", "clase": "Riesgo de quiebre", "contrib": 14662.39, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 56}, {"sku": "PHCO0011", "nombre": "Mini Sartén Antiadherente 5 Cm Para Huevos-panqueques", "cat": "Cocina", "u": 18, "ing": 10564.1, "costo_u": 324.65664, "cogs": 5843.82, "mb%": 30.052824620000003, "stock": 21.0, "estado": "Activa", "item": "MLU1314661544", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697313474", "ads_u": 14, "ventas": 14, "ult": "2026-08-27", "prim": "2026-08-01", "clase": "Alto volumen / bajo margen", "contrib": 3526.05, "estado_ml": "Activa", "stock_ml": 21, "catalogo": true, "ads_pct": 78}, {"sku": "PHDH0005", "nombre": "Lámpara Halo Mesa Multitrend Sunset Lamp Elegante Y Moderna", "cat": "Decoración hogar", "u": 9, "ing": 3643.76, "costo_u": 131.89176, "cogs": 1187.03, "mb%": 49.32749767, "stock": 191.0, "estado": "Activa", "item": "MLU880989136", "enlace": "https://articulo.mercadolibre.com.uy/MLU-880989136", "ads_u": 2, "ventas": 7, "ult": "2026-08-26", "prim": "2026-08-03", "clase": "Estrella", "contrib": 1835.18, "estado_ml": "Activa", "stock_ml": 191, "catalogo": true, "ads_pct": 22}, {"sku": "PHCO0009BLAN", "nombre": "Dispensador Y Organizador De Huevos Para Heladera Y Cocina", "cat": "Cocina", "u": 9, "ing": 2313.6, "costo_u": 62.02602, "cogs": 558.23, "mb%": 57.02739999999999, "stock": 287.0, "estado": "Activa", "item": "MLU698239606", "enlace": "https://articulo.mercadolibre.com.uy/MLU-698239606", "ads_u": 6, "ventas": 9, "ult": "2026-08-23", "prim": "2026-08-01", "clase": "Estrella", "contrib": 1311.26, "estado_ml": "Activa", "stock_ml": 287, "catalogo": true, "ads_pct": 67}, {"sku": "PMOT0006", "nombre": "Mxsimedarby 2pzs Guantes Quita Pelo Mascotas Grande Negro", "cat": "Mascotas", "u": 8, "ing": 2930.0, "costo_u": 34.1166168, "cogs": 272.93, "mb%": 71.25214954, "stock": 42.0, "estado": "Activa", "item": "MLU1412556406", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1412556404", "ads_u": 3, "ventas": 7, "ult": "2026-08-27", "prim": "2026-08-01", "clase": "Estrella", "contrib": 1984.83, "estado_ml": "Activa", "stock_ml": 42, "catalogo": true, "ads_pct": 38}, {"sku": "PHCO0022", "nombre": "5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones", "cat": "Cocina", "u": 7, "ing": 2620.0, "costo_u": 23.058, "cogs": 161.41, "mb%": 74.2355, "stock": 39.0, "estado": "Activa", "item": "MLU880896958", "enlace": "https://articulo.mercadolibre.com.uy/MLU-880896958", "ads_u": 5, "ventas": 7, "ult": "2026-08-26", "prim": "2026-08-15", "clase": "Rentable y escalable", "contrib": 1836.57, "estado_ml": "Activa", "stock_ml": 39, "catalogo": true, "ads_pct": 71}, {"sku": "PMOT0007", "nombre": "Tapete Sanitario Césped Sintético Para Perros 64x51 Cm", "cat": "Mascotas", "u": 6, "ing": 12798.72, "costo_u": 605.04192, "cogs": 3630.25, "mb%": 52.49809455, "stock": 44.0, "estado": "Activa", "item": "MLU693763327", "enlace": "https://articulo.mercadolibre.com.uy/MLU-693763327", "ads_u": 5, "ventas": 6, "ult": "2026-08-20", "prim": "2026-08-01", "clase": "Rentable y escalable", "contrib": 6848.85, "estado_ml": "Activa", "stock_ml": 44, "catalogo": true, "ads_pct": 83}, {"sku": "PHCO0001", "nombre": "Dispensador De Agua Automático Usb Recargable Vmi", "cat": "Cocina", "u": 5, "ing": 1414.07, "costo_u": 110.6784, "cogs": 553.39, "mb%": 42.48189831, "stock": 95.0, "estado": "Activa", "item": "MLU699478638", "enlace": "https://articulo.mercadolibre.com.uy/MLU-699478638", "ads_u": 3, "ventas": 5, "ult": "2026-08-24", "prim": "2026-08-04", "clase": "Estable", "contrib": 642.93, "estado_ml": "Activa", "stock_ml": 95, "catalogo": true, "ads_pct": 60}, {"sku": "PTGC0002", "nombre": "Teclado Gamer Imice Gk-700 Retroiluminado Con Apoya Muñeca", "cat": "Tecnologia", "u": 5, "ing": 8300.0, "costo_u": 830.0, "cogs": 4150.0, "mb%": 30.0, "stock": 0.0, "estado": "Pausada", "item": "MLU1461927248", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1461927248", "ads_u": 5, "ventas": 4, "ult": "2026-08-22", "prim": "2026-08-13", "clase": "Riesgo de quiebre", "contrib": 3100.05, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 100}, {"sku": "PTSV0002", "nombre": "Auriculares Unicorn Ah-902a", "cat": "Tecnologia", "u": 5, "ing": 6300.0, "costo_u": 630.0, "cogs": 3150.0, "mb%": 30.0, "stock": 0.0, "estado": "Pausada", "item": "MLU1464673016", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1461981790", "ads_u": 5, "ventas": 5, "ult": "2026-08-13", "prim": "2026-08-07", "clase": "Riesgo de quiebre", "contrib": 2353.05, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 100}, {"sku": "PHCO0025", "nombre": "Tetera De Vidrio Resistente Al Calor Con Infusor De Té", "cat": "Cocina", "u": 4, "ing": 2063.35, "costo_u": 142.406208, "cogs": 569.62, "mb%": 55.060208759999995, "stock": 42.0, "estado": "Activa", "item": "MLU884537514", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884537514", "ads_u": 3, "ventas": 4, "ult": "2026-08-24", "prim": "2026-08-14", "clase": "Rentable y escalable", "contrib": 1115.82, "estado_ml": "Activa", "stock_ml": 42, "catalogo": true, "ads_pct": 75}, {"sku": "PHCO0021", "nombre": "Calendario Pizarra Magnética Multitrend 21x29,7 Cm Compacta", "cat": "Cocina", "u": 4, "ing": 4677.5, "costo_u": 187.23096, "cogs": 748.92, "mb%": 65.0215232, "stock": 46.0, "estado": "Activa", "item": "MLU881040054", "enlace": "https://articulo.mercadolibre.com.uy/MLU-881040054", "ads_u": 2, "ventas": 4, "ult": "2026-08-20", "prim": "2026-08-03", "clase": "Rentable y escalable", "contrib": 2934.65, "estado_ml": "Activa", "stock_ml": 46, "catalogo": true, "ads_pct": 50}, {"sku": "PHCO0029GRIS", "nombre": "Apoya Ollas De Silicona Anticalor - Posavasos Y Protector", "cat": "Cocina", "u": 4, "ing": 494.0, "costo_u": 31.0083984, "cogs": 124.03, "mb%": 56.14738585, "stock": 46.0, "estado": "Activa", "item": "MLU694188393", "enlace": "https://articulo.mercadolibre.com.uy/MLU-694188393", "ads_u": 0, "ventas": 2, "ult": "2026-08-12", "prim": "2026-08-06", "clase": "Rentable y escalable", "contrib": 276.37, "estado_ml": "Activa", "stock_ml": 46, "catalogo": true, "ads_pct": 0}, {"sku": "PHOR0003", "nombre": "Cesto Para Ropa Sucia Portátil Con Asas Color Durazno", "cat": "Decoración hogar", "u": 4, "ing": 4312.0, "costo_u": 310.1116536, "cogs": 1240.45, "mb%": 52.3114595, "stock": 46.0, "estado": "Activa", "item": "MLU693750701", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1396835940", "ads_u": 4, "ventas": 3, "ult": "2026-08-07", "prim": "2026-08-02", "clase": "Rentable y escalable", "contrib": 2294.45, "estado_ml": "Activa", "stock_ml": 46, "catalogo": true, "ads_pct": 100}, {"sku": "PHCO0010", "nombre": "Dispensador Vmi Para Papel Film Y Aluminio Con Cortador", "cat": "Cocina", "u": 3, "ing": 1483.44, "costo_u": 165.09528, "cogs": 495.29, "mb%": 49.98267636, "stock": 129.0, "estado": "Activa", "item": "MLU699478666", "enlace": "https://articulo.mercadolibre.com.uy/MLU-699478666", "ads_u": 1, "ventas": 2, "ult": "2026-08-27", "prim": "2026-08-01", "clase": "Estable", "contrib": 738.15, "estado_ml": "Activa", "stock_ml": 129, "catalogo": true, "ads_pct": 33}, {"sku": "PMCU0003ROJO", "nombre": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "cat": "Mascotas", "u": 3, "ing": 210.0, "costo_u": 28.59192, "cogs": 85.78, "mb%": 41.87744, "stock": 6.0, "estado": "Activa", "item": "MLU884470894", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884470894", "ads_u": 0, "ventas": 2, "ult": "2026-08-27", "prim": "2026-08-09", "clase": "Estable", "contrib": 92.79, "estado_ml": "Activa", "stock_ml": 6, "catalogo": true, "ads_pct": 0}, {"sku": "PMOT0004", "nombre": "Rascador Sisal Para Gatos Cama Y Juguete De Rascar Para Gato", "cat": "Mascotas", "u": 3, "ing": 2100.0, "costo_u": 147.386736, "cogs": 442.16, "mb%": 58.944752, "stock": 46.0, "estado": "Activa", "item": "MLU884436698", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884436698", "ads_u": 2, "ventas": 3, "ult": "2026-08-27", "prim": "2026-08-06", "clase": "Rentable y escalable", "contrib": 1238.41, "estado_ml": "Activa", "stock_ml": 46, "catalogo": true, "ads_pct": 67}, {"sku": "PMCA0003", "nombre": "Cama Tipo Banana Para Mascota Pequeña", "cat": "Mascotas", "u": 3, "ing": 3019.72, "costo_u": 294.22008, "cogs": 882.66, "mb%": 52.24338868, "stock": 48.0, "estado": "Activa", "item": "MLU693763467", "enlace": "https://articulo.mercadolibre.com.uy/MLU-693763467", "ads_u": 2, "ventas": 3, "ult": "2026-08-23", "prim": "2026-08-07", "clase": "Rentable y escalable", "contrib": 1596.38, "estado_ml": "Activa", "stock_ml": 48, "catalogo": true, "ads_pct": 67}, {"sku": "PMOT0001", "nombre": "Removedor De Pelo Para Mascotas Pet Fountain - 4 Unidades", "cat": "Mascotas", "u": 3, "ing": 490.0, "costo_u": 66.40704, "cogs": 199.22, "mb%": 42.05312, "stock": 471.0, "estado": "Activa", "item": "MLU697287242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697287242", "ads_u": 0, "ventas": 2, "ult": "2026-08-20", "prim": "2026-08-10", "clase": "Estable", "contrib": 217.21, "estado_ml": "Activa", "stock_ml": 471, "catalogo": true, "ads_pct": 0}, {"sku": "PMCU0003VERD", "nombre": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "cat": "Mascotas", "u": 3, "ing": 210.0, "costo_u": 28.59192, "cogs": 85.78, "mb%": 41.87744, "stock": 5.0, "estado": "Activa", "item": "MLU884301986", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884301986", "ads_u": 0, "ventas": 2, "ult": "2026-08-17", "prim": "2026-08-09", "clase": "Estable", "contrib": 92.79, "estado_ml": "Activa", "stock_ml": 5, "catalogo": true, "ads_pct": 0}, {"sku": "PHDH0001LOVE", "nombre": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "cat": "Decoración hogar", "u": 3, "ing": 759.0, "costo_u": 97.76592, "cogs": 293.3, "mb%": 55.249134180000006, "stock": 84.0, "estado": "Activa", "item": "MLU697415242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697415242", "ads_u": 0, "ventas": 2, "ult": "2026-08-14", "prim": "2026-08-10", "clase": "Rentable y escalable", "contrib": 347.88, "estado_ml": "", "stock_ml": 84, "catalogo": true, "ads_pct": 0}, {"sku": "PHDH0001SATU", "nombre": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "cat": "Decoración hogar", "u": 3, "ing": 759.0, "costo_u": 97.76592, "cogs": 293.3, "mb%": 55.249134180000006, "stock": 45.0, "estado": "Activa", "item": "MLU697415242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697415242", "ads_u": 0, "ventas": 2, "ult": "2026-08-14", "prim": "2026-08-04", "clase": "Rentable y escalable", "contrib": 347.88, "estado_ml": "", "stock_ml": 45, "catalogo": true, "ads_pct": 0}, {"sku": "PHDH0001ASTR", "nombre": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "cat": "Decoración hogar", "u": 3, "ing": 759.0, "costo_u": 97.76592, "cogs": 293.3, "mb%": 55.249134180000006, "stock": 41.0, "estado": "Activa", "item": "MLU697415242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697415242", "ads_u": 1, "ventas": 3, "ult": "2026-08-14", "prim": "2026-08-05", "clase": "Rentable y escalable", "contrib": 347.88, "estado_ml": "", "stock_ml": 41, "catalogo": true, "ads_pct": 33}, {"sku": "PHCO0027", "nombre": "Molinillo De Sal Eléctrico Molinillo De Pimienta Automático Negro Y Transparente", "cat": "Cocina", "u": 3, "ing": 3904.5, "costo_u": 508.013856, "cogs": 1524.04, "mb%": 42.91869664, "stock": 10.0, "estado": "Activa", "item": "MLU698157303", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1474354232", "ads_u": 1, "ventas": 2, "ult": "2026-08-14", "prim": "2026-08-10", "clase": "Estable", "contrib": 1778.2, "estado_ml": "Activa", "stock_ml": 10, "catalogo": true, "ads_pct": 33}, {"sku": "PHCO0029NEGR", "nombre": "Apoya Ollas De Silicona Anticalor - Posavasos Y Protector", "cat": "Cocina", "u": 3, "ing": 360.8, "costo_u": 31.0083984, "cogs": 93.03, "mb%": 56.14738585, "stock": 47.0, "estado": "Activa", "item": "MLU694198193", "enlace": "https://articulo.mercadolibre.com.uy/MLU-694198193", "ads_u": 0, "ventas": 3, "ult": "2026-08-10", "prim": "2026-08-05", "clase": "Rentable y escalable", "contrib": 200.02, "estado_ml": "Activa", "stock_ml": 47, "catalogo": true, "ads_pct": 0}, {"sku": "PHC00025", "nombre": "Tetera De Vidrio Resistente Al Calor Con Infusor De Té Blanco", "cat": "?", "u": 3, "ing": 1655.9, "costo_u": null, "cogs": null, "mb%": null, "stock": null, "estado": null, "item": "MLU884537514", "enlace": "", "ads_u": 1, "ventas": 2, "ult": "2026-08-08", "prim": "2026-08-02", "clase": "Estable", "contrib": null, "estado_ml": "—", "stock_ml": null, "catalogo": null, "ads_pct": 33}, {"sku": "PHC00022", "nombre": "5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones", "cat": "?", "u": 3, "ing": 1160.0, "costo_u": null, "cogs": null, "mb%": null, "stock": null, "estado": null, "item": "MLU880896958", "enlace": "", "ads_u": 1, "ventas": 3, "ult": "2026-08-06", "prim": "2026-08-03", "clase": "Estable", "contrib": null, "estado_ml": "—", "stock_ml": null, "catalogo": null, "ads_pct": 33}, {"sku": "PMOT0005", "nombre": "Rascador Cama Gato Doble Nivel Infinito Reductor Estrés", "cat": "Mascotas", "u": 3, "ing": 3339.0, "costo_u": 369.573624, "cogs": 1108.72, "mb%": 55.028809190000004, "stock": 0.0, "estado": "Pausada", "item": "MLU884548334", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884548334", "ads_u": 3, "ventas": 3, "ult": "2026-08-06", "prim": "2026-08-02", "clase": "Riesgo de quiebre", "contrib": 1666.02, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 100}, {"sku": "PHC00024", "nombre": "Magic Brush Cepillo De Limpieza 5 En 1 Blanco", "cat": "?", "u": 3, "ing": 1750.0, "costo_u": null, "cogs": null, "mb%": null, "stock": null, "estado": null, "item": "MLU884381452", "enlace": "", "ads_u": 3, "ventas": 2, "ult": "2026-08-04", "prim": "2026-08-04", "clase": "Estable", "contrib": null, "estado_ml": "—", "stock_ml": null, "catalogo": null, "ads_pct": 100}, {"sku": "PMCU0001", "nombre": "Bebedero/comedero Cuenco Acero Inoxidable 500ml Higiénico", "cat": "Mascotas", "u": 2, "ing": 860.0, "costo_u": 213.97824, "cogs": 427.96, "mb%": 30.237618599999998, "stock": 146.0, "estado": "Activa", "item": "MLU698291500", "enlace": "https://articulo.mercadolibre.com.uy/MLU-698291500", "ads_u": 0, "ventas": 2, "ult": "2026-08-27", "prim": "2026-08-26", "clase": "Estable", "contrib": 322.73, "estado_ml": "Activa", "stock_ml": 146, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0032", "nombre": "Soporte Adhesivo Para Escobas Y Lampazos X 2 Pcs", "cat": "Cocina", "u": 2, "ing": 500.0, "costo_u": 9.2232, "cogs": 18.45, "mb%": 76.31072, "stock": 23.0, "estado": "Activa", "item": "MLU694251089", "enlace": "https://articulo.mercadolibre.com.uy/MLU-694251089", "ads_u": 1, "ventas": 2, "ult": "2026-08-26", "prim": "2026-08-26", "clase": "Estable", "contrib": 359.72, "estado_ml": "Activa", "stock_ml": 23, "catalogo": true, "ads_pct": 50}, {"sku": "PAAA0003", "nombre": "Cenicero Para Puerta Del Auto  Resistente Al Viento", "cat": "Autos", "u": 2, "ing": 1030.0, "costo_u": 193.133808, "cogs": 386.27, "mb%": 42.498289709999995, "stock": 7.0, "estado": "Activa", "item": "MLU884303380", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884303380", "ads_u": 1, "ventas": 2, "ult": "2026-08-26", "prim": "2026-08-14", "clase": "Estable", "contrib": 480.87, "estado_ml": "Activa", "stock_ml": 7, "catalogo": true, "ads_pct": 50}, {"sku": "PHDH0002BEIG", "nombre": "Gestionador 2.0 Organizador De Cables", "cat": "Decoración hogar", "u": 2, "ing": 1037.4, "costo_u": 117.8448264, "cogs": 235.69, "mb%": 59.32546905, "stock": 46.0, "estado": "Activa", "item": "MLU880947316", "enlace": "https://articulo.mercadolibre.com.uy/MLU-880947316", "ads_u": 0, "ventas": 2, "ult": "2026-08-20", "prim": "2026-08-15", "clase": "Estable", "contrib": 598.88, "estado_ml": "Activa", "stock_ml": 46, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0004BLAN", "nombre": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "cat": "Cocina", "u": 2, "ing": 1072.0, "costo_u": 304.3656, "cogs": 608.73, "mb%": 28.41261017, "stock": 11.0, "estado": "Activa", "item": "MLU696559194", "enlace": "https://articulo.mercadolibre.com.uy/MLU-696559194", "ads_u": 1, "ventas": 2, "ult": "2026-08-17", "prim": "2026-08-07", "clase": "Estable", "contrib": 346.06, "estado_ml": "", "stock_ml": 11, "catalogo": true, "ads_pct": 50}, {"sku": "PHDH0001GISP", "nombre": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "cat": "Decoración hogar", "u": 2, "ing": 506.0, "costo_u": 97.76592, "cogs": 195.53, "mb%": 55.249134180000006, "stock": 32.0, "estado": "Activa", "item": "MLU697415242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697415242", "ads_u": 1, "ventas": 2, "ult": "2026-08-14", "prim": "2026-08-09", "clase": "Estable", "contrib": 231.92, "estado_ml": "", "stock_ml": 32, "catalogo": true, "ads_pct": 50}, {"sku": "PHDH0001BALL", "nombre": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "cat": "Decoración hogar", "u": 2, "ing": 506.0, "costo_u": 97.76592, "cogs": 195.53, "mb%": 55.249134180000006, "stock": 20.0, "estado": "Activa", "item": "MLU697415242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697415242", "ads_u": 0, "ventas": 1, "ult": "2026-08-14", "prim": "2026-08-14", "clase": "Estable", "contrib": 231.92, "estado_ml": "", "stock_ml": 20, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0017", "nombre": "Frasco Flip Separador De Alimentos Y Liquido Multitrend", "cat": "Cocina", "u": 2, "ing": 980.0, "costo_u": 245.33712, "cogs": 490.67, "mb%": 49.71146667, "stock": 10.0, "estado": "Activa", "item": "MLU882389536", "enlace": "https://articulo.mercadolibre.com.uy/MLU-882389536", "ads_u": 0, "ventas": 1, "ult": "2026-08-12", "prim": "2026-08-12", "clase": "Estable", "contrib": 365.53, "estado_ml": "Activa", "stock_ml": 10, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0004VEAQ", "nombre": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "cat": "Cocina", "u": 2, "ing": 964.0, "costo_u": 304.3656, "cogs": 608.73, "mb%": 28.41261017, "stock": 13.0, "estado": "Activa", "item": "MLU696559194", "enlace": "https://articulo.mercadolibre.com.uy/MLU-696559194", "ads_u": 2, "ventas": 2, "ult": "2026-08-10", "prim": "2026-08-01", "clase": "Estable", "contrib": 265.39, "estado_ml": "", "stock_ml": 13, "catalogo": true, "ads_pct": 100}, {"sku": "PMCU0003NEGR", "nombre": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "cat": "Mascotas", "u": 2, "ing": 135.0, "costo_u": 28.59192, "cogs": 57.18, "mb%": 41.87744, "stock": 3.0, "estado": "Activa", "item": "MLU884548970", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884548970", "ads_u": 0, "ventas": 1, "ult": "2026-08-09", "prim": "2026-08-09", "clase": "Estable", "contrib": 58.13, "estado_ml": "Activa", "stock_ml": 3, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0008", "nombre": "Centrifugadora De Frutas Y Verduras - Salad Spinner - 5 L", "cat": "Cocina", "u": 2, "ing": 2301.0, "costo_u": 258.2496, "cogs": 516.5, "mb%": 58.11444068, "stock": 47.0, "estado": "Activa", "item": "MLU699363656", "enlace": "https://articulo.mercadolibre.com.uy/MLU-699324588", "ads_u": 2, "ventas": 2, "ult": "2026-08-06", "prim": "2026-08-01", "clase": "Estable", "contrib": 1333.02, "estado_ml": "Activa", "stock_ml": 47, "catalogo": true, "ads_pct": 100}, {"sku": "PAAA0001VERD", "nombre": "Ksd Manopla De Microfibra Multifuncional Para Auto Y Casa", "cat": "Autos", "u": 2, "ing": 288.0, "costo_u": 59.02848, "cogs": 118.06, "mb%": 43.1072, "stock": 27.0, "estado": "Activa", "item": "MLU698277334", "enlace": "https://articulo.mercadolibre.com.uy/MLU-698277334", "ads_u": 0, "ventas": 1, "ult": "2026-08-03", "prim": "2026-08-03", "clase": "Estable", "contrib": 126.95, "estado_ml": "", "stock_ml": 27, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0024", "nombre": "Magic Brush Cepillo De Limpieza 5 En 1", "cat": "Cocina", "u": 1, "ing": 550.32, "costo_u": 155.87208, "cogs": 155.87, "mb%": 55.0604672, "stock": 22.0, "estado": "Activa", "item": "MLU884381452", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884381452", "ads_u": 0, "ventas": 1, "ult": "2026-08-24", "prim": "2026-08-24", "clase": "Estable", "contrib": 294.65, "estado_ml": "Activa", "stock_ml": 22, "catalogo": true, "ads_pct": 0}, {"sku": "PHDH0002GRIS", "nombre": "Gestionador 2.0 Organizador De Cables", "cat": "Decoración hogar", "u": 1, "ing": 550.55, "costo_u": 117.8448264, "cogs": 117.84, "mb%": 60.5215163, "stock": 56.0, "estado": "Activa", "item": "MLU880921336", "enlace": "https://articulo.mercadolibre.com.uy/MLU-880921336", "ads_u": 0, "ventas": 1, "ult": "2026-08-21", "prim": "2026-08-21", "clase": "Baja rotación / investigar", "contrib": 323.23, "estado_ml": "Activa", "stock_ml": 56, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0012VERD", "nombre": "Pelador De Verduras Y Frutas Genérica 20 Cm Abs", "cat": "Cocina", "u": 1, "ing": 90.0, "costo_u": 20.29104, "cogs": 20.29, "mb%": 57.45440000000001, "stock": 112.0, "estado": "Activa", "item": "MLU645895169", "enlace": "https://articulo.mercadolibre.com.uy/MLU-645895169", "ads_u": 0, "ventas": 1, "ult": "2026-08-20", "prim": "2026-08-20", "clase": "Baja rotación / investigar", "contrib": 52.07, "estado_ml": "", "stock_ml": 112, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0023VERD", "nombre": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca", "cat": "Cocina", "u": 1, "ing": 517.0, "costo_u": 178.93008, "cogs": 178.93, "mb%": 55.1486, "stock": 0.0, "estado": "Pausada", "item": "MLU884404890", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884404890", "ads_u": 1, "ventas": 1, "ult": "2026-08-16", "prim": "2026-08-16", "clase": "Riesgo de quiebre", "contrib": 252.54, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 100}, {"sku": "PHDH0001LUNA", "nombre": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "cat": "Decoración hogar", "u": 1, "ing": 253.0, "costo_u": 97.76592, "cogs": 97.77, "mb%": 55.249134180000006, "stock": 32.0, "estado": "Activa", "item": "MLU697415242", "enlace": "https://articulo.mercadolibre.com.uy/MLU-697415242", "ads_u": 0, "ventas": 1, "ult": "2026-08-14", "prim": "2026-08-14", "clase": "Baja rotación / investigar", "contrib": 115.96, "estado_ml": "", "stock_ml": 32, "catalogo": true, "ads_pct": 0}, {"sku": "PTOR0001", "nombre": "Smartwatch Smartband M7 Con Salud Y Deporte", "cat": "Tecnologia", "u": 1, "ing": 800.0, "costo_u": 250.0, "cogs": 250.0, "mb%": 48.75, "stock": 9.0, "estado": "Activa", "item": "MLU696031467", "enlace": "https://articulo.mercadolibre.com.uy/MLU-696031467", "ads_u": 0, "ventas": 1, "ult": "2026-08-13", "prim": "2026-08-13", "clase": "Estable", "contrib": 410.85, "estado_ml": "Activa", "stock_ml": 9, "catalogo": true, "ads_pct": 0}, {"sku": "PTSV0007NEGR", "nombre": "Auriculares Vincha Inalámbricos Akz 08c Para Niños", "cat": "Tecnologia", "u": 1, "ing": 1015.49, "costo_u": 580.0, "cogs": 580.0, "mb%": 30.0, "stock": 1.0, "estado": "Activa", "item": "MLU1461983784", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1461983784", "ads_u": 1, "ventas": 1, "ult": "2026-08-12", "prim": "2026-08-12", "clase": "Estable", "contrib": 325.31, "estado_ml": "Activa", "stock_ml": 1, "catalogo": true, "ads_pct": 100}, {"sku": "PHCO0033", "nombre": "Frasco Tarro Para Ensaladas Con Apertura Lateral | 1000ml", "cat": "Cocina", "u": 1, "ing": 475.0, "costo_u": 139.547016, "cogs": 139.55, "mb%": 52.0905968, "stock": 18.0, "estado": "Activa", "item": "MLU1469269370", "enlace": "https://articulo.mercadolibre.com.uy/MLU-1469269370", "ads_u": 0, "ventas": 1, "ult": "2026-08-12", "prim": "2026-08-12", "clase": "Estable", "contrib": 250.58, "estado_ml": "Activa", "stock_ml": 18, "catalogo": true, "ads_pct": 0}, {"sku": "PMOT0003AMAR", "nombre": "Pelota De Juguete Para Mascotas Interactiva Con Velocidades", "cat": "Mascotas", "u": 1, "ing": 180.5, "costo_u": 47.03832, "cogs": 47.04, "mb%": 55.242989470000005, "stock": 66.0, "estado": "Activa", "item": "MLU884431970", "enlace": "https://articulo.mercadolibre.com.uy/MLU-884431970", "ads_u": 1, "ventas": 1, "ult": "2026-08-12", "prim": "2026-08-12", "clase": "Baja rotación / investigar", "contrib": 99.69, "estado_ml": "Activa", "stock_ml": 66, "catalogo": true, "ads_pct": 100}, {"sku": "PHCO0030", "nombre": "Picadora Manual 1.5l Con Cuerda - Procesador De Alimentos", "cat": "Cocina", "u": 1, "ing": 351.5, "costo_u": 100.7911296, "cogs": 100.79, "mb%": 52.75915416, "stock": 97.0, "estado": "Activa", "item": "MLU694198565", "enlace": "https://articulo.mercadolibre.com.uy/MLU-694198565", "ads_u": 0, "ventas": 1, "ult": "2026-08-11", "prim": "2026-08-11", "clase": "Baja rotación / investigar", "contrib": 187.28, "estado_ml": "Activa", "stock_ml": 97, "catalogo": true, "ads_pct": 0}, {"sku": "PHCO0004GRCL", "nombre": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "cat": "Cocina", "u": 1, "ing": 482.0, "costo_u": 304.3656, "cogs": 304.37, "mb%": 28.41261017, "stock": 13.0, "estado": "Activa", "item": "MLU696559194", "enlace": "https://articulo.mercadolibre.com.uy/MLU-696559194", "ads_u": 1, "ventas": 1, "ult": "2026-08-09", "prim": "2026-08-09", "clase": "Estable", "contrib": 132.69, "estado_ml": "", "stock_ml": 13, "catalogo": true, "ads_pct": 100}, {"sku": "PMCA0002", "nombre": "Cama S Para Mascotas Perro Suertudo - Algodón Hidratable", "cat": "Mascotas", "u": 1, "ing": 720.0, "costo_u": 269.31744, "cogs": 269.32, "mb%": 42.5948, "stock": 43.0, "estado": "Activa", "item": "MLU698226916", "enlace": "https://articulo.mercadolibre.com.uy/MLU-698226916", "ads_u": 1, "ventas": 1, "ult": "2026-08-08", "prim": "2026-08-08", "clase": "Baja rotación / investigar", "contrib": 336.66, "estado_ml": "Activa", "stock_ml": 43, "catalogo": true, "ads_pct": 100}, {"sku": "PHCO0002PAND", "nombre": "Babero Silicona Hyundai Hy-w003 Varios Colores", "cat": "Cocina", "u": 1, "ing": 200.0, "costo_u": 66.40704, "cogs": 66.41, "mb%": 46.79648, "stock": 8.0, "estado": "Activa", "item": "MLU704261762", "enlace": "https://articulo.mercadolibre.com.uy/MLU-704261762", "ads_u": 1, "ventas": 1, "ult": "2026-08-05", "prim": "2026-08-05", "clase": "Estable", "contrib": 99.79, "estado_ml": "", "stock_ml": 8, "catalogo": true, "ads_pct": 100}, {"sku": "PTGC0001", "nombre": "Teclado Imice Ak-100 Retroiluminado Qwerty", "cat": "Tecnologia", "u": 1, "ing": 1500.0, "costo_u": 750.0, "cogs": 750.0, "mb%": 30.0, "stock": 0.0, "estado": "Pausada", "item": "MLU696045949", "enlace": "https://articulo.mercadolibre.com.uy/MLU-696045949", "ads_u": 1, "ventas": 1, "ult": "2026-08-05", "prim": "2026-08-05", "clase": "Riesgo de quiebre", "contrib": 560.25, "estado_ml": "Inactiva", "stock_ml": 0, "catalogo": true, "ads_pct": 100}, {"sku": "PHC00023MARR", "nombre": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca Beige", "cat": "?", "u": 1, "ing": 480.0, "costo_u": null, "cogs": null, "mb%": null, "stock": null, "estado": null, "item": "MLU884521848", "enlace": "", "ads_u": 0, "ventas": 1, "ult": "2026-08-05", "prim": "2026-08-05", "clase": "Estable", "contrib": null, "estado_ml": "—", "stock_ml": null, "catalogo": null, "ads_pct": 0}, {"sku": "PAAA0002", "nombre": "Toalla De Microfibra Para Limpieza Auto Linna - X 4 Unidades", "cat": "Autos", "u": 1, "ing": 260.0, "costo_u": 47.96064, "cogs": 47.96, "mb%": 61.553599999999996, "stock": 432.0, "estado": "Activa", "item": "MLU698277484", "enlace": "https://articulo.mercadolibre.com.uy/MLU-698277484", "ads_u": 0, "ventas": 1, "ult": "2026-08-01", "prim": "2026-08-01", "clase": "Baja rotación / investigar", "contrib": 158.39, "estado_ml": "Activa", "stock_ml": 432, "catalogo": true, "ads_pct": 0}], "ads": [{"t": "Caja De Arena Inteligente Para Gatos, Autolimpiante Blanco", "item": "MLU693695781", "inv": 1865.6, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 93.0, "imp": 31608.0, "mb": 38.3, "contrib": -1865.6, "estado": "Movido", "camp": "Campaña Mercado Libre"}, {"t": "Frasco Flip Separador De Alimentos Y Liquido Multitrend Blan", "item": "MLU882389536", "inv": 981.34, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 138.0, "imp": 130541.0, "mb": 49.7, "contrib": -981.34, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Auriculares Gamer Imice Hd490 7.1 Negro", "item": "MLU1457523252", "inv": 355.33, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 90.0, "imp": 27033.0, "mb": 30.0, "contrib": -355.33, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Vincha Inalámbricos Akz 08c Para Niños Blanco", "item": "MLU1461973380", "inv": 539.52, "ing": 1015.49, "roas": 1.88, "acos": 53.13, "vt": 1.0, "clics": 85.0, "imp": 26984.0, "mb": 30.0, "contrib": -234.87, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Smartwatch Smartband M7 Con Salud Y Deporte Negro Plástico A", "item": "MLU696031467", "inv": 181.56, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 72.0, "imp": 29121.0, "mb": 48.8, "contrib": -181.56, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Inalámbricos Lehmox Bluetooth 5.3 Lef-pro90, Bat", "item": "MLU697102205", "inv": 175.51, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 51.0, "imp": 7348.0, "mb": 30.0, "contrib": -175.51, "estado": "Movido", "camp": "Campaña Mercado Libre"}, {"t": "Picadora Manual 1.5l Con Cuerda - Procesador De Alimentos Gr", "item": "MLU694198565", "inv": 173.9, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 66.0, "imp": 36388.0, "mb": 52.8, "contrib": -173.9, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Gestionador 2.0 Organizador De Cables Gris", "item": "MLU880921336", "inv": 130.9, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 36.0, "imp": 6730.0, "mb": 60.5, "contrib": -130.9, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Taza Kobe Kfb-07 Inox 470 Ml", "item": "MLU696654652", "inv": 93.88, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 24.0, "imp": 37984.0, "mb": 42.8, "contrib": -93.88, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca ", "item": "MLU884521848", "inv": 90.11, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 33.0, "imp": 15357.0, "mb": 55.1, "contrib": -90.11, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Auriculares Vincha Inalámbricos Akz 08c Para Niños Negro", "item": "MLU1461983784", "inv": 88.74, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 16.0, "imp": 53276.0, "mb": 30.0, "contrib": -88.74, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Tubo Luz Led Recargable Bajo Mesada Cocina Sensor Movimiento", "item": "MLU880989098", "inv": 85.56, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 41.0, "imp": 23615.0, "mb": 42.6, "contrib": -85.56, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cama Mediana Puff Xulai Para Gatos Y Perros Azul Oscuro Puff", "item": "MLU699569798", "inv": 82.87, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 23.0, "imp": 10697.0, "mb": 42.3, "contrib": -82.87, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Bebedero Comedero Acero Inoxidable 1l Genérico Doble Cuenco ", "item": "MLU698226720", "inv": 76.83, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 16.0, "imp": 11356.0, "mb": 30.5, "contrib": -76.83, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Frasco Tarro Para Ensaladas Con Apertura Lateral | 1000ml Bl", "item": "MLU1469269370", "inv": 61.85, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 39.0, "imp": 24311.0, "mb": 52.1, "contrib": -61.85, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Organizador Con 8 Compartimentos - Contenedor De Condimentos", "item": "MLU693696315", "inv": 54.62, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 32.0, "imp": 35105.0, "mb": 52.3, "contrib": -54.62, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Molinillo Manual Dayilin W-310 Para Café Y Canela Negro", "item": "MLU698212740", "inv": 44.16, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 18.0, "imp": 8377.0, "mb": 42.7, "contrib": -44.16, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Ksd Manopla De Microfibra Multifuncional Para Auto Y Casa", "item": "MLU698277334", "inv": 41.37, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 22.0, "imp": 12053.0, "mb": 43.1, "contrib": -41.37, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "item": "MLU696559194", "inv": 580.69, "ing": 1928.0, "roas": 3.32, "acos": 30.12, "vt": 4.0, "clics": 182.0, "imp": 13473.0, "mb": 28.4, "contrib": -32.89, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Parlante Portatil Luces C/ 2 Microfonos Para Karaoke Rosa Cl", "item": "MLU1463631940", "inv": 32.41, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 7.0, "imp": 8630.0, "mb": 30.0, "contrib": -32.41, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Parlante Tyg Tg-396 Resistente Al Agua Azul Acero", "item": "MLU1463818818", "inv": 28.15, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 8.0, "imp": 9640.0, "mb": 30.0, "contrib": -28.15, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Organizador Para Ropa Interior 16 Divisores Beige", "item": "MLU1413272322", "inv": 28.04, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 26.0, "imp": 11682.0, "mb": 52.2, "contrib": -28.04, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Parlante Jbr Modelo Jbr-1205 Negro", "item": "MLU1473847090", "inv": 26.33, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 6.0, "imp": 24608.0, "mb": 30.0, "contrib": -26.33, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Caja Organizadora Decorativa De Tela Plegable Con Tapa Gris", "item": "MLU693722589", "inv": 24.7, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 12.0, "imp": 2930.0, "mb": 52.3, "contrib": -24.7, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Apoya Ollas De Silicona Anticalor - Posavasos Y Protector Gr", "item": "MLU694188393", "inv": 23.31, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 15.0, "imp": 2523.0, "mb": 56.1, "contrib": -23.31, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Bolsa Al Vacío Ordene 60x80 Cm Con Bomba", "item": "MLU884473292", "inv": 22.17, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 15.0, "imp": 15111.0, "mb": 42.4, "contrib": -22.17, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Mouse Gamer Imice Alámbrico Usb Con Luces Led Negro Negro", "item": "MLU697054175", "inv": 21.58, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 7.0, "imp": 2903.0, "mb": 30.0, "contrib": -21.58, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "item": "MLU884301986", "inv": 16.99, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 8.0, "imp": 6277.0, "mb": 41.9, "contrib": -16.99, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Toalla De Microfibra Para Limpieza Auto Linna - X 4 Unidades", "item": "MLU698277484", "inv": 15.53, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 4.0, "imp": 23943.0, "mb": 61.6, "contrib": -15.53, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Botellas Vidrio Ámbar 500cc Con Spray Pack X2 Marrón", "item": "MLU880974754", "inv": 13.25, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 9.0, "imp": 10907.0, "mb": 24.5, "contrib": -13.25, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Parlante Portátil Bluetooth T&g Tg-437 Rgb Radio Fm Usb Negr", "item": "MLU1463822016", "inv": 12.39, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 7.0, "imp": 4517.0, "mb": 30.0, "contrib": -12.39, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Removedor De Pelo Para Mascotas Pet Fountain - 4 Unidades", "item": "MLU697287242", "inv": 12.29, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 11.0, "imp": 4017.0, "mb": 42.1, "contrib": -12.29, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Pelador De Verduras Y Frutas Genérica 20 Cm Abs", "item": "MLU645895169", "inv": 12.04, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 13.0, "imp": 2559.0, "mb": 57.5, "contrib": -12.04, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Centrifugador De Vegetales Pinmoo X992 20 Cm Antideslizante", "item": "MLU696674484", "inv": 12.02, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 5.0, "imp": 2455.0, "mb": 42.6, "contrib": -12.02, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Pelota De Juguete Para Mascotas Interactiva Con Velocidades ", "item": "MLU884431970", "inv": 11.68, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 10.0, "imp": 1003.0, "mb": 55.2, "contrib": -11.68, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Organizador De Maquillaje Generico Desmaquillador Transparen", "item": "MLU1412534346", "inv": 10.68, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 10.0, "imp": 3985.0, "mb": 52.7, "contrib": -10.68, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Dispensador De Bolsas De Residuos Para Mascota Con Linterna ", "item": "MLU884540982", "inv": 9.8, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 3.0, "imp": 1610.0, "mb": 42.4, "contrib": -9.8, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cargador Fuente Dmi-a28 Tipo C 20w Blanco", "item": "MLU1446860800", "inv": 7.85, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 605.0, "mb": 30.0, "contrib": -7.85, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Konigsaigg K5259 Audio Rosa", "item": "MLU1463619046", "inv": 6.46, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 3.0, "imp": 2382.0, "mb": 30.0, "contrib": -6.46, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Apoya Ollas De Silicona Anticalor - Posavasos Y Protector Ne", "item": "MLU694198193", "inv": 4.38, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 5.0, "imp": 1929.0, "mb": 56.1, "contrib": -4.38, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Auriculares Inalámbricos Lehmox Bluetooth 5.3 Lef-pro90, Bat", "item": "MLU697102205", "inv": 4.13, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 3.0, "imp": 1099.0, "mb": 30.0, "contrib": -4.13, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "item": "MLU884548970", "inv": 3.97, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 3.0, "imp": 2248.0, "mb": 41.9, "contrib": -3.97, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cargador De Pared 25w Usb-c Dmi-a20 Blanco", "item": "MLU697068207", "inv": 2.46, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 1.0, "imp": 620.0, "mb": 30.0, "contrib": -2.46, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Pelota De Juguete Para Mascotas Interactiva Con Velocidades ", "item": "MLU884406046", "inv": 2.33, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 3.0, "imp": 772.0, "mb": 55.2, "contrib": -2.33, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Parlante Tyg 337: Sonido Potente Y Diseño Moderno Blanco", "item": "MLU697098655", "inv": 2.24, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 7704.0, "mb": 34.1, "contrib": -2.24, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Parlante T&g 426 Led Y Wireless Negro Y Naranja", "item": "MLU696957597", "inv": 1.8, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 3227.0, "mb": 30.0, "contrib": -1.8, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Konigsaigg K5259 Audio Amarillo", "item": "MLU1463619044", "inv": 1.73, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 1.0, "imp": 682.0, "mb": 30.0, "contrib": -1.73, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "item": "MLU884353920", "inv": 1.64, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 1766.0, "mb": 41.9, "contrib": -1.64, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Bebedero/comedero Cuenco Acero Inoxidable 500ml Higiénico Gr", "item": "MLU698291500", "inv": 1.62, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 5545.0, "mb": 30.2, "contrib": -1.62, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Dispensador De Bolsas De Residuos Para Mascota Con Linterna ", "item": "MLU884332644", "inv": 1.3, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 1.0, "imp": 113.0, "mb": 42.4, "contrib": -1.3, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cable De Datos Usb-c A Usb-c C231b Negro", "item": "MLU697070461", "inv": 1.29, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 1.0, "imp": 162.0, "mb": 31.4, "contrib": -1.29, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Organizador Plegable Para Ropa Interior 6 Divisiones Beige", "item": "MLU1413272340", "inv": 0.66, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 7504.0, "mb": 52.7, "contrib": -0.66, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Caja Organizadora Desarmable Pequeña Apilable Beige", "item": "MLU694198983", "inv": 0.4, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 1.0, "imp": 2108.0, "mb": 51.6, "contrib": -0.4, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Botellas De Vidrio Ámbar Con Gatillo Pulverizador 500ml Marr", "item": "MLU1490582682", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 71.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Cesto Plegable Para Ropa Sucia Portátil Con Asas Compacto Co", "item": "MLU693750701", "inv": 98.6, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 30.0, "imp": 10416.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Audifonos In Ear Inalambricos Cancelacion Ruido Bluetooth Ne", "item": "MLU1461993574", "inv": 66.29, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 17.0, "imp": 2563.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Gamer Jg4 Negros Negro", "item": "MLU1463818646", "inv": 23.76, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 9.0, "imp": 2879.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Inalámbricos Bluetooth Ah-902a Unicorn Azul Clar", "item": "MLU1464673016", "inv": 1798.33, "ing": 6300.0, "roas": 3.5, "acos": 28.54, "vt": 5.0, "clics": 126.0, "imp": 44980.0, "mb": null, "contrib": null, "estado": "Deshabilitado", "camp": "Campaña Electro hasta $2000"}, {"t": "Auriculares Konigsaigg K5259 Audio Verde", "item": "MLU697203071", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 221.0, "mb": 30.0, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Cable De Datos Dompro Lightning A Usb-c C231a 27w Blanco", "item": "MLU697069325", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 509.0, "mb": 30.0, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Cargador Dmi Usb-c Y Usb-a Dmi-a23 Blanco", "item": "MLU696837739", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 749.0, "mb": 30.0, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Cargador Fuente Dmi-26 Usb-c Pd 25w Blanco", "item": "MLU696043935", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 1083.0, "mb": 30.0, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Moreka-623 Altavoz Portátil Subwoofer Inalámbrico Bluetooth ", "item": "MLU1463631490", "inv": 33.12, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 12.0, "imp": 9117.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Parlante Bluetooth T&g Tg-359 Mini Cubo Luces Led Rgb Soport", "item": "MLU696970505", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 20.0, "mb": 28.9, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Parlante Portatil T&g Seisa Tg-337 Bluetooth Stereo Radio Fm", "item": "MLU697103095", "inv": 2.76, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 2.0, "imp": 476.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Portátil Bluetooth Parlante Radio Fm Reloj Digital Color Roj", "item": "MLU1463618760", "inv": 84.56, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 14.0, "imp": 5832.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Electro hasta $2000"}, {"t": "Adaptador Inalámbrico 2 En 1 Carplay Y Android Auto 11.26", "item": "MLU693704537", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 199.0, "mb": 52.3, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Auriculares In-ear Blancos Ligthing Blanco", "item": "MLU1463818516", "inv": 1.32, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 1.0, "imp": 891.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Centrifuga Secador De Lechuga Frutas Salad Spinner Color Ver", "item": "MLU699363656", "inv": 219.14, "ing": 3422.0, "roas": 15.62, "acos": 6.4, "vt": 3.0, "clics": 42.0, "imp": 3020.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cesto Plegable Para Ropa Sucia Portátil Con Asas Compacto Co", "item": "MLU693750701", "inv": 2073.91, "ing": 4312.0, "roas": 2.08, "acos": 48.1, "vt": 4.0, "clics": 260.0, "imp": 46492.0, "mb": null, "contrib": null, "estado": "Movido", "camp": "Campaña Mercado Libre"}, {"t": "Comedero Y Bebedero 2 En 1 Para Perros Y Gatos - Dispensador", "item": "MLU694199365", "inv": 1639.2, "ing": 16312.5, "roas": 9.95, "acos": 10.05, "vt": 37.0, "clics": 554.0, "imp": 35919.0, "mb": null, "contrib": null, "estado": "Deshabilitado", "camp": "Campaña Mercado Libre"}, {"t": "Guantes Removedores De Pelo Para Mascotas - Pack De 2 Guante", "item": "MLU1412556406", "inv": 367.45, "ing": 3376.5, "roas": 9.19, "acos": 10.88, "vt": 8.0, "clics": 82.0, "imp": 23946.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Magical Debrost Degelo - Bandeja Descongelación Rápida", "item": "MLU653462505", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 729.0, "mb": 42.6, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "item": "MLU884470894", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 207.0, "mb": 41.9, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "item": "MLU884510014", "inv": 0.0, "ing": 0.0, "roas": 0.0, "acos": 0.0, "vt": 0.0, "clics": 0.0, "imp": 269.0, "mb": 41.9, "contrib": 0.0, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Sartén Antiadherente Sartén Para Huevos Sartén Para Panquequ", "item": "MLU1314661544", "inv": 1430.32, "ing": 8261.54, "roas": 5.78, "acos": 17.31, "vt": 14.0, "clics": 318.0, "imp": 84731.0, "mb": null, "contrib": null, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Babero Silicona Hyundai Hy-w003 Varios Colores", "item": "MLU704261762", "inv": 81.28, "ing": 200.0, "roas": 2.46, "acos": 40.64, "vt": 1.0, "clics": 25.0, "imp": 9581.0, "mb": 46.8, "contrib": 12.31, "estado": "Movido", "camp": "Campaña All $600 - $1000"}, {"t": "Gestionador 2.0 Organizador De Cables Beige", "item": "MLU880947316", "inv": 282.98, "ing": 518.7, "roas": 1.83, "acos": 54.56, "vt": 1.0, "clics": 42.0, "imp": 9315.0, "mb": 59.3, "contrib": 24.74, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Dispensador Vmi Para Papel Film Y Aluminio Con Cortador", "item": "MLU699478666", "inv": 158.71, "ing": 493.44, "roas": 3.11, "acos": 32.16, "vt": 1.0, "clics": 33.0, "imp": 8555.0, "mb": 50.0, "contrib": 87.92, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Pelota De Juguete Para Mascotas Interactiva Con Velocidades ", "item": "MLU884379988", "inv": 6.76, "ing": 180.5, "roas": 26.7, "acos": 3.75, "vt": 1.0, "clics": 6.0, "imp": 1341.0, "mb": 55.2, "contrib": 92.95, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Soporte Adhesivo Para Escobas Y Lampazos X 2 Pcs Gris", "item": "MLU694251089", "inv": 34.84, "ing": 250.0, "roas": 7.18, "acos": 13.94, "vt": 1.0, "clics": 25.0, "imp": 2259.0, "mb": 76.3, "contrib": 155.94, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Lámpara Halo Mesa Multitrend Sunset Lamp Elegante Y Moderna ", "item": "MLU880989136", "inv": 227.87, "ing": 814.19, "roas": 3.57, "acos": 27.99, "vt": 2.0, "clics": 82.0, "imp": 19501.0, "mb": 49.3, "contrib": 173.75, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cenicero Para Puerta Del Auto  Resistente Al Viento", "item": "MLU884303380", "inv": 37.18, "ing": 515.0, "roas": 13.85, "acos": 7.22, "vt": 1.0, "clics": 32.0, "imp": 1612.0, "mb": 42.5, "contrib": 181.69, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Dispensador De Agua Automático Usb Recargable Vmi Negro", "item": "MLU699478638", "inv": 166.49, "ing": 855.5, "roas": 5.14, "acos": 19.46, "vt": 3.0, "clics": 56.0, "imp": 16815.0, "mb": 42.5, "contrib": 196.94, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Cama S Para Mascotas Perro Suertudo - Algodón Hidratable Mar", "item": "MLU698226916", "inv": 79.46, "ing": 720.0, "roas": 9.06, "acos": 11.04, "vt": 1.0, "clics": 8.0, "imp": 778.0, "mb": 42.6, "contrib": 227.22, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Teclado Imice Ak-100 Retroiluminado Qwerty Negro", "item": "MLU696045949", "inv": 114.78, "ing": 1500.0, "roas": 13.07, "acos": 7.65, "vt": 1.0, "clics": 23.0, "imp": 1480.0, "mb": 30.0, "contrib": 335.22, "estado": "Deshabilitado", "camp": "Campaña Electro hasta $2000"}, {"t": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca ", "item": "MLU884404890", "inv": 111.1, "ing": 1120.5, "roas": 10.09, "acos": 9.92, "vt": 3.0, "clics": 49.0, "imp": 11899.0, "mb": 55.1, "contrib": 506.84, "estado": "Deshabilitado", "camp": "Campaña Mercado Libre"}, {"t": "Cama Tipo Banana Para Mascota Pequeña Amarillo", "item": "MLU693763467", "inv": 479.56, "ing": 2039.86, "roas": 4.25, "acos": 23.51, "vt": 2.0, "clics": 130.0, "imp": 25850.0, "mb": 52.2, "contrib": 586.13, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Tetera De Vidrio Resistente Al Calor Con Infusor De Té Blanc", "item": "MLU884537514", "inv": 508.4, "ing": 2136.9, "roas": 4.2, "acos": 23.79, "vt": 4.0, "clics": 186.0, "imp": 33622.0, "mb": 55.1, "contrib": 668.18, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "item": "MLU697415242", "inv": 810.1, "ing": 2878.3, "roas": 3.55, "acos": 28.15, "vt": 10.0, "clics": 282.0, "imp": 179757.0, "mb": 55.2, "contrib": 780.14, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Dispensador Y Organizador De Huevos Para Heladera Y Cocina B", "item": "MLU698239606", "inv": 371.45, "ing": 2067.24, "roas": 5.57, "acos": 17.97, "vt": 8.0, "clics": 142.0, "imp": 17283.0, "mb": 57.0, "contrib": 807.44, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Magic Brush Cepillo De Limpieza 5 En 1 Blanco", "item": "MLU884381452", "inv": 659.16, "ing": 2690.32, "roas": 4.08, "acos": 24.5, "vt": 5.0, "clics": 137.0, "imp": 26345.0, "mb": 55.1, "contrib": 822.14, "estado": "Activo", "camp": "Campaña All $600 - $1000"}, {"t": "Calendario Pizarra Magnética Multitrend 21x29,7 Cm Compacta ", "item": "MLU881040054", "inv": 578.71, "ing": 2392.5, "roas": 4.13, "acos": 24.19, "vt": 2.0, "clics": 93.0, "imp": 54751.0, "mb": 65.0, "contrib": 976.93, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Rascador Cama Gato Doble Nivel Infinito Reductor Estrés Marr", "item": "MLU884548334", "inv": 700.77, "ing": 3339.0, "roas": 4.76, "acos": 20.99, "vt": 3.0, "clics": 97.0, "imp": 15428.0, "mb": 55.0, "contrib": 1136.64, "estado": "Deshabilitado", "camp": "Campaña Mercado Libre"}, {"t": "Rascador Sisal Para Gatos Cama Y Juguete De Rascar Para Gato", "item": "MLU884436698", "inv": 897.3, "ing": 3620.0, "roas": 4.03, "acos": 24.79, "vt": 6.0, "clics": 176.0, "imp": 45749.0, "mb": 58.9, "contrib": 1236.5, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Teclado Gamer Imice Gk-700 Retroiluminado Con Apoya Muñeca N", "item": "MLU1461927248", "inv": 830.47, "ing": 10840.0, "roas": 13.05, "acos": 7.66, "vt": 7.0, "clics": 158.0, "imp": 35911.0, "mb": 30.0, "contrib": 2421.53, "estado": "Deshabilitado", "camp": "Campaña Electro hasta $2000"}, {"t": "5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones", "item": "MLU880896958", "inv": 297.25, "ing": 4949.05, "roas": 16.65, "acos": 6.01, "vt": 13.0, "clics": 100.0, "imp": 3932.0, "mb": 74.2, "contrib": 3376.7, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Tapete Sanitario Césped Sintético Para Perros 64x51 Cm Verde", "item": "MLU693763327", "inv": 1623.35, "ing": 10732.48, "roas": 6.61, "acos": 15.13, "vt": 5.0, "clics": 160.0, "imp": 14599.0, "mb": 52.5, "contrib": 4011.0, "estado": "Activo", "camp": "Campaña Mercado Libre"}, {"t": "Lámpara Led Aurora Boreal  Efecto Relajante De Luces Rgb Mar", "item": "MLU882392434", "inv": 2345.28, "ing": 20458.76, "roas": 8.72, "acos": 11.46, "vt": 38.0, "clics": 523.0, "imp": 110181.0, "mb": 54.4, "contrib": 8780.19, "estado": "Deshabilitado", "camp": "Campaña Mercado Libre"}], "ads_tot": {"inv": 25323.97, "ing": 120240.27, "roas": 4.75, "acos": 21.06, "imp": 1640986, "clics": 5319, "ctr": 0.324, "cpc": 4.76, "neg": 53, "conm": 85, "sinventa": 68, "quemado": 5272.16, "contrib": 22369.54, "sinmargen": 14, "inv_sinmargen": 7838.76}, "promos": [{"t": "Potenciá tus ventas", "vig": "Del 3 de agosto del 2026 al 3 de febrero del 2027", "est": "Activa", "comp": "No", "vis": 3031.0, "v": 59.0, "conv": "2,2%", "u": 67.0, "gmv": 48479.02, "tk": 723.57}, {"t": "Gamer Days", "vig": "Del 16 al 30 de Agosto", "est": "Activa", "comp": "No", "vis": 335.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Herramientas y Construc.", "vig": "Del 16 al 30 de Agosto", "est": "Activa", "comp": "No", "vis": 346.0, "v": 10.0, "conv": "2,9%", "u": 10.0, "gmv": 4012.08, "tk": 401.21}, {"t": "Dia del niño", "vig": "Del 20 de Julio al 19 de Agosto", "est": "Finalizada", "comp": "No", "vis": 2854.0, "v": 9.0, "conv": "0,6%", "u": 18.0, "gmv": 5319.0, "tk": 295.5}, {"t": "Relámpagos compartidas", "vig": "Del 22 de Julio al 19 de Agosto", "est": "Finalizada", "comp": "No", "vis": 6.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Oferta relámpago", "vig": "El 19 de Agosto", "est": "Finalizada", "comp": "No", "vis": 28.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Oferta relámpago", "vig": "Del 12 al 13 de Agosto", "est": "Finalizada", "comp": "No", "vis": 70.0, "v": 2.0, "conv": "2,9%", "u": 2.0, "gmv": 1399.68, "tk": 699.84}, {"t": "Oferta relámpago", "vig": "El 10 de Agosto", "est": "Finalizada", "comp": "No", "vis": 306.0, "v": 1.0, "conv": "0,3%", "u": 1.0, "gmv": 113.8, "tk": 113.8}, {"t": "Oferta relámpago", "vig": "Del 6 al 7 de Agosto", "est": "Finalizada", "comp": "No", "vis": 96.0, "v": 3.0, "conv": "3,1%", "u": 3.0, "gmv": 1451.37, "tk": 483.79}, {"t": "Oferta relámpago", "vig": "El 5 de Agosto", "est": "Finalizada", "comp": "No", "vis": 102.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Oferta relámpago", "vig": "Del 4 al 5 de Agosto", "est": "Finalizada", "comp": "No", "vis": 83.0, "v": 2.0, "conv": "2,4%", "u": 2.0, "gmv": 1222.26, "tk": 611.13}, {"t": "Compartidas Iluminacion", "vig": "Del 31 de Julio al 31 de Agosto", "est": "Finalizada", "comp": "No", "vis": 1051.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Nostalgia Fashion-Beauty", "vig": "Del 16 al 25 de Agosto", "est": "Finalizada", "comp": "No", "vis": 4.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Martes de Mascota 25-08", "vig": "Del 24 al 25 de Agosto", "est": "Finalizada", "comp": "No", "vis": 13.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "ELECTROWEEK AGOSTO", "vig": "Del 16 al 23 de Agosto", "est": "Finalizada", "comp": "No", "vis": 295.0, "v": 1.0, "conv": "0,3%", "u": 1.0, "gmv": 280.25, "tk": 280.25}, {"t": "Martes de Mascota", "vig": "Del 17 al 18 de Agosto", "est": "Finalizada", "comp": "No", "vis": 161.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Fecha doble 8/8", "vig": "Del 26 de Julio al 16 de Agosto", "est": "Finalizada", "comp": "No", "vis": 4379.0, "v": 45.0, "conv": "1,2%", "u": 52.0, "gmv": 23875.75, "tk": 459.15}, {"t": "Dia del niño 2026", "vig": "Del 2 al 16 de Agosto", "est": "Finalizada", "comp": "No", "vis": 3920.0, "v": 12.0, "conv": "0,4%", "u": 15.0, "gmv": 7814.7, "tk": 520.98}, {"t": "ofertas por 24hs 8/8", "vig": "Del 7 al 8 de Agosto", "est": "Finalizada", "comp": "No", "vis": 180.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Martes de mascota 04-08", "vig": "Del 3 al 4 de Agosto", "est": "Finalizada", "comp": "No", "vis": 184.0, "v": 2.0, "conv": "1,1%", "u": 2.0, "gmv": 855.0, "tk": 427.5}, {"t": "Potenciá tus ventas", "vig": "Del 28 de Junio al 3 de Agosto", "est": "Finalizada", "comp": "No", "vis": 146.0, "v": 0.0, "conv": "0%", "u": 0.0, "gmv": 0.0, "tk": 0.0}, {"t": "Oferta relámpago", "vig": "Contiene fechas específicas", "est": "no data", "comp": "No", "vis": 440.0, "v": 4.0, "conv": "1,4%", "u": 6.0, "gmv": 2218.02, "tk": 369.67}], "cupones": [{"n": "Nuevos Seguidores", "vig": "24 jul – 24 ago", "est": "Finalizada", "desc": "10% OFF", "aud": "Nuevos seguidores de Mi página", "aplic": 324, "canj": 18, "u": 46, "gmv": 28642.67, "presu": 2853.96, "tk": 1591.26, "adop": "324 nuevos seguidores"}, {"n": "Cupom para carrinhos abandonados", "vig": "13 jul – 11 sep", "est": "Activa", "desc": "5% OFF", "aud": "Todos los compradores", "aplic": 242, "canj": 1, "u": 1, "gmv": 1113.0, "presu": 55.65, "tk": 1113.0, "adop": "0,4% de los carritos se convirtieron en ventas"}, {"n": "PARALOSQUESIGUEN", "vig": "23 ago – 6 sep", "est": "Activa", "desc": "5% OFF", "aud": "Seguidores de Mi página", "aplic": 4, "canj": 0, "u": 0, "gmv": 0, "presu": 0, "tk": 0, "adop": "No aplica"}], "fichas": {"cats": [{"cat": "Lamparas de mesa y escritorio", "pubs": 9, "attrs": 16, "total": 144, "vacios": 98, "compl": 31.9, "faltan": [["Aplicaciones inteligentes compatib", 9], ["Voltaje de la batería", 8], ["Ancho total", 7], ["Diámetro total", 7], ["Altura total", 7], ["Marca\n\n(Si tienes variantes necesi", 6]], "items": ["MLU697415242", "MLU697415242", "MLU697415242", "MLU697415242", "MLU697415242", "MLU697415242", "MLU697415242", "MLU880989136", "MLU882392434"], "skus": ["PHDH0001BALL", "PHDH0001LUNA", "PHDH0001ASTR", "PHDH0001CIER", "PHDH0001GISP", "PHDH0001LOVE", "PHDH0001SATU", "PHDH0005", "PHDH0004"], "u": 68}, {"cat": "Bebederos y comederos para p...", "pubs": 9, "attrs": 29, "total": 261, "vacios": 60, "compl": 77.0, "faltan": [["Voltaje", 9], ["Tipo de pilas", 9], ["Asistentes virtuales compatibles", 9], ["Sistemas operativos compatibles", 9], ["Voltaje de la batería", 9], ["Tipo de pila", 9]], "items": ["MLU884548970", "MLU698291500", "MLU884301986", "MLU884353920", "MLU884470894", "MLU698226720", "MLU884510014", "MLU694199365", "MLU1412556516"], "skus": ["PMCU0003NEGR", "PMCU0001", "PMCU0003VERD", "PMCU0003AZUL", "PMCU0003ROJO", "PMCU0002", "PMCU0003ROSA", "PMCU0004", "PMCU0004"], "u": 59}, {"cat": "Sartenes  woks  planchas y b...", "pubs": 2, "attrs": 21, "total": 42, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU1314661544", "MLU697313474"], "skus": ["PHCO0011", "PHCO0011"], "u": 18}, {"cat": "Hueveras y porta huevos", "pubs": 1, "attrs": 18, "total": 18, "vacios": 1, "compl": 94.4, "faltan": [["Diámetro", 1]], "items": ["MLU698239606"], "skus": ["PHCO0009BLAN"], "u": 9}, {"cat": "Soportes de escobas y escobi...", "pubs": 2, "attrs": 11, "total": 22, "vacios": 1, "compl": 95.5, "faltan": [["Unidades por pack", 1]], "items": ["MLU880896958", "MLU694251089"], "skus": ["PHCO0022", "PHCO0032"], "u": 9}, {"cat": "Cepillos para mascotas", "pubs": 2, "attrs": 13, "total": 26, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU1412556406", "MLU1412556404"], "skus": ["PMOT0006", "PMOT0006"], "u": 8}, {"cat": "Posavasos", "pubs": 2, "attrs": 14, "total": 28, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU694188393", "MLU694198193"], "skus": ["PHCO0029GRIS", "PHCO0029NEGR"], "u": 7}, {"cat": "Teclados para computadoras", "pubs": 2, "attrs": 25, "total": 50, "vacios": 8, "compl": 84.0, "faltan": [["Número de homologación de telecomu", 2], ["Frecuencia de sondeo", 2], ["Altura del teclado", 1], ["Ancho del teclado", 1], ["Profundidad del teclado", 1], ["Largo del cable", 1]], "items": ["MLU1461927248", "MLU696045949"], "skus": ["PTGC0002", "PTGC0001"], "u": 6}, {"cat": "Auriculares", "pubs": 16, "attrs": 16, "total": 256, "vacios": 19, "compl": 92.6, "faltan": [["Color de la luz", 16], ["Modelo alfanumérico\n\n(Si tienes va", 1], ["Con micrófono", 1], ["Con luz led", 1]], "items": ["MLU1461983784", "MLU1457523252", "MLU1461973380", "MLU1461993574", "MLU1463619044", "MLU1463619046", "MLU1463818516", "MLU1463818646", "MLU697097541", "MLU697102201", "MLU697102205", "MLU697203071", "MLU1464673016", "MLU1457549520", "MLU1461981790", "MLU696838583"], "skus": ["PTSV0007NEGR", "PTSV0004", "PTSV0007BLAN", "PTSA0001", "PTSA0004AMAR", "PTSA0004ROSA", "PTSA0003", "PTSA0005", "PTSA0001", "PTSA0002", "PTSA0002", "PTSA0004VERD", "PTSV0002", "PTSV0005", "PTSV0002", "PTSV0001"], "u": 6}, {"cat": "Rascadores para gatos", "pubs": 2, "attrs": 17, "total": 34, "vacios": 1, "compl": 97.1, "faltan": [["Material del tapizado", 1]], "items": ["MLU884436698", "MLU884548334"], "skus": ["PMOT0004", "PMOT0005"], "u": 6}, {"cat": "Tapetes sanitarios para perros", "pubs": 1, "attrs": 15, "total": 15, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU693763327"], "skus": ["PMOT0007"], "u": 6}, {"cat": "Otros", "pubs": 7, "attrs": 9, "total": 63, "vacios": 55, "compl": 12.7, "faltan": [["Color principal", 7], ["Código universal de producto", 6], ["Marca\n\n(Si tienes variantes necesi", 6], ["Modelo\n\n(Si tienes variantes neces", 6], ["Cantidad de piezas", 6], ["Resistencia a la temperatura", 6]], "items": ["MLU696559194", "MLU696559194", "MLU696559194", "MLU696559194", "MLU696559194", "MLU696559194", "MLU696559194"], "skus": ["PHCO0004BLAN", "PHCO0004GROS", "PHCO0004GRCL", "PHCO0004ROSA", "PHCO0004TURQ", "PHCO0004VEAQ", "PHCO0004VIOL"], "u": 5}, {"cat": "Dispensadores de agua", "pubs": 1, "attrs": 21, "total": 21, "vacios": 4, "compl": 81.0, "faltan": [["Temperatura mínima", 1], ["Capacidad de refrigeración", 1], ["Capacidad de calentamiento", 1], ["Capacidad máxima de agua", 1]], "items": ["MLU699478638"], "skus": ["PHCO0001"], "u": 5}, {"cat": "Pizarras y pizarrones", "pubs": 1, "attrs": 11, "total": 11, "vacios": 3, "compl": 72.7, "faltan": [["Número de certificado de seguridad", 1], ["Edad mínima recomendada", 1], ["Edad recomendada", 1]], "items": ["MLU881040054"], "skus": ["PHCO0021"], "u": 4}, {"cat": "Camas para gatos y perros", "pubs": 3, "attrs": 15, "total": 45, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU698226916", "MLU693763467", "MLU699569798"], "skus": ["PMCA0002", "PMCA0003", "PMCA0001"], "u": 4}, {"cat": "Canastos para ropa", "pubs": 2, "attrs": 12, "total": 24, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU693750701", "MLU1396835940"], "skus": ["PHOR0003", "PHOR0003"], "u": 4}, {"cat": "Teteras y calderas", "pubs": 1, "attrs": 14, "total": 14, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU884537514"], "skus": ["PHCO0025"], "u": 4}, {"cat": "Productos para animales y ma...", "pubs": 1, "attrs": 4, "total": 4, "vacios": 1, "compl": 75.0, "faltan": [["Número de registro del MGAP", 1]], "items": ["MLU697287242"], "skus": ["PMOT0001"], "u": 3}, {"cat": "Organizadores de cables", "pubs": 2, "attrs": 13, "total": 26, "vacios": 4, "compl": 84.6, "faltan": [["Cantidad de cables soportados", 2], ["Diámetro", 2]], "items": ["MLU880947316", "MLU880921336"], "skus": ["PHDH0002BEIG", "PHDH0002GRIS"], "u": 3}, {"cat": "Contenedores de alimentos", "pubs": 2, "attrs": 19, "total": 38, "vacios": 1, "compl": 97.4, "faltan": [["Largo", 1]], "items": ["MLU882389536", "MLU1469269370"], "skus": ["PHCO0017", "PHCO0033"], "u": 3}, {"cat": "Saleros y pimenteros", "pubs": 2, "attrs": 15, "total": 30, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU698157303", "MLU1474354232"], "skus": ["PHCO0027", "PHCO0027"], "u": 3}, {"cat": "Papel film", "pubs": 1, "attrs": 8, "total": 8, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU699478666"], "skus": ["PHCO0010"], "u": 3}, {"cat": "Panos de limpieza", "pubs": 5, "attrs": 14, "total": 70, "vacios": 53, "compl": 24.3, "faltan": [["Número de registro de producto del", 5], ["Color principal", 4], ["Marca\n\n(Si tienes variantes necesi", 4], ["Modelo\n\n(Si tienes variantes neces", 4], ["Tipo de paño de limpieza\n\n(Si tien", 4], ["Unidades por envase", 4]], "items": ["MLU698277334", "MLU698277334", "MLU698277334", "MLU698277334", "MLU698277334"], "skus": ["PAAA0001AZUL", "PAAA0001CELE", "PAAA0001MARR", "PAAA0001ROJO", "PAAA0001VERD"], "u": 2}, {"cat": "Centrifugadores de vegetales", "pubs": 4, "attrs": 13, "total": 52, "vacios": 12, "compl": 76.9, "faltan": [["Marca\n\n(Si tienes variantes necesi", 1], ["Modelo\n\n(Si tienes variantes neces", 1], ["Modo de uso", 1], ["Materiales", 1], ["Altura", 1], ["Diámetro", 1]], "items": ["MLU699363656", "MLU696674484", "MLU696674484", "MLU699324588"], "skus": ["PHCO0008", "PHCO0003AZUL", "PHCO0003VERD", "PHCO0008"], "u": 2}, {"cat": "Ceniceros para vehiculos", "pubs": 1, "attrs": 8, "total": 8, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU884303380"], "skus": ["PAAA0003"], "u": 2}, {"cat": "Baberos para bebes", "pubs": 5, "attrs": 19, "total": 95, "vacios": 80, "compl": 15.8, "faltan": [["Color principal", 5], ["Largo", 5], ["Ancho", 5], ["Código universal de producto", 5], ["Marca\n\n(Si tienes variantes necesi", 4], ["Línea\n\n(Si tienes variantes necesi", 4]], "items": ["MLU704261762", "MLU704261762", "MLU704261762", "MLU704261762", "MLU704261762"], "skus": ["PHCO0002TAZA", "PHCO0002DURA", "PHCO0002PAND", "PHCO0002DINO", "PHCO0002LIMO"], "u": 1}, {"cat": "Pelapapas", "pubs": 3, "attrs": 11, "total": 33, "vacios": 12, "compl": 63.6, "faltan": [["Color principal", 2], ["Código universal de producto", 1], ["Marca\n\n(Si tienes variantes necesi", 1], ["Modelo\n\n(Si tienes variantes neces", 1], ["Formato de venta", 1], ["Unidades por pack", 1]], "items": ["MLU645895169", "MLU645895169", "MLU653475387"], "skus": ["PHCO0012VERD", "PHCO0012ROJO", "PHCO0019"], "u": 1}, {"cat": "Procesadoras de alimentos", "pubs": 2, "attrs": 15, "total": 30, "vacios": 9, "compl": 70.0, "faltan": [["Voltaje", 2], ["Potencia", 2], ["Voltaje de la batería", 2], ["Tipo de alimentación\n\n(Si tienes v", 1], ["Capacidad del vaso procesador", 1], ["Capacidad del vaso licuador", 1]], "items": ["MLU694198565", "MLU765363550"], "skus": ["PHCO0030", "PHCO0016VERD"], "u": 1}, {"cat": "Smartwatches", "pubs": 1, "attrs": 30, "total": 30, "vacios": 8, "compl": 73.3, "faltan": [["Material del bisel", 1], ["Número de homologación de telecomu", 1], ["Memoria interna", 1], ["Capacidad total del módulo de memo", 1], ["Profundidad máxima de resistencia ", 1], ["Capacidad de la batería", 1]], "items": ["MLU696031467"], "skus": ["PTOR0001"], "u": 1}, {"cat": "Toallas y toallones de bano", "pubs": 1, "attrs": 17, "total": 17, "vacios": 2, "compl": 88.2, "faltan": [["Toallones por paquete", 1], ["Uso recomendado", 1]], "items": ["MLU698277484"], "skus": ["PAAA0002"], "u": 1}, {"cat": "Loncheras", "pubs": 3, "attrs": 16, "total": 48, "vacios": 2, "compl": 95.8, "faltan": [["Cantidad de recipientes", 2]], "items": ["MLU884521848", "MLU884404888", "MLU884404890"], "skus": ["PHCO0023MARR", "PHCO0023AZUL", "PHCO0023VERD"], "u": 1}, {"cat": "Pelotas de juguete para masc...", "pubs": 3, "attrs": 12, "total": 36, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU884379988", "MLU884431970", "MLU884406046"], "skus": ["PMOT0003ROJO", "PMOT0003AMAR", "PMOT0003VERD"], "u": 1}, {"cat": "Cepillos de limpieza para el...", "pubs": 1, "attrs": 13, "total": 13, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU884381452"], "skus": ["PHCO0024"], "u": 1}, {"cat": "Tazas", "pubs": 3, "attrs": 18, "total": 54, "vacios": 38, "compl": 29.6, "faltan": [["Color principal", 3], ["Personaje", 3], ["Forma de la taza ", 3], ["Diámetro", 3], ["Marca\n\n(Si tienes variantes necesi", 2], ["Fabricante\n\n(Si tienes variantes n", 2]], "items": ["MLU696654652", "MLU696654652", "MLU696654652"], "skus": ["PHCO0013BLAN", "PHCO0013ROSA", "PHCO0013NEGR"], "u": 0}, {"cat": "Mouses para computadoras", "pubs": 1, "attrs": 26, "total": 26, "vacios": 9, "compl": 65.4, "faltan": [["Número de homologación de telecomu", 1], ["Velocidad máxima", 1], ["Largo", 1], ["Ancho", 1], ["Altura", 1], ["Peso", 1]], "items": ["MLU697054175"], "skus": ["PTGM0001"], "u": 0}, {"cat": "Kits de microfonos  transmis...", "pubs": 1, "attrs": 10, "total": 10, "vacios": 3, "compl": 70.0, "faltan": [["Número de homologación de telecomu", 1], ["Rango de frecuencia", 1], ["Tipo de micrófono", 1]], "items": ["MLU693704537"], "skus": ["PAAA0004"], "u": 0}, {"cat": "Cables y adaptadores de datos", "pubs": 2, "attrs": 14, "total": 28, "vacios": 6, "compl": 78.6, "faltan": [["Número de homologación de telecomu", 2], ["Certificaciones del cable", 2], ["Versión thunderbolt", 2]], "items": ["MLU697069325", "MLU697070461"], "skus": ["PTOC0001", "PTOC0002"], "u": 0}, {"cat": "Selladoras de bolsas industr...", "pubs": 2, "attrs": 14, "total": 28, "vacios": 6, "compl": 78.6, "faltan": [["Voltaje", 2], ["Velocidad de sellado", 2], ["Ancho de sellado", 1], ["Potencia", 1]], "items": ["MLU698239338", "MLU926043518"], "skus": ["PHCO0007", "PHCO0007"], "u": 0}, {"cat": "Envases de embalaje", "pubs": 2, "attrs": 15, "total": 30, "vacios": 4, "compl": 86.7, "faltan": [["Profundidad", 2], ["Código universal de producto", 1], ["Color principal", 1]], "items": ["MLU880974754", "MLU1490582682"], "skus": ["PHDH0006", "PHDH0006"], "u": 0}, {"cat": "Bolsas sanitarias para perros", "pubs": 2, "attrs": 8, "total": 16, "vacios": 2, "compl": 87.5, "faltan": [["Código universal de producto", 2]], "items": ["MLU884332644", "MLU884540982"], "skus": ["PMOT0002VERD", "PMOT0002NEGR"], "u": 0}, {"cat": "Cargadores de dispositivos m...", "pubs": 4, "attrs": 17, "total": 68, "vacios": 8, "compl": 88.2, "faltan": [["Tipo de batería", 4], ["Capacidad de la batería", 4]], "items": ["MLU1446860800", "MLU696043935", "MLU696837739", "MLU697068207"], "skus": ["PTOF0002", "PTOF0001", "PTOP0001", "PTOP0002"], "u": 0}, {"cat": "Parlantes", "pubs": 17, "attrs": 34, "total": 578, "vacios": 62, "compl": 89.3, "faltan": [["Número de homologación de telecomu", 17], ["Tipo de pila", 16], ["Código universal de producto", 13], ["Voltaje", 5], ["Autonomía máxima de la batería", 4], ["Color principal", 2]], "items": ["MLU1460733168", "MLU1463618700", "MLU1463618702", "MLU1463618760", "MLU1463631440", "MLU1463631490", "MLU1463631940", "MLU1463818818", "MLU1463822016", "MLU1473847090", "MLU696957597", "MLU696970505", "MLU697098651", "MLU697098655", "MLU697103095", "MLU697113627", "MLU697202851"], "skus": ["PTSP0010", "PTSP0013", "PTSP0013", "PTSP0005", "PTSP0005", "PTSP0004", "PTSP0001", "PTSP0006", "PTSP0007", "PTSP0008", "PTSP0003", "PTSP0010", "PTSP0009BLAN", "PTSP0009BLAN", "PTSP0009CELE", "PTSP0009CELE", "PTSP0004"], "u": 0}, {"cat": "Ralladores de cocina", "pubs": 1, "attrs": 10, "total": 10, "vacios": 1, "compl": 90.0, "faltan": [["Código universal de producto", 1]], "items": ["MLU1315939874"], "skus": ["PHCO0016ROJO"], "u": 0}, {"cat": "Bolsas hermeticas y al vacio", "pubs": 1, "attrs": 11, "total": 11, "vacios": 1, "compl": 90.9, "faltan": [["Código universal de producto", 1]], "items": ["MLU884473292"], "skus": ["PHDH0007"], "u": 0}, {"cat": "Luces de emergencia", "pubs": 1, "attrs": 24, "total": 24, "vacios": 2, "compl": 91.7, "faltan": [["Tiempo de carga de la batería", 1], ["Voltaje de la batería", 1]], "items": ["MLU880989098"], "skus": ["PHDH0003"], "u": 0}, {"cat": "Organizadores de piletas y p...", "pubs": 1, "attrs": 13, "total": 13, "vacios": 1, "compl": 92.3, "faltan": [["Accesorios incluidos", 1]], "items": ["MLU880883814"], "skus": ["PHCO0026"], "u": 0}, {"cat": "Porta especieros", "pubs": 3, "attrs": 14, "total": 42, "vacios": 3, "compl": 92.9, "faltan": [["Capacidad de los frascos para espe", 2], ["Peso", 1]], "items": ["MLU693696315", "MLU653397669", "MLU653462479"], "skus": ["PHCO0031", "PHCO0020", "PHCO0020"], "u": 0}, {"cat": "Organizadores de ropa para r...", "pubs": 2, "attrs": 21, "total": 42, "vacios": 2, "compl": 95.2, "faltan": [["Cantidad de ganchos", 2]], "items": ["MLU1413272322", "MLU1413272340"], "skus": ["PHOR0002S018", "PHOR0002S006"], "u": 0}, {"cat": "Cajas decorativas y organiza...", "pubs": 2, "attrs": 12, "total": 24, "vacios": 1, "compl": 95.8, "faltan": [["Capacidad en peso", 1]], "items": ["MLU693722589", "MLU694198983"], "skus": ["PHOR0004", "PHOR0001"], "u": 0}, {"cat": "Articulos de cocina", "pubs": 1, "attrs": 3, "total": 3, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU653462505"], "skus": ["PHCO0018"], "u": 0}, {"cat": "Organizadores de maquillaje", "pubs": 1, "attrs": 11, "total": 11, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU1412534346"], "skus": ["PHOR0005"], "u": 0}, {"cat": "Molinillos manuales de granos", "pubs": 1, "attrs": 10, "total": 10, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU698212740"], "skus": ["PHCO0005"], "u": 0}, {"cat": "Cajas sanitarias para mascotas", "pubs": 1, "attrs": 11, "total": 11, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU693695781"], "skus": ["PMOT0008"], "u": 0}, {"cat": "Botellas deportivas y de bazar", "pubs": 1, "attrs": 27, "total": 27, "vacios": 0, "compl": 100.0, "faltan": [], "items": ["MLU696679174"], "skus": ["PHCO0006"], "u": 0}], "global": 78.2, "tot_a": 2678, "tot_v": 583, "deadline": ["Hazlo antes del 04 de Septiembre"]}, "envios": {"ag_sem": {"t": 18, "ok": 18, "pct": 100, "exp": "Muy mala, sin destaque", "vent": "semana al 23/08"}, "ag_4s": {"t": 70, "ok": 55, "pct": 78, "exp": "Muy mala, sin destaque", "vent": "26 jul – 23 ago"}, "flex": {"t": 21, "ok": 19, "pct": 90, "exp": "Excelente, con destaque", "vent": "17–23 ago"}, "semanas": [{"s": "27 jul – 2 ago", "ok": 4, "t": 5}, {"s": "3 – 9 ago", "ok": 9, "t": 19}, {"s": "10 – 16 ago", "ok": 18, "t": 19}, {"s": "17 – 23 ago", "ok": 11, "t": 11}]}, "pubs": {"activa": 106, "inactiva": 20, "sinestado": 31, "total": 157, "catalogo": 149, "propias": 8, "sinstock": 14}, "stock_upd": [{"sku": "PHDH0004", "vend": 3, "ant": 0.0, "nuevo": 0, "neg": true, "name": "Lámpara Led Aurora Boreal  Efecto Relajante De Luces Rgb", "notas": "[16/08/26] -17u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi) | [16/08/26] Confirmado por Javi: stock real = 25 (reemplaza cálculo automático). | [19/08/26] -6u vendidas ciclo 17-19/08 (auto, sin confirmar por Javi) | [24/08/26 seg. sesión] -14u vendidas ciclo 20-24/08 (auto, sin confirmar por Javi)"}, {"sku": "PHCO0022", "vend": 3, "ant": 39.0, "nuevo": 36.0, "neg": false, "name": "5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones", "notas": "PACK X5 armado por Multitrend. Costo = USD 0,05 x 5. Piezas compradas 25-C107: 450 (50 + 400). Stock ML 396 packs equivaldria a 1.980 piezas: VERIFICAR, el stock parece cargado en piezas. | [16/08/26] -1u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi) | [24/08/26 seg. sesión] -3u vendidas ciclo 20-24/08 (auto, sin confirmar por Javi)"}, {"sku": "PHCO0011", "vend": 2, "ant": 21.0, "nuevo": 19.0, "neg": false, "name": "Mini Sartén Antiadherente 5 Cm Para Huevos-panqueques", "notas": "[16/08/26] -6u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi) | [24/08/26 seg. sesión] -3u vendidas ciclo 20-24/08 (auto, sin confirmar por Javi)"}, {"sku": "PMCU0004", "vend": 2, "ant": 0.0, "nuevo": 0, "neg": true, "name": "Comedero Y Bebedero 2 En 1 Para Perros Y Gatos - Dispensador", "notas": "[16/08/26] -16u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi) | [16/08/26] Confirmado por Javi: stock real = 25 (reemplaza cálculo automático). | [19/08/26] -8u vendidas ciclo 17-19/08 (auto, sin confirmar por Javi) | [24/08/26 seg. sesión] -15u vendidas ciclo 20-24/08 (auto, sin confirmar por Javi)"}, {"sku": "PMCU0001", "vend": 2, "ant": 146.0, "nuevo": 144.0, "neg": false, "name": "Bebedero/comedero Cuenco Acero Inoxidable 500ml Higiénico", "notas": null}, {"sku": "PHCO0032", "vend": 2, "ant": 23.0, "nuevo": 21.0, "neg": false, "name": "Soporte Adhesivo Para Escobas Y Lampazos X 2 Pcs", "notas": "PACK X2 armado por Multitrend. Costo = USD 0,05 x 2. Comparte ITEM COD 25-C107 con PHCO0022. Stock 50 packs = 100 piezas."}, {"sku": "PHCO0010", "vend": 1, "ant": 129.0, "nuevo": 128.0, "neg": false, "name": "Dispensador Vmi Para Papel Film Y Aluminio Con Cortador", "notas": null}, {"sku": "PMCU0003ROJO", "vend": 1, "ant": 6.0, "nuevo": 5.0, "neg": false, "name": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "notas": "[16/08/26] -2u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi)"}, {"sku": "PMOT0006", "vend": 1, "ant": 42.0, "nuevo": 41.0, "neg": false, "name": "Mxsimedarby 2pzs Guantes Quita Pelo Mascotas Grande Negro", "notas": "[16/08/26] -4u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi) | [24/08/26 seg. sesión] -1u vendidas ciclo 20-24/08 (auto, sin confirmar por Javi)"}, {"sku": "PMOT0004", "vend": 1, "ant": 46.0, "nuevo": 45.0, "neg": false, "name": "Rascador Sisal Para Gatos Cama Y Juguete De Rascar Para Gato", "notas": null}, {"sku": "PHDH0005", "vend": 1, "ant": 191.0, "nuevo": 190.0, "neg": false, "name": "Lámpara Halo Mesa Multitrend Sunset Lamp Elegante Y Moderna", "notas": "[16/08/26] -1u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi) | [19/08/26] -1u vendidas ciclo 17-19/08 (auto, sin confirmar por Javi) | [24/08/26 seg. sesión] -4u vendidas ciclo 20-24/08 (auto, sin confirmar por Javi)"}, {"sku": "PAAA0003", "vend": 1, "ant": 7.0, "nuevo": 6.0, "neg": false, "name": "Cenicero Para Puerta Del Auto  Resistente Al Viento", "notas": "[16/08/26] -1u vendidas ciclo 09-16/08 (auto, sin confirmar por Javi)"}], "quiebre": {"dia": 1062, "sem": 7431, "mes": 31847, "det": [{"sku": "PMCU0004", "n": "Comedero y Bebedero 2 en 1", "u": 49, "r7": 1.57, "mg": 235.96, "perd": 371}, {"sku": "PHDH0004", "n": "Lámpara LED Aurora Boreal", "u": 45, "r7": 1.86, "mg": 371.96, "perd": 691}]}};
+const F0=n=>Math.round(n).toLocaleString('es-UY');
+const F=n=>n.toLocaleString('es-UY',{minimumFractionDigits:0,maximumFractionDigits:0});
+const M=n=>'$'+F(n);
+const E=(t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!==undefined)e.innerHTML=h; return e;};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const tip=document.getElementById('tip');
+function showTip(ev,html){tip.innerHTML=html;tip.style.opacity='1';
+  const r=tip.getBoundingClientRect();let x=ev.clientX+14,y=ev.clientY-10;
+  if(x+r.width>innerWidth-8)x=ev.clientX-r.width-14; if(y<4)y=4;
+  tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.style.opacity='0';}
+function hoverable(el,html){el.addEventListener('mousemove',e=>showTip(e,html));el.addEventListener('mouseleave',hideTip);
+  el.setAttribute('tabindex','0');el.addEventListener('focus',e=>{const b=el.getBoundingClientRect();showTip({clientX:b.left+b.width/2,clientY:b.top},html)});el.addEventListener('blur',hideTip);}
+
+/* ---------- KPIs ---------- */
+document.getElementById('k-contrib').textContent=M(D.pnl.contrib);
+document.getElementById('k-ing').textContent=M(D.pnl.ing);
+document.getElementById('k-neto').textContent=M(D.pnl.total);
+document.getElementById('k-carga').textContent='−'+M(D.pnl.carga);
+
+/* ---------- P&L ---------- */
+(function(){
+  const p=D.pnl;
+  const filas=[['Ingresos por productos',p.ing,'pos'],['Ingresos por envío cobrados',p.ingenv,'pos'],
+    ['Descuentos y bonificaciones ML',p.desc,'pos'],['Comisión ML (cargo por venta)',p.cargo,'neg'],
+    ['Costo fijo por publicación',p.fijo,'neg'],['Costos de envío absorbidos',p.cenv,'neg'],
+    ['Anulaciones y reembolsos',p.anul,'neg'],['Otros ajustes de ML no desglosados',p.resid,'neg'],['Neto liquidado por Mercado Libre',p.total,'sub'],
+    ['Costo de mercadería (COGS)',-p.cogs,'neg'],['Contribución antes de publicidad',p.total-p.cogs,'sub'],
+    ['Inversión en Mercado Ads',-p.ads,'neg'],['Contribución neta del mes',p.contrib,'tot']];
+  const tb=document.getElementById('pnl-tabla');
+  filas.forEach(([l,v,k])=>{
+    const tr=E('tr');
+    const bold=(k==='tot'||k==='sub');
+    tr.innerHTML=`<td style="${bold?'font-weight:700;':''}${k==='tot'?'font-size:15px;':''}${k==='sub'?'border-top:1px solid var(--border-strong);':''}${k==='tot'?'border-top:2px solid var(--mt-green-dark);':''}">${l}</td>
+      <td class="r" style="font-weight:${bold?700:500};${k==='tot'?'font-size:16px;color:var(--mt-green-dark);':''}${k==='neg'?'color:var(--text-secondary);':''}${k==='sub'?'border-top:1px solid var(--border-strong);':''}${k==='tot'?'border-top:2px solid var(--mt-green-dark);':''}">${v<0?'−':''}${M(Math.abs(v))}</td>`;
+    tb.appendChild(tr);
+  });
+  // waterfall
+  const steps=[['Ingresos',p.ing+p.ingenv+p.desc,'base'],['Carga ML',p.cargo+p.fijo+p.cenv+p.anul+p.resid,'d'],
+    ['COGS',-p.cogs,'d'],['Ads',-p.ads,'d'],['Queda',p.contrib,'base']];
+  const W=440,H=260,PL=8,PB=44,PT=14;
+  const max=steps[0][1];
+  const bw=(W-PL*2)/steps.length-14;
+  let cum=0,html=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cascada del resultado de agosto"><g>`;
+  for(let i=0;i<4;i++){const y=PT+(H-PT-PB)*i/3;html+=`<line class="gl" x1="${PL}" y1="${y}" x2="${W-PL}" y2="${y}"/>`;}
+  steps.forEach((s,i)=>{
+    const x=PL+i*((W-PL*2)/steps.length)+7;
+    const sc=v=>(H-PT-PB)*(v/max);
+    let top,h,col;
+    if(s[2]==='base'){top=H-PB-sc(s[1]);h=sc(s[1]);col=i===0?'var(--c2)':'var(--c1)';cum=s[1];}
+    else{const prev=cum;cum=prev+s[1];top=H-PB-sc(prev);h=sc(Math.abs(s[1]));col='var(--c3)';top=H-PB-sc(prev);}
+    html+=`<rect class="wf" data-l="${esc(s[0])}" data-v="${Math.round(s[1])}" x="${x}" y="${top.toFixed(1)}" width="${bw}" height="${Math.max(h,2).toFixed(1)}" rx="4" fill="${col}"/>`;
+    html+=`<text class="axis" x="${x+bw/2}" y="${H-PB+16}" text-anchor="middle">${s[0]}</text>`;
+    html+=`<text class="axis" x="${x+bw/2}" y="${H-PB+30}" text-anchor="middle" font-weight="700" fill="var(--text-secondary)">${s[1]<0?'−':''}${F(Math.abs(s[1])/1000)}k</text>`;
+  });
+  html+='</g></svg>';
+  document.getElementById('waterfall').innerHTML=html;
+  document.querySelectorAll('rect.wf').forEach(r=>hoverable(r,`<b>${r.dataset.l}</b><br>${r.dataset.v<0?'−':''}${M(Math.abs(+r.dataset.v))}`));
+})();
+
+/* ---------- quiebre ---------- */
+document.getElementById('quiebre-cards').innerHTML=D.quiebre.det.map(q=>`
+ <div class="card" style="border-left:4px solid var(--critical)">
+   <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
+     <div><h4 style="font-family:'Outfit';font-size:16px">${q.n}</h4>
+     <span class="mono">${q.sku}</span></div>
+     <span class="pill p-crit"><i class="dot"></i>Inactiva · stock 0</span></div>
+   <div class="grid g3" style="margin-top:14px;gap:10px">
+     <div><div class="tag">Vendidas ago.</div><div class="num" style="font-family:Outfit;font-size:22px;font-weight:700">${q.u}</div></div>
+     <div><div class="tag">Ritmo últ. 7 d</div><div class="num" style="font-family:Outfit;font-size:22px;font-weight:700">${q.r7.toLocaleString('es-UY')}<span style="font-size:12px;color:var(--text-muted)"> u/día</span></div></div>
+     <div><div class="tag">Margen unitario</div><div class="num" style="font-family:Outfit;font-size:22px;font-weight:700">$${F(q.mg)}</div></div>
+   </div>
+   <p style="font-size:13px;color:var(--text-secondary);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+     Cada día sin reponer: <strong style="color:var(--critical)">−$${F(q.perd)}</strong> de contribución estimada.</p>
+ </div>`).join('');
+
+/* ---------- serie diaria ---------- */
+function lineChart(el,serie,key,key2,color,label,fmt){
+  const W=900,H=230,PL=48,PR=12,PT=14,PB=34;
+  const max=Math.max(...serie.map(d=>Math.max(d[key],key2?d[key2]:0)))*1.08;
+  const iw=W-PL-PR,ih=H-PT-PB;
+  const X=i=>PL+iw*i/(serie.length-1), Y=v=>PT+ih-ih*v/max;
+  let g='';
+  for(let i=0;i<=4;i++){const y=PT+ih*i/4,v=max*(1-i/4);
+    g+=`<line class="gl" x1="${PL}" y1="${y.toFixed(1)}" x2="${W-PR}" y2="${y.toFixed(1)}"/>
+        <text class="axis" x="${PL-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${fmt(v)}</text>`;}
+  const pts=serie.map((d,i)=>`${X(i).toFixed(1)},${Y(d[key]).toFixed(1)}`).join(' ');
+  let area=`M${PL},${PT+ih} L`+pts.replace(/ /g,' L')+` L${(W-PR)},${PT+ih} Z`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${g}`;
+  s+=`<path d="${area}" fill="${color}" opacity=".10"/>`;
+  if(key2){const p2=serie.map((d,i)=>`${X(i).toFixed(1)},${Y(d[key2]).toFixed(1)}`).join(' ');
+    s+=`<polyline points="${p2}" fill="none" stroke="var(--text-muted)" stroke-width="2" opacity=".45" stroke-dasharray="4 3"/>`;}
+  s+=`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`;
+  serie.forEach((d,i)=>{
+    if(i===serie.length-1) s+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(d[key]).toFixed(1)}" r="4.5" fill="${color}" stroke="var(--surface)" stroke-width="2"/>`;
+    if(i%3===0||i===serie.length-1) s+=`<text class="axis" x="${X(i).toFixed(1)}" y="${H-PB+16}" text-anchor="middle">${d.f}</text>`;
+    s+=`<rect class="hit" data-i="${i}" x="${(X(i)-iw/serie.length/2).toFixed(1)}" y="${PT}" width="${(iw/serie.length).toFixed(1)}" height="${ih}" fill="transparent"/>`;
+  });
+  s+='</svg>';
+  el.innerHTML=s;
+  el.querySelectorAll('rect.hit').forEach(r=>{const d=serie[+r.dataset.i];
+    hoverable(r,`<b>${d.f}</b><br>Visitas: ${F(d.vt)} (únicos ${F(d.vu)})<br>Ventas: ${d.v} · ${M(d.g)}`);});
+}
+lineChart(document.getElementById('ch-visitas'),D.serie,'vt','vu','var(--c2)','Visitas diarias en agosto',v=>F0(v));
+(function(){
+  const el=document.getElementById('ch-gmv'),serie=D.serie;
+  const W=900,H=200,PL=54,PR=12,PT=14,PB=34;
+  const max=Math.max(...serie.map(d=>d.g))*1.1,iw=W-PL-PR,ih=H-PT-PB;
+  const bw=iw/serie.length-2;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Ventas brutas por día">`;
+  for(let i=0;i<=3;i++){const y=PT+ih*i/3,v=max*(1-i/3);
+    s+=`<line class="gl" x1="${PL}" y1="${y.toFixed(1)}" x2="${W-PR}" y2="${y.toFixed(1)}"/>
+        <text class="axis" x="${PL-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end">$${F0(v/1000)}k</text>`;}
+  serie.forEach((d,i)=>{
+    const x=PL+iw*i/serie.length+1,h=ih*d.g/max;
+    s+=`<rect class="gb" data-i="${i}" x="${x.toFixed(1)}" y="${(PT+ih-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="3" fill="var(--c1)"/>`;
+    if(i%3===0||i===serie.length-1) s+=`<text class="axis" x="${(x+bw/2).toFixed(1)}" y="${H-PB+16}" text-anchor="middle">${d.f}</text>`;});
+  s+='</svg>'; el.innerHTML=s;
+  el.querySelectorAll('rect.gb').forEach(r=>{const d=serie[+r.dataset.i];
+    hoverable(r,`<b>${d.f}</b><br>${M(d.g)} · ${d.v} ventas · ${d.u} unid.`);});
+})();
+document.getElementById('semanas').innerHTML=D.semanas.map((w,i)=>{
+  const base=D.semanas[0].vd,dv=(w.vd/base-1)*100;
+  return `<div class="kpi"><span class="lab">${w.l} · ${w.r}</span>
+   <span class="val num">${w.vd.toLocaleString('es-UY',{maximumFractionDigits:0})}<span style="font-size:13px;color:var(--text-muted);font-weight:500"> vis/día</span></span>
+   <span class="foot">${w.ventas} ventas · ${M(w.gmv)} ${i?`<span class="delta ${dv<-5?'down':dv>5?'up':'flat'}">${dv>0?'+':''}${dv.toLocaleString('es-UY',{minimumFractionDigits:1,maximumFractionDigits:1})}%</span>`:''}</span></div>`;}).join('');
+
+/* ---------- envios ---------- */
+(function(){
+  const e=D.envios;
+  const card=(t,d,sub)=>{const crit=d.pct<90;
+   return `<div class="kpi" style="border-left:4px solid var(--${crit?'critical':'good'})">
+    <span class="lab">${t}</span><span class="val num" style="color:var(--${crit?'critical':'good'})">${d.pct}%</span>
+    <span class="foot">${d.ok} de ${d.t} a tiempo · ${sub}</span>
+    <span class="pill ${crit?'p-crit':'p-good'}" style="margin-top:7px;align-self:flex-start"><i class="dot"></i>${d.exp}</span></div>`;};
+  document.getElementById('env-cards').innerHTML=
+    card('Agencias · última semana',e.ag_sem,e.ag_sem.vent)+
+    card('Agencias · 4 semanas',e.ag_4s,e.ag_4s.vent)+
+    card('Flex · última semana',e.flex,e.flex.vent);
+  const S=e.semanas,W=760,H=190,PL=44,PR=12,PT=14,PB=44,iw=W-PL-PR,ih=H-PT-PB;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumplimiento semanal de despachos en agencias">`;
+  for(let i=0;i<=4;i++){const y=PT+ih*i/4;s+=`<line class="gl" x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}"/><text class="axis" x="${PL-8}" y="${y+3.5}" text-anchor="end">${100-i*25}%</text>`;}
+  const y90=PT+ih*(1-0.9);
+  s+=`<line x1="${PL}" y1="${y90.toFixed(1)}" x2="${W-PR}" y2="${y90.toFixed(1)}" stroke="var(--critical)" stroke-width="2" stroke-dasharray="6 4"/>
+      <text class="axis" x="${PL+4}" y="${(y90-7).toFixed(1)}" text-anchor="start" fill="var(--critical)" font-weight="700">Umbral 90%</text>`;
+  const bw=iw/S.length-26;
+  S.forEach((w,i)=>{const p=w.ok/w.t,x=PL+iw*i/S.length+13,h=ih*p;
+    const col=p>=0.9?'var(--c1)':'var(--c3)';
+    s+=`<rect class="eb" data-i="${i}" x="${x.toFixed(1)}" y="${(PT+ih-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="${col}"/>
+        <text class="axis" x="${(x+bw/2).toFixed(1)}" y="${(PT+ih-h+(h>ih-18?16:-8)).toFixed(1)}" text-anchor="middle" font-weight="700" fill="${h>ih-18?'#fff':'var(--text-primary)'}">${Math.round(p*100)}%</text>
+        <text class="axis" x="${(x+bw/2).toFixed(1)}" y="${H-PB+17}" text-anchor="middle">${w.s}</text>
+        <text class="axis" x="${(x+bw/2).toFixed(1)}" y="${H-PB+30}" text-anchor="middle" opacity=".8">${w.ok}/${w.t}</text>`;});
+  s+='</svg>';
+  document.getElementById('ch-envios').innerHTML=s;
+  document.querySelectorAll('rect.eb').forEach(r=>{const w=S[+r.dataset.i];
+    hoverable(r,`<b>${w.s}</b><br>${w.ok} de ${w.t} despachos a tiempo<br>${Math.round(w.ok/w.t*100)}%`);});
+  const tot=D.canales.reduce((a,c)=>a+c.e,0);
+  document.getElementById('canales').innerHTML=D.canales.map(c=>
+   `<tr><td>${c.c}</td><td class="r num">${c.e}</td><td class="r num" style="white-space:nowrap">${(c.e/tot*100).toLocaleString('es-UY',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td>
+    <td class="r num">${c.u}</td><td class="r num"><strong>${(c.u/c.e).toLocaleString('es-UY',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></td><td class="r num">${c.p}</td></tr>`).join('')
+   +`<tr style="border-top:1px solid var(--border-strong)"><td><strong>Total</strong></td><td class="r num"><strong>${tot}</strong></td><td class="r num" style="white-space:nowrap">100%</td><td class="r num"><strong>269</strong></td><td class="r num"><strong>1,33</strong></td><td class="r num"><strong>21</strong></td></tr>`
+   +`<tr><td style="color:var(--text-muted)">Cancelados (no despachados)</td><td class="r num" style="color:var(--text-muted)">6</td><td class="r">—</td><td class="r num" style="color:var(--text-muted)">9</td><td class="r">—</td><td class="r num" style="color:var(--text-muted)">2</td></tr>`;
+})();
+/* ---------- ranking ---------- */
+(function(){
+  const tb=document.getElementById('tb-sku'),q=document.getElementById('q'),
+        fc=document.getElementById('f-clase'),fe=document.getElementById('f-estado'),cu=document.getElementById('cuenta');
+  [...new Set(D.sku.map(s=>s.clase))].sort().forEach(c=>fc.appendChild(E('option',null,c)).value=c);
+  [...new Set(D.sku.map(s=>s.estado_ml).filter(Boolean))].sort().forEach(c=>fe.appendChild(E('option',null,c)).value=c);
+  let sk='u',sd='desc';
+  const cls={'Estrella':'p-good','Rentable y escalable':'p-good','Riesgo de quiebre':'p-crit',
+    'Alto volumen / bajo margen':'p-warn','Baja rotación / investigar':'p-info','Estable':'p-mute'};
+  function render(){
+    const norm=x=>String(x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const t=norm(q.value.trim()),c=fc.value,e=fe.value;
+    let r=D.sku.filter(s=>(!c||s.clase===c)&&(!e||s.estado_ml===e)&&
+      (!t||norm(s.sku+' '+(s.nombre||'')+' '+(s.cat||'')).includes(t)));
+    r.sort((a,b)=>{let x=a[sk],y=b[sk];
+      if(x==null)x=(typeof y==='number')?-Infinity:''; if(y==null)y=(typeof x==='number')?-Infinity:'';
+      const v=(typeof x==='number'&&typeof y==='number')?x-y:String(x).localeCompare(String(y),'es');
+      return sd==='asc'?v:-v;});
+    cu.textContent=`${r.length} de ${D.sku.length} SKU · ${r.reduce((a,s)=>a+s.u,0)} unidades`+((!t&&!c&&!e)?' (+2 sin SKU cargado = 269 netas)':'');
+    tb.innerHTML=r.map(s=>{
+      const link=s.enlace&&s.enlace!=='None'?`<a href="${esc(s.enlace)}" target="_blank" rel="noopener">${esc(s.nombre)}</a>`:esc(s.nombre);
+      const est=s.estado_ml||'—';
+      const ep=est==='Activa'?'p-good':est==='Inactiva'?'p-crit':'p-mute';
+      const stk=s.stock==null?'—':s.stock;
+      return `<tr><td class="mono">${esc(s.sku)}${s.catalogo?' <span class="pill p-mute" style="font-size:9.5px;padding:1px 6px">cat</span>':''}</td>
+      <td style="min-width:230px">${link}<div class="mono" style="font-size:11.5px;color:var(--text-muted)">${esc(s.cat||'')}</div></td>
+      <td class="r num"><strong>${s.u}</strong></td>
+      <td class="r num">${M(s.ing)}</td>
+      <td class="r num" style="color:${s.contrib==null?'var(--text-muted)':s.contrib>0?'var(--good)':'var(--critical)'}">${s.contrib==null?'—':M(s.contrib)}</td>
+      <td class="r num">${s['mb%']==null?'—':s['mb%'].toLocaleString('es-UY',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}</td>
+      <td class="r num">${s.ads_pct}%</td>
+      <td class="r num" style="${s.stock!=null&&s.stock<=0?'color:var(--critical);font-weight:700':''}">${stk}</td>
+      <td><span class="pill ${ep}"><i class="dot"></i>${esc(est)}</span></td>
+      <td><span class="pill ${cls[s.clase]||'p-mute'}">${esc(s.clase)}</span></td></tr>`;}).join('');
+  }
+  document.querySelectorAll('#t-sku th.s').forEach(th=>{
+    th.setAttribute('role','button'); th.setAttribute('tabindex','0');
+    const go=()=>{const k=th.dataset.k;
+      if(sk===k)sd=sd==='asc'?'desc':'asc'; else{sk=k;sd=(k==='sku'||k==='nombre'||k==='clase'||k==='estado_ml')?'asc':'desc';}
+      document.querySelectorAll('#t-sku th.s').forEach(o=>o.removeAttribute('data-dir'));
+      th.dataset.dir=sd; render();};
+    th.addEventListener('click',go);
+    th.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();go();}});
+  });
+  [q,fc,fe].forEach(el=>el.addEventListener('input',render));
+  document.querySelector('#t-sku th[data-k="u"]').dataset.dir='desc';
+  render();
+})();
+
+/* ---------- ads ---------- */
+(function(){
+  const sinv=D.ads.filter(a=>a.vt===0).sort((a,b)=>b.inv-a.inv).slice(0,8);
+  document.getElementById('ads-mal').innerHTML=sinv.map(a=>
+   `<tr><td style="max-width:250px">${esc(a.t)}</td><td class="r num" style="color:var(--critical);font-weight:600">${M(a.inv)}</td><td class="r num">${a.clics}</td></tr>`).join('');
+  const bien=D.ads.filter(a=>a.contrib!=null).sort((a,b)=>b.contrib-a.contrib).slice(0,8);
+  document.getElementById('ads-bien').innerHTML=bien.map(a=>
+   `<tr><td style="max-width:250px">${esc(a.t)}${a.estado==='Deshabilitado'?' <span class="pill p-crit" style="font-size:9.5px;padding:1px 6px">sin stock</span>':''}</td>
+    <td class="r num" style="color:var(--good);font-weight:600">+${M(a.contrib)}</td><td class="r num">${a.roas.toLocaleString('es-UY',{minimumFractionDigits:1,maximumFractionDigits:1})}×</td></tr>`).join('');
+})();
+
+/* ---------- promos ---------- */
+document.getElementById('tb-promos').innerHTML=D.promos.filter(p=>p.vis>0).sort((a,b)=>b.gmv-a.gmv).map(p=>{
+  const act=String(p.est).toLowerCase()==='activa';
+  return `<tr><td><strong>${esc(p.t)}</strong></td><td class="mono" style="font-size:12px">${esc(String(p.vig).replace(/^Del /,''))}</td>
+   <td><span class="pill ${act?'p-good':'p-mute'}">${esc(p.est)}</span></td>
+   <td class="r num">${F(p.vis)}</td><td class="r num">${p.u}</td><td class="r num">${esc(p.conv)}</td>
+   <td class="r num" style="${p.gmv>10000?'font-weight:700':''}">${M(p.gmv)}</td></tr>`;}).join('');
+document.getElementById('cupones').innerHTML=D.cupones.map(c=>{
+  const act=c.est==='Activa',bien=c.u>0;
+  return `<div class="card" style="border-left:4px solid var(--${bien?'good':act?'warning':'text-muted'})">
+   <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap">
+     <h4 style="font-family:'Outfit';font-size:15px">${esc(c.n)}</h4>
+     <span class="pill ${act?'p-good':'p-mute'}">${esc(c.est)}</span></div>
+   <p class="mono" style="font-size:12px;margin-top:3px">${esc(c.desc)} · ${esc(c.vig)}</p>
+   <p style="font-size:12.5px;color:var(--text-muted);margin-top:2px">${esc(c.aud)}</p>
+   <div class="grid g3" style="margin-top:13px;gap:8px">
+     <div><div class="tag">Aplicados</div><div class="num" style="font-family:Outfit;font-size:19px;font-weight:700">${c.aplic}</div></div>
+     <div><div class="tag">Canjeados</div><div class="num" style="font-family:Outfit;font-size:19px;font-weight:700;color:var(--${c.canj?'good':'critical'})">${c.canj}</div></div>
+     <div><div class="tag">Unidades</div><div class="num" style="font-family:Outfit;font-size:19px;font-weight:700">${c.u}</div></div>
+   </div>
+   <p style="font-size:12.5px;color:var(--text-secondary);margin-top:12px;padding-top:11px;border-top:1px solid var(--border)">
+     Ventas brutas <strong>${M(c.gmv)}</strong>${c.presu?` · descuento absorbido <strong>${M(c.presu)}</strong> (${(c.presu/c.gmv*100).toLocaleString('es-UY',{minimumFractionDigits:1,maximumFractionDigits:1})}%)`:''}</p>
+   <p style="font-size:12px;color:var(--text-muted);margin-top:5px">Adopción: ${esc(c.adop)}</p></div>`;}).join('');
+
+/* ---------- fichas ---------- */
+(function(){
+  const con=D.fichas.cats.filter(c=>c.u>0).sort((a,b)=>b.u-a.u);
+  const sin=D.fichas.cats.filter(c=>c.u===0).sort((a,b)=>a.compl-b.compl).slice(0,6);
+  const row=c=>{const col=c.compl>=90?'var(--good)':c.compl>=60?'var(--warning)':'var(--critical)';
+   return `<tr><td>${esc(c.cat)}</td><td class="r num">${c.pubs}</td>
+    <td class="r num" style="${c.u?'font-weight:700':'color:var(--text-muted)'}">${c.u||'—'}</td>
+    <td class="r num" style="color:${col};font-weight:700">${c.compl.toLocaleString('es-UY',{minimumFractionDigits:1,maximumFractionDigits:1})}%</td>
+    <td><div class="bar"><i style="width:${c.compl}%;background:${col}"></i></div></td>
+    <td class="r num">${c.vacios}</td></tr>`;};
+  document.getElementById('tb-fichas').innerHTML=con.map(row).join('')
+   +`<tr><td colspan="6" style="background:var(--surface-2);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);font-family:Outfit;font-weight:700">Peores categorías sin ventas en el mes</td></tr>`
+   +sin.map(row).join('');
+})();
+
+/* ---------- inactivas ---------- */
+(function(){
+  const m=new Map(D.sku.map(s=>[s.sku,s]));
+  const rows=D.sku.filter(s=>s.estado_ml==='Inactiva'||(s.stock!=null&&s.stock<=0)).sort((a,b)=>b.u-a.u);
+  document.getElementById('tb-inact').innerHTML=rows.map(s=>
+   `<tr><td class="mono">${esc(s.sku)}</td><td>${esc(s.nombre)}</td>
+    <td class="r num" style="font-weight:700">${s.u}</td>
+    <td class="r num" style="${s.stock_ml===0?'color:var(--critical);font-weight:700':''}">${s.stock_ml==null?'—':s.stock_ml}</td>
+    <td><span class="pill ${s.estado_ml==='Activa'?'p-good':'p-crit'}"><i class="dot"></i>${esc(s.estado_ml)}</span></td></tr>`).join('');
+})();
+
+/* ---------- stock ---------- */
+document.getElementById('tb-stock').innerHTML=D.stock_upd.sort((a,b)=>b.vend-a.vend).map(s=>
+ `<tr><td class="mono">${esc(s.sku)}</td><td>${esc(s.name)}</td>
+  <td class="r num">${s.ant}</td><td class="r num">${s.vend}</td>
+  <td class="r num" style="${s.neg?'color:var(--critical);font-weight:700':''}">${s.nuevo}${s.neg?' <span class="pill p-crit" style="font-size:9.5px;padding:1px 6px">déficit</span>':''}</td></tr>`).join('');
+
+/* ---------- acciones ---------- */
+const ACC={alta:[
+ ['Reponé PMCU0004 y PHDH0004, y reactivá las dos publicaciones el mismo día que entre el stock.',
+  '94 unidades y $49.136 del mes salieron de esos dos. Cada día pausados cuesta ~$1.062 de contribución estimada.',
+  'Las dos publicaciones figuran Activas con stock cargado en el depósito de ML, y los anuncios de Ads vuelven de «Deshabilitado» a «Activo».'],
+ ['Pausá el anuncio de «Caja de Arena Inteligente» en Mercado Ads.',
+  '$1.865,60 este mes con 93 clics y 0 ventas. Tercer mes seguido, ~$5.615 acumulados sin una sola venta.',
+  'El anuncio figura pausado y esa inversión aparece redistribuida o retirada en el próximo reporte por anuncios.'],
+ ['Confirmá el stock físico real de PMCU0004, PHDH0004 y PTGC0002.',
+  'Los tres vendieron con el maestro y el depósito de ML en 0. PMCU0004 vendió 2 unidades de más y PHDH0004, 3.',
+  'Los tres tienen un número de stock confirmado por vos en el maestro, y si es 0 la publicación queda pausada a propósito, no por agotamiento.'],
+ ['Sostené el despacho diario antes de las 17:15 hasta el 7 de septiembre.',
+  'Agencias ya está en 100% esta semana, pero el promedio de 4 semanas sigue en 78% arrastrando la semana del 3 al 9 de agosto. La exposición está penalizada hasta que esa semana salga de la ventana.',
+  'El reporte de agencias muestra ≥90% en las últimas 4 semanas y la exposición deja de decir «Muy mala, sin destaque».'],
+ ['Reemplazá el cupón «PARALOSQUESIGUEN» por una copia exacta de «Nuevos Seguidores».',
+  'El que venció generó 46 unidades y $28.643 con 10% OFF y mínimo $1.000. El nuevo cambió descuento, mínimo y audiencia a la vez: 4 aplicados, 0 canjeados en 5 días.',
+  'Hay un cupón activo de 10% OFF con mínimo $1.000 para nuevos seguidores, y a los 7 días tiene canjes > 0.']],
+media:[
+ ['Decidí cuál de las dos publicaciones es la principal en los 7 SKU con ventas cruzadas.',
+  '18 SKU tienen publicación duplicada de catálogo. En 7, las ventas del mes entraron por la que el maestro no enlaza — incluido PMCU0004, el producto más vendido del mes.',
+  'Cada uno de esos 7 SKU tiene en el maestro el ITEM_ID de la publicación por la que realmente vende, o está confirmado que las dos deben quedar activas y por qué.'],
+ ['Arreglá la publicación del Frasco Flip Separador antes de volver a publicitarla.',
+  '138 clics y 0 ventas con $981 invertidos. Con ese volumen de clics el problema no es la puja: es precio, fotos, título o ficha.',
+  'La publicación tiene ficha completa y foto principal nueva, y en el siguiente ciclo la conversión del anuncio es > 0.'],
+ ['Completá los 98 atributos vacíos de «Lámparas de mesa y escritorio».',
+  'Es la categoría #1 del mes (68 unidades) y la peor con ventas: 31,9% de completitud. 149 de 157 publicaciones son de catálogo, donde los atributos deciden la caja de compra.',
+  'Lámparas pasa de 90% de completitud. No hace falta llegar al 100% del catálogo — la meta son Lámparas y Bebederos.'],
+ ['Revisá los 53 anuncios con contribución neta negativa.',
+  '−$5.230 en el mes. Tercer mes con el mismo 62%. La cuenta cierra positiva solo porque unos pocos anuncios muy rentables la sostienen.',
+  'Cada anuncio con contribución < 0 y > $100 de inversión está pausado, con puja bajada, o con su margen cargado en el maestro si faltaba.'],
+ ['Cargá el margen de los 14 anuncios sin costo en el maestro.',
+  '$7.838,76 de inversión no se puede evaluar porque esos SKU no tienen costo cargado. Es el 31% de la inversión del mes a ciegas.',
+  'Los 14 tienen «Costo UYU» y «Margen bruto %» en el maestro, y el próximo cierre evalúa el 100% de la inversión.'],
+ ['Definí si PHDH0006 son 100 o 300 packs.',
+  'El maestro dice 300 y ML dice 100 en una publicación y 200 en otra. La nota del propio maestro ya sospechaba que 200 packs eran en realidad 400 piezas.',
+  'El maestro tiene un solo número confirmado y la nota de duda se borra.'],
+ ['Subí el reporte de evolución de negocio el próximo ciclo.',
+  'Es el único habitual que no llegó. Sin él no hay corte por rango de precios ni por tipo de comprador — este mes no se pudo medir qué proporción de compradores fue nueva.',
+  'El archivo está en el próximo lote y el panel vuelve a mostrar el % de compradores nuevos.']],
+inv:[
+ ['¿La caída de 35,5% en visitas es exposición penalizada o pausa de publicaciones?',
+  'Las dos cosas pasaron en la misma ventana, así que la correlación no alcanza. Hoy Ads explica el 66% de las unidades, lo que enmascara cualquier caída orgánica.',
+  'Hay un reporte de rendimiento de publicaciones con ventana nueva que permita aislar las visitas de PMCU0004 y PHDH0004 del resto del catálogo.'],
+ ['¿Cuánto del cupón «Nuevos Seguidores» fue incremental?',
+  '46 unidades y $28.643 brutos, pero no se sabe cuántas habrían pasado igual. Pendiente desde el ciclo anterior, sin dato nuevo.',
+  'Hay una ventana con el cupón apagado (la actual, desde el 24/08) comparable contra una con el cupón activo, a igual nivel de inversión en Ads.'],
+ ['¿«Potenciá tus ventas» es campaña o descuento permanente del club de ML?',
+  '$48.479 en ventas brutas, el monto más alto de todas las promociones, con vigencia de 6 meses (3/08/2026 al 3/02/2027). Abierto hace cuatro ciclos.',
+  'Está confirmado qué es, y se decide si se sigue reportando junto a las promociones puntuales o aparte.'],
+ ['Corregí el toolkit <code>mt</code> antes de migrar la skill a v6.',
+  'La corrida en paralelo de este cierre encontró que cuenta como vendidos los paquetes cancelados enteros: +5 unidades netas, +2 envíos y ~$600 de ingresos de más.',
+  '<code>mt ventas</code> devuelve 269 unidades netas y 202 envíos sobre este mismo archivo, y ahí sí se migra la skill.'],
+ ['¿Conviene empujar Flex en el checkout para pedidos grandes?',
+  'Cuarto ciclo seguido con correo concentrando los pedidos más grandes: 1,53 unidades por envío contra 1,25 de Flex, y 11 de 21 paquetes multiproducto. Sigue siendo una inferencia del mix.',
+  'Está claro por qué el comprador elige correo para pedidos grandes (costo, cobertura o preferencia) y se decide si se cambia algo.'],
+ ['¿Por qué el cupón de carritos abandonados convierte al 0,4%?',
+  '242 aplicaciones y 1 solo canje. Costó $55,65 y trajo $1.113, así que no molesta — pero el 5% OFF con mínimo $800 no está moviendo a nadie a volver.',
+  'Se probó una variante (mayor descuento o menor mínimo) durante 3 semanas y se comparó la adopción contra el 0,4% actual.']]};
+Object.entries(ACC).forEach(([k,v])=>{
+  document.getElementById('acc-'+k).innerHTML=v.map(([t,w,d])=>
+   `<div class="act ${k}"><h4>${t}</h4>
+     <div class="why"><span class="k">Por qué</span><span>${w}</span></div>
+     <div class="done"><span class="k">Listo cuando</span><span>${d}</span></div></div>`).join('');
+});
+
+/* ---------- archivos ---------- */
+const ARCH=[
+ ['20260828_Ventas_UY_…_1103hs.xlsx','Ventas UY (Mercado Libre y Shops)','1–27 ago (corte 28/08 11:03 hs)','procesar'],
+ ['Reporte_desempeño_producto_2026_08_01–28.xlsx','Desempeño de producto (serie diaria a nivel cuenta)','1–28 ago','procesar'],
+ ['reportpads_report…514714.xlsx','Mercado Ads — reporte por anuncios','1–27 ago','procesar'],
+ ['reportsales_report…532210.xlsx','Mercado Ads — ventas por publicidad','1–27 ago','procesar'],
+ ['reportcampaigns_report…547900.xlsx','Mercado Ads — reporte por campañas','1–27 ago','procesar'],
+ ['reportcampaigns_report…563365.xlsx','Mercado Ads — por campañas (byte-idéntico al anterior)','1–27 ago','no aplica — duplicado exacto, mismo MD5'],
+ ['reportplacement_report_campaign…588069.xlsx','Mercado Ads — campañas por espacio publicitario','1–27 ago','referencia'],
+ ['Reporte_rendimiento_promociones_2026_08_28.xlsx','Rendimiento de promociones','vigencias variables','procesar'],
+ ['Reporte_rendimiento_cupones_2026_08_28.xlsx','Rendimiento de cupones','vigencias variables','procesar'],
+ ['Publicaciones2026_08_28_11_05.xlsx','Publicaciones (SKU, stock, precio, estado)','foto 28/08 11:05 hs','procesar'],
+ ['Fichas_tecnicas2026_08_28_11_07.xlsx','Fichas técnicas (54 categorías, 150 pubs)','foto 28/08 11:07 hs','procesar'],
+ ['reporte_de_envios_20260824.xlsx','Envíos en agencias de Mercado Libre','semana al 23/08 · 4 sem. 26 jul–23 ago','estado de cuenta'],
+ ['reporte_de_envios_flex_20260824.xlsx','Envíos Flex','17–23 ago','estado de cuenta — mismo archivo del ciclo 24/08'],
+ ['(no llegó)','Reporte de evolución de negocio','—','faltante — dato no estimado']];
+document.getElementById('tb-arch').innerHTML=ARCH.map(([a,t,p,d])=>{
+  const k=d.startsWith('procesar')?'p-good':d.startsWith('referencia')?'p-info':d.startsWith('estado')?'p-info':d.startsWith('faltante')?'p-crit':'p-warn';
+  return `<tr><td class="mono" style="font-size:12px">${esc(a)}</td><td>${esc(t)}</td>
+   <td class="mono" style="font-size:12px">${esc(p)}</td><td><span class="pill ${k}">${esc(d)}</span></td></tr>`;}).join('');
+</script>
+</body>
+</html>

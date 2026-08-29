@@ -1,0 +1,199 @@
+{
+  "meta": {
+    "actualizado": "2026-08-29",
+    "moneda": "UYU",
+    "fuente": "Reportes exportados de Mercado Libre UY, cruzados con el maestro STOCK_MT_FINAL",
+    "nota": "Cada ciclo publica el período tal como lo entrega Mercado Libre. Algunos vienen recortados al ciclo y otros mes a la fecha: la columna Ventana lo indica y las cifras de ventanas distintas no se suman entre si."
+  },
+  "meses": [
+    {
+      "id": "2026-08",
+      "nombre": "Agosto",
+      "anio": 2026,
+      "slug": "2026-08",
+      "estado": "cerrado",
+      "ventana": "1–27 ago 2026",
+      "aviso": "El cierre se corrió el 28/08 con datos hasta el 27 inclusive. Los últimos días del mes no están incluidos.",
+      "resumen": {
+        "unidades": 269,
+        "ingresos_productos": 153158.93,
+        "neto_liquidado": 132164.98,
+        "contribucion_neta": 56762.05,
+        "contribucion_pct": 37.1,
+        "carga_ml_pct": 25.3,
+        "roas": 4.75,
+        "acos": 21.06,
+        "inversion_ads": 25323.97,
+        "envios": 202
+      },
+      "titulares": [
+        "Contribución neta del mes $56.762 (37,1% de los ingresos). Primer mes con P&L real, no estimado.",
+        "Los dos productos estrella (PMCU0004 y PHDH0004) terminaron el mes en stock 0 y publicación inactiva: 35% de las unidades y 32% de la facturación.",
+        "53 de 85 anuncios con margen conocido dan contribución negativa. Tercer mes con el mismo patrón.",
+        "Reputación en agencias: la semana al 23/08 cerró 100%, pero el promedio de 4 semanas sigue en 78% por la semana del 3 al 9 de agosto."
+      ]
+    }
+  ],
+  "ciclos": [
+    {
+      "id": "2026-08-15",
+      "mes": "2026-08",
+      "fecha": "2026-08-15",
+      "titulo": "Primer cruce de Mercado Ads por publicación",
+      "tipo": "reportes",
+      "periodo": "31 jul – 15 ago 2026",
+      "ventana": "ciclo",
+      "kpis": {
+        "ventas": 102595,
+        "ventas_concepto": "Ventas brutas (reporte Evolución de negocio)",
+        "unidades": 178,
+        "unidades_concepto": "brutas",
+        "visitas": 5564,
+        "conversion": 2.73,
+        "ticket": 675,
+        "roas": 4.17,
+        "acos": 23.95,
+        "inversion_ads": 19254.58
+      },
+      "hallazgos": [
+        "ROAS 4,17× a nivel cuenta, pero 51 de 84 anuncios con margen conocido dan contribución neta negativa.",
+        "55 de 96 anuncios sin una sola venta atribuida: $3.703 (19,2% de la inversión)."
+      ],
+      "snapshot": null
+    },
+    {
+      "id": "2026-08-16",
+      "mes": "2026-08",
+      "fecha": "2026-08-16",
+      "titulo": "Riesgo de quiebre y backlog de despachos",
+      "tipo": "reportes",
+      "periodo": "9 – 16 ago 2026",
+      "ventana": "ciclo",
+      "kpis": {
+        "ventas": 54282,
+        "ventas_concepto": "Ventas brutas (reporte Evolución de negocio)",
+        "unidades": 93,
+        "unidades_concepto": "netas (99 brutas − 6 canceladas)",
+        "visitas": 2826,
+        "conversion": 2.87,
+        "ticket": 670
+      },
+      "hallazgos": [
+        "20 ventas sin despachar, algunas con 7 días de atraso.",
+        "5 SKU en riesgo de quiebre; stock confirmado a mano con Javi."
+      ],
+      "snapshot": null
+    },
+    {
+      "id": "2026-08-17",
+      "mes": "2026-08",
+      "fecha": "2026-08-17",
+      "titulo": "Se incorporan envíos y fichas técnicas al panel",
+      "tipo": "proceso",
+      "periodo": "sin reportes nuevos",
+      "ventana": "—",
+      "kpis": {},
+      "hallazgos": [
+        "Dos tipos de reporte se venían perdiendo: envíos y fichas técnicas. Se agregó un inventario de archivos bloqueante.",
+        "Resuelta la discrepancia 99 vs 93 unidades: era un error propio de parseo de paquetes multiproducto, no de Mercado Libre."
+      ],
+      "snapshot": null
+    },
+    {
+      "id": "2026-08-19",
+      "mes": "2026-08",
+      "fecha": "2026-08-19",
+      "titulo": "Caída de reputación en agencias",
+      "tipo": "reportes",
+      "periodo": "1 – 19 ago 2026",
+      "ventana": "mes a la fecha",
+      "kpis": {
+        "unidades": 194,
+        "unidades_concepto": "netas",
+        "envios": 149,
+        "fichas_tecnicas": 68.0
+      },
+      "hallazgos": [
+        "Agencias 55% en la semana y 73% en 4 semanas: exposición «muy mala, sin destaque».",
+        "Los 9 incumplimientos salieron en un único lote el 10/08 a las 19:35 hs.",
+        "«Caja De Arena Inteligente» acumula ~$3.750 en dos ciclos sin una sola venta."
+      ],
+      "snapshot": null
+    },
+    {
+      "id": "2026-08-24a",
+      "mes": "2026-08",
+      "fecha": "2026-08-24",
+      "titulo": "Cierre del tema SKU y toolkit mt",
+      "tipo": "proceso",
+      "periodo": "sin reportes nuevos",
+      "ventana": "—",
+      "kpis": {},
+      "hallazgos": [
+        "Última venta con SKU mal cargado: 12/08/2026. Tema cerrado.",
+        "Tecnología: 38 publicaciones activas sobre 108 unidades de stock."
+      ],
+      "snapshot": null
+    },
+    {
+      "id": "2026-08-24",
+      "mes": "2026-08",
+      "fecha": "2026-08-24",
+      "titulo": "Ventas UY en dos entregas, stock recalculado",
+      "tipo": "reportes",
+      "periodo": "1 – 24 ago 2026",
+      "ventana": "mes a la fecha",
+      "corte": "24/08 20:08 hs",
+      "archivos": 9,
+      "kpis": {
+        "ventas": 148400,
+        "ventas_concepto": "Ventas brutas (reporte Evolución de negocio)",
+        "unidades": 249,
+        "unidades_concepto": "netas (258 brutas − 9 canceladas)",
+        "visitas": 8078,
+        "conversion": 2.66,
+        "ticket": 690,
+        "envios": 187,
+        "flex_a_tiempo": 90
+      },
+      "hallazgos": [
+        "El export de Ventas UY del 19/08 estaba cortado a las 18:05 hs: se perdieron ventas tardías. Regla nueva: revisar siempre la hora de corte.",
+        "PMCU0004 quedó en 2 unidades y PHDH0004 en 5. Los dos de mayor margen del catálogo.",
+        "PTGC0002 vendió 2 unidades con stock 0."
+      ],
+      "snapshot": "ciclos/2026-08-24.html"
+    },
+    {
+      "id": "2026-08-28",
+      "mes": "2026-08",
+      "fecha": "2026-08-28",
+      "titulo": "Cierre de agosto — rentabilidad real",
+      "tipo": "cierre",
+      "periodo": "1 – 27 ago 2026",
+      "ventana": "mes a la fecha",
+      "corte": "28/08 11:03 hs",
+      "archivos": 13,
+      "kpis": {
+        "ventas": 153158.93,
+        "ventas_concepto": "Ingresos por productos (Ventas UY)",
+        "unidades": 269,
+        "unidades_concepto": "netas",
+        "envios": 202,
+        "contribucion_neta": 56762.05,
+        "contribucion_pct": 37.1,
+        "roas": 4.75,
+        "acos": 21.06,
+        "inversion_ads": 25323.97,
+        "fichas_tecnicas": 78.2,
+        "flex_a_tiempo": 90
+      },
+      "hallazgos": [
+        "Primer P&L real: contribución neta $56.762 (37,1%). La carga de ML es 25,3% de los ingresos y Ads 16,5%.",
+        "Los dos estrella terminaron en stock 0 e inactivos. Cada día pausados cuesta ~$1.062 de contribución (inferencia).",
+        "Fichas técnicas subieron de 68,0% a 78,2%. El deadline de ML es rotativo: confirmado.",
+        "Bug encontrado en el toolkit mt: los paquetes cancelados enteros se cuentan como vendidos."
+      ],
+      "snapshot": "ciclos/2026-08-28.html"
+    }
+  ]
+}

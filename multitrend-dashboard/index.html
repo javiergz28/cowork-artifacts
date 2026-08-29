@@ -1,754 +1,84 @@
 <!DOCTYPE html>
-<script type="application/json" id="cowork-artifact-meta">
-{
-  "name": "Multitrend Dashboard",
-  "schemaVersion": 1,
-  "description": "Panel de inteligencia comercial de Multitrend (Mercado Libre UY): KPIs de ventas, ranking de productos por rentabilidad y stock, alertas de quiebre, rendimiento de promociones y pendientes accionables. Se actualiza cada ciclo con los reportes de ML.",
-  "mcpTools": [],
-  "mcpServerNames": []
-}
-</script>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multitrend — Panel de Inteligencia Comercial</title>
+<meta name="theme-color" content="#F6F9F7">
+<meta name="description" content="Histórico de reportes de Mercado Libre de Multitrend Uruguay: cada ciclo procesado y cada cierre mensual, guardados tal como se publicaron.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230C0C0C%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%277%27 fill=%27%232BEA60%27/%3E%3C/svg%3E">
+<title>Reportes — Multitrend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    color-scheme: light;
-    --mt-green: #2BEA60;
-    --mt-green-dark: #25BF50;
-    --mt-green-light: #D5FBDF;
-    --mt-black: #0C0C0C;
-    --mt-white: #FFFFFF;
-    --surface: #ffffff;
-    --page: #f6f9f7;
-    --text-primary: #0C0C0C;
-    --text-secondary: #55625a;
-    --text-muted: #8b968f;
-    --border: rgba(12,12,12,0.08);
-    --grid: #ecf3ef;
-    --good: #0ca30c;
-    --warning: #fab219;
-    --critical: #d03b3b;
-    --shadow: 0 1px 2px rgba(12,12,12,.04), 0 8px 24px -12px rgba(12,12,12,.10);
-  }
-  * { box-sizing: border-box; }
-  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
-  body {
-    margin: 0; padding: 0 0 80px 0;
-    background: var(--page);
-    color: var(--text-primary);
-    font-family: 'Rethink Sans', system-ui, -apple-system, "Segoe UI", sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  h1,h2,h3, .num-hero, .brand-word { font-family: 'Outfit', system-ui, sans-serif; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 22px 40px; overflow-wrap: break-word; word-break: break-word; }
-
-  .topbar {
-    position: sticky; top: 0; z-index: 20;
-    background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-  }
-  .topbar-inner { max-width: 1180px; margin: 0 auto; padding: 14px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-  .brand { display:flex; align-items:center; gap:9px; }
-  .brand .dot { width:11px; height:11px; border-radius:50%; background: var(--mt-green); box-shadow: 0 0 0 4px var(--mt-green-light); }
-  .brand-word { font-weight: 800; font-size: 17px; letter-spacing: -0.01em; }
-  .brand-sub { font-size: 12px; color: var(--text-muted); margin-left: 4px; padding-left:10px; border-left: 1px solid var(--border); }
-  .update-pill { display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:6px 12px; border-radius:999px; background: var(--mt-green-light); color: var(--mt-green-dark); font-weight:600; }
-  .update-pill::before { content:''; width:6px; height:6px; border-radius:50%; background: var(--mt-green-dark); }
-
-  header.hero { padding: 28px 0 8px; }
-  header.hero h1 { font-size: 26px; font-weight: 700; margin: 0 0 6px 0; letter-spacing:-0.01em; }
-  header.hero .meta { color: var(--text-secondary); font-size: 13.5px; }
-
-  .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0 22px; }
-  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); transition: transform .15s ease; }
-  .kpi:hover { transform: translateY(-2px); }
-  .kpi .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing:.04em; font-weight:600; }
-  .kpi .value { font-size: 23px; font-weight: 800; margin-top: 6px; letter-spacing:-0.01em; }
-  .kpi .sub { font-size: 11.5px; color: var(--text-secondary); margin-top:3px; }
-  .kpi.accent { background: linear-gradient(135deg, var(--mt-green) 0%, var(--mt-green-dark) 100%); border-color: transparent; }
-  .kpi.accent .label, .kpi.accent .sub { color: rgba(12,12,12,0.65); }
-  .kpi.accent .value { color: var(--mt-black); }
-
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; box-shadow: var(--shadow); }
-  .card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 14px; flex-wrap:wrap; }
-  .card h2 { font-size: 15.5px; margin: 0; font-weight:700; }
-  .card h2 .n { color: var(--text-muted); font-weight: 500; font-size: 12.5px; font-family:'Rethink Sans',sans-serif; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); font-weight: 700; padding: 8px; border-bottom: 1px solid var(--grid); cursor: pointer; user-select: none; white-space:nowrap; }
-  th:hover { color: var(--mt-green-dark); }
-  th .arrow { font-size:9px; opacity:.5; margin-left:2px; }
-  td { padding: 9px 8px; border-bottom: 1px solid var(--grid); vertical-align: middle; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  td.mono { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--text-secondary); }
-  tbody tr { transition: background .1s ease; }
-  tbody tr:hover td { background: var(--mt-green-light); }
-  .prod-link { color: var(--text-primary); text-decoration:none; font-weight:600; border-bottom: 1px solid transparent; }
-  .prod-link:hover { color: var(--mt-green-dark); border-bottom-color: var(--mt-green); }
-  .prod-link .ext { font-size:10px; opacity:.5; margin-left:3px; }
-  .confirmed-tag { display:inline-flex; align-items:center; gap:3px; font-size:10px; color: var(--mt-green-dark); font-weight:700; margin-left:6px; }
-
-  .badge { display:inline-block; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
-  .pill { display:inline-block; font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
-  .pill-live { background: var(--mt-green-light); color: var(--mt-green-dark); }
-  .pill-off { background: #f2f2f0; color: var(--text-secondary); }
-  .pill-warn { background: #fffaeb; color: #8a6400; }
-  .pill-bad { background: #fdf1f1; color: var(--critical); }
-
-  .toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom: 14px; }
-  .search { flex: 1; min-width: 180px; position:relative; }
-  .search input { width:100%; padding: 9px 12px 9px 32px; border-radius: 10px; border: 1px solid var(--border); background: var(--page); font-size:13px; font-family: inherit; outline:none; }
-  .search input:focus { border-color: var(--mt-green); background: var(--surface); }
-  .search::before { content:'⌕'; position:absolute; left:11px; top:50%; transform:translateY(-50%); color: var(--text-muted); font-size:14px; }
-  .chip { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 12px; font-weight:600; cursor:pointer; color: var(--text-secondary); transition: all .12s ease; }
-  .chip:hover { border-color: var(--mt-green); }
-  .chip.active { background: var(--mt-black); color: var(--mt-white); border-color: var(--mt-black); }
-
-  .alert { display: flex; gap: 10px; padding: 13px 15px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; align-items: flex-start; }
-  .alert.critical { background: #fdf1f1; border: 1px solid rgba(208,59,59,.2); }
-  .alert.warning { background: #fffaeb; border: 1px solid rgba(250,178,25,.25); }
-  .alert.good { background: var(--mt-green-light); border: 1px solid rgba(37,191,80,.25); }
-  .alert .tag { font-weight:800; font-size:10.5px; text-transform:uppercase; padding: 3px 9px; border-radius: 6px; flex-shrink:0; margin-top:1px; }
-  .alert.critical .tag { background: var(--critical); color:#fff; }
-  .alert.warning .tag { background: var(--warning); color:#3a2c00; }
-  .alert.good .tag { background: var(--mt-green-dark); color:#fff; }
-  .alert ul { margin: 6px 0 0 18px; padding:0; }
-  .alert strong { font-weight:700; }
-
-  details.resolved { margin-top: 4px; }
-  details.resolved summary { cursor:pointer; font-size: 12.5px; color: var(--mt-green-dark); font-weight:700; padding: 6px 0; }
-  details.resolved ul { margin: 4px 0 0 18px; padding:0; font-size:12.5px; color: var(--text-secondary); line-height:1.7; }
-
-  .pendiente { display:flex; gap:12px; align-items:flex-start; padding: 12px 4px; border-bottom: 1px solid var(--grid); }
-  .pendiente:last-child { border-bottom:none; }
-  .pendiente .prio { flex-shrink:0; font-size: 10px; font-weight:800; text-transform:uppercase; padding:4px 9px; border-radius:7px; margin-top:1px; }
-  .prio.alta { background:#fdf1f1; color:var(--critical); }
-  .prio.media { background:#fffaeb; color:#8a6400; }
-  .prio.investigar { background: var(--mt-green-light); color: var(--mt-green-dark); }
-  .pendiente .txt strong { display:block; font-size:13.5px; margin-bottom:3px; }
-  .pendiente .txt span { font-size:12.5px; color: var(--text-secondary); line-height:1.5; }
-
-  .foot-note { font-size: 12px; color: var(--text-muted); line-height:1.7; }
-  .foot-note b { color: var(--text-secondary); }
-
-  .chart-tooltip-hint { font-size: 11px; color: var(--text-muted); margin-top:6px; }
-
-  @media (max-width: 900px) {
-    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 640px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .two-col { grid-template-columns: 1fr; }
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/reportes.css">
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-inner">
+  <div class="wrap topbar-inner">
     <div class="brand">
       <span class="dot"></span>
-      <span class="brand-word">Multitrend</span>
-      <span class="brand-sub">Panel comercial · Mercado Libre UY</span>
+      <span>Multitrend</span>
+      <span class="brand-sub">Reportes · Mercado Libre UY</span>
     </div>
-    <span class="update-pill">Actualizado 24 de agosto de 2026 · 21:34 hs</span>
+    <span class="spacer"></span>
+    <a class="btn btn-primary" data-ultimo href="#meses"><span class="live"></span><span data-ultimo-label>Último panel</span></a>
   </div>
 </div>
 
-<div class="wrap">
+<main class="wrap">
 
-  <header class="hero">
-    <h1>Inteligencia comercial del ciclo</h1>
-    <div class="meta">Período informado por Mercado Libre: <b>1–24 ago 2026 (mes a la fecha)</b>. <b>Ventas UY llegó en un segundo envío</b> (export del 24/08 a las 20:08 hs) y ya está cruzado: ranking, canales de entrega y stock recalculado, todo actualizado en este panel. Cruzados con el maestro <b>STOCK_MT_FINAL</b> (Google Sheet propio en Drive, cuenta <code>multitrenduy@gmail.com</code>).<br>
-    <b>Hallazgo de este segundo pase:</b> el export de Ventas UY del ciclo anterior (19/08) estaba cortado a las 18:05 hs — se perdieron ventas tardías de ese mismo día. Con el dato completo, PMCU0004 y PHDH0004 quedan en <b>2 y 5 unidades</b> respectivamente (no 17 y 19). Maestro corregido, Excel actualizado entregado por chat.<br>
-    <span style="color:var(--critical);font-weight:700">Sigue sin llegar el reporte de envíos en agencias</span> — el canal que venía con reputación crítica (55%/73%, última vez visto el 19/08). Es el dato más urgente pendiente. Mercado Ads tampoco llegó (opcional este ciclo).</div>
-  </header>
+  <section class="hero">
+    <p class="eyebrow">Inteligencia comercial</p>
+    <h1>Todo lo que medimos,<br><em>ciclo a ciclo.</em></h1>
+    <p>Cada dos o tres días se procesa un lote de reportes de Mercado Libre y se publica un panel con el estado del negocio a esa fecha. Los ciclos de un mismo mes se van acumulando hasta el cierre mensual. Acá queda guardado todo el histórico: podés abrir el panel de cualquier fecha tal como se publicó ese día.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" data-ultimo href="#meses"><span class="live"></span><span data-ultimo-label>Último panel</span></a>
+      <a class="btn" href="../">← Artifact Deck</a>
+    </div>
+  </section>
 
-  <div class="kpi-grid">
-    <div class="kpi accent"><div class="label">Ventas brutas</div><div class="value">$ 148.400</div><div class="sub">1–24 ago · mes a la fecha (Negocio)</div></div>
-    <div class="kpi"><div class="label">Unidades vendidas</div><div class="value">249</div><div class="sub">netas · 258 brutas − 9 canceladas (Ventas UY)</div></div>
-    <div class="kpi"><div class="label">Conversión</div><div class="value">2,66%</div><div class="sub">8.078 visitas</div></div>
-    <div class="kpi"><div class="label">Ticket promedio</div><div class="value">$ 690</div><div class="sub">por venta</div></div>
-    <div class="kpi"><div class="label">Compradores nuevos</div><div class="value">97,81%</div><div class="sub">179 de 183 compradores</div></div>
-    <div class="kpi"><div class="label">Ads</div><div class="value" style="font-size:17px;color:var(--text-muted)">Sin dato</div><div class="sub">no llegó este ciclo · último: 4,42x (1–18 ago)</div></div>
-    <div class="kpi"><div class="label">Envíos a tiempo</div><div class="value" style="color:var(--warning)">90%</div><div class="sub">Flex, últ. semana · agencias: sin dato este ciclo</div></div>
-    <div class="kpi" style="background:linear-gradient(135deg,#eafff2,#fff)"><div class="label">Nuevo desde 19/08</div><div class="value" style="font-size:19px">51 u · $29.283</div><div class="sub">20–24 ago (Ventas UY, neto de canceladas)</div></div>
+  <section class="how">
+    <div class="how-item">
+      <span class="how-num">01</span>
+      <h3>Ciclo</h3>
+      <p>Un lote de reportes procesado en una fecha. Trae KPIs, ranking de productos, alertas y qué hacer ahora.</p>
+    </div>
+    <div class="how-item">
+      <span class="how-num">02</span>
+      <h3>Mes</h3>
+      <p>La suma de los ciclos de ese mes, con la serie de cómo se fue armando y el cierre con la rentabilidad real.</p>
+    </div>
+    <div class="how-item">
+      <span class="how-num">03</span>
+      <h3>Panel guardado</h3>
+      <p>El HTML congelado de cada ciclo. No se toca nunca más: sirve para auditar qué se sabía y cuándo.</p>
+    </div>
+    <div class="how-item">
+      <span class="how-num">04</span>
+      <h3>Ventana</h3>
+      <p>Mercado Libre a veces informa el ciclo y a veces el mes a la fecha. Está declarado en cada uno y no se mezclan.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Reportes mensuales</h2>
+      <span class="hint" id="actualizado"></span>
+    </div>
+    <div class="months" id="meses"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p><strong>Fuente:</strong> reportes exportados de Mercado Libre UY, cruzados con el maestro STOCK_MT_FINAL.</p>
+    <p>Los paneles se generan con el ciclo <code>/multitrend-ciclo</code> y se publican en GitHub Pages. Las cifras son las que informa Mercado Libre en cada corte; cuando algo es inferencia o hipótesis, el panel lo dice.</p>
   </div>
+</footer>
 
-  <div class="card">
-    <div class="card-head"><h2>Evolución diaria <span class="n">(1–24 ago, mes a la fecha)</span></h2></div>
-    <div class="two-col">
-      <div>
-        <h2 style="font-size:13px;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">Ventas brutas (UYU)</h2>
-        <div id="chart-ventas"></div>
-      </div>
-      <div>
-        <h2 style="font-size:13px;color:var(--text-secondary);font-weight:600;margin-bottom:8px;">Visitas</h2>
-        <div id="chart-visitas"></div>
-      </div>
-    </div>
-    <div class="chart-tooltip-hint">Pasá el cursor sobre las barras para ver el detalle de cada día. 01–19/08 coincide exactamente con lo ya publicado en el pase anterior (se verificó dato a dato). El 24/08 está parcial — la sesión corrió a las 21:34 hs, antes de que termine el día.</div>
-  </div>
-
-  <div class="card">
-    <div class="card-head"><h2>Envíos — reputación <span class="n">(Flex: última semana 17–23 ago · agencias: sin reporte este ciclo)</span></h2></div>
-
-    <div class="alert critical">
-      <span class="tag">Sin dato</span>
-      <div><strong>No llegó el reporte de envíos en agencias este ciclo — es el canal que venía en crisis (55% última semana / 73% en 4 semanas el 19/08, muy por debajo del umbral de 90%).</strong> No hay forma de saber desde acá si se recuperó, empeoró o sigue igual. Dado que es el canal que más está penalizando la exposición de las publicaciones, es el dato más urgente para pedirle a Javi el próximo ciclo — más que cualquier otro reporte.</div>
-    </div>
-
-    <div class="alert warning">
-      <span class="tag">Flex</span>
-      <div><strong>Mercado Envíos Flex bajó de "Excelente" a "Regular, sin destaque": 90% de envíos correctos (17–23 ago), venía de 94% el 19/08.</strong> 2 incumplimientos de 21 envíos — y los dos son el <b>mismo producto</b>: Comedero/Bebedero 2 en 1 (PMCU0004), enviado desde Zona 10 y Zona 7, ambos "Envío demorado" y ambos afectaron la reputación. Es <b>hipótesis, no conclusión</b> — con solo 8 envíos de ese producto en la semana (2 de 8 fallaron) la muestra es chica, pero vale la pena mirar si el empaque/tamaño de ese producto puntual complica el despacho a tiempo, más que un problema de zona (las zonas son distintas entre sí).</div>
-    </div>
-
-    <div class="table-scroll"><table>
-      <thead><tr><th>Canal</th><th>Ventana</th><th class="num">Envíos</th><th class="num">Cumplidos</th><th class="num">%</th><th>Exposición según ML</th></tr></thead>
-      <tbody>
-        <tr>
-          <td>Agencias / puntos de despacho</td><td>10–16 ago <span class="n">(último dato disponible, no de este ciclo)</span></td>
-          <td class="num">20 de 20</td><td class="num">11</td><td class="num" style="color:var(--critical);font-weight:700">55%</td>
-          <td><span class="pill pill-bad">Muy mala, sin destaque</span></td>
-        </tr>
-        <tr>
-          <td>Mercado Envíos Flex</td><td>17–23 ago (última semana)</td>
-          <td class="num">21 de 21</td><td class="num">19</td><td class="num" style="color:var(--warning);font-weight:700">90%</td>
-          <td><span class="pill pill-warn">Regular, sin destaque</span></td>
-        </tr>
-      </tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">21 envíos correctos/90% recalculado desde el detalle coincide con el encabezado del reporte. Este ciclo el archivo de Flex no trae hoja de "últimas 4 semanas" (sí la trajo el 17/08) — solo hay dato semanal.</div>
-
-    <div class="two-col" style="margin-top:18px;">
-      <div>
-        <h3 style="font-size:13px;margin:0 0 8px;">Flex — los 2 incumplimientos de la semana</h3>
-        <div class="table-scroll"><table>
-          <thead><tr><th>Zona</th><th>Producto</th><th>Qué pasó</th></tr></thead>
-          <tbody>
-            <tr><td>Zona 10</td><td>Comedero/Bebedero 2 en 1 (PMCU0004)</td><td><span style="color:var(--critical);font-weight:600">Envío demorado</span> — venció 20/08, entregó 21/08</td></tr>
-            <tr><td>Zona 7</td><td>Comedero/Bebedero 2 en 1 (PMCU0004)</td><td><span style="color:var(--critical);font-weight:600">Envío demorado</span> — venció 19/08, entregó 20/08</td></tr>
-          </tbody>
-        </table></div>
-        <div class="chart-tooltip-hint" style="margin-top:8px;">Zona 6 mueve el mayor volumen (8 de 21 envíos, 38%) y esta semana sin fallos. Zonas 7 y 10 tuvieron solo 2 envíos cada una — 1 falla en cada una es 50%, pero la muestra es demasiado chica para hablar de zona problemática.</div>
-      </div>
-      <div>
-        <h3 style="font-size:13px;margin:0 0 8px;">Volumen Flex de la semana (17–23 ago)</h3>
-        <div class="foot-note">
-          <p><b>21 envíos, 24 unidades</b> (3 paquetes multiproducto, 2 unidades cada uno). El Comedero/Bebedero 2 en 1 (PMCU0004) fue <b>8 de los 21 envíos (38%)</b> — altísima concentración para un solo producto, consistente con que es uno de los dos "Estrella" del catálogo. La Lámpara Aurora (PHDH0004), el otro "Estrella", tuvo 5 envíos.</p>
-        </div>
-      </div>
-    </div>
-
-    <div style="margin-top:18px;">
-      <h3 style="font-size:13px;margin:0 0 8px;">Canales de entrega, mes a la fecha (1–24 ago) <span class="n" style="font-weight:400">(187 envíos efectivos · 249 unidades)</span></h3>
-      <div class="table-scroll"><table>
-        <thead><tr><th>Canal</th><th class="num">Envíos</th><th class="num">% de envíos</th><th class="num">Unidades</th><th class="num">Unid. por envío</th><th class="num">Paq. multiproducto</th></tr></thead>
-        <tbody>
-          <tr><td><b>Mercado Envíos Flex</b> <span class="n">(entrega propia)</span></td><td class="num">99</td><td class="num">52,9%</td><td class="num">123</td><td class="num">1,24</td><td class="num">8</td></tr>
-          <tr><td><b>Correo y puntos de despacho</b> <span class="n">(agencias)</span></td><td class="num">68</td><td class="num">36,4%</td><td class="num">105</td><td class="num" style="font-weight:700">1,54</td><td class="num">11</td></tr>
-          <tr><td><b>Entrega en persona</b> <span class="n">(acuerdo con el comprador)</span></td><td class="num">20</td><td class="num">10,7%</td><td class="num">21</td><td class="num">1,05</td><td class="num">0</td></tr>
-          <tr style="border-top:2px solid var(--grid)"><td><b>Total</b></td><td class="num"><b>187</b></td><td class="num">100%</td><td class="num"><b>249</b></td><td class="num">1,33</td><td class="num">19</td></tr>
-          <tr><td class="n">Cancelados (no se despacharon)</td><td class="num n">6</td><td class="num n">—</td><td class="num n">9</td><td class="num n">—</td><td class="num n">—</td></tr>
-        </tbody>
-      </table></div>
-      <div class="chart-tooltip-hint">Contado por envío físico, no por fila del reporte. 19 paquetes multiproducto en todo el mes — 11 por correo, 8 por Flex.</div>
-
-      <div class="alert warning" style="margin-top:12px;">
-        <span class="tag">Se sostiene, tercer ciclo seguido</span>
-        <div><strong>Correo sigue concentrando los pedidos más grandes: 1,54 unidades por envío contra 1,24 de Flex, con 11 de 19 paquetes multiproducto del mes.</strong> Es la misma inferencia de los dos ciclos anteriores (no una causa comprobada), ahora con un tercer ciclo de datos en la misma dirección. Empieza a dejar de ser casualidad — vale la pena que Javi confirme si conviene ofrecer Flex de forma más agresiva en el checkout para pedidos grandes, sobre todo mientras la reputación de agencias siga floja.</div>
-      </div>
-
-      <div class="foot-note" style="margin-top:10px;">
-        <p><b>Las 20 entregas en persona (10,7% de los envíos)</b> siguen fuera de todo reporte de reputación de ML — punto ciego del panel, no de la operación.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2 style="margin-bottom:12px;">Alertas del ciclo</h2>
-
-    <div class="alert critical">
-      <span class="tag">Crítico, confirmado</span>
-      <div><strong>PMCU0004 (Comedero/Bebedero 2en1) queda en 2 unidades y PHDH0004 (Lámpara Aurora) en 5 — los dos "Estrella" del catálogo, casi agotados.</strong> Confirmado por <b>dos fuentes independientes que casi coinciden</b>: el recálculo desde Ventas UY (25 confirmadas el 16/08 − 26 y 20 unidades vendidas desde entonces = 2 y 5) y el stock en depósito que reporta ML en Publicaciones (3 y 6, con snapshot de esa misma mañana). La diferencia de 1 unidad entre ambas fuentes es esperable por el desfasaje horario entre exports — las dos apuntan al mismo lugar: quedan entre 2 y 6 unidades de los productos de mayor margen y volumen del catálogo. Maestro corregido y Excel entregado por chat.</div>
-    </div>
-    <div class="alert warning">
-      <span class="tag">Nuevo</span>
-      <div><strong>PTGC0002 (Teclado Gamer Imice) se vendió con stock 0: 2 unidades el 22/08 pese a figurar sin stock desde el 19/08.</strong> La venta es real y no está cancelada (confirmado en Ventas UY, "En camino"). O Javi repuso sin actualizar el maestro, o se vendió sin stock físico disponible — en ese caso hay un despacho en riesgo. Se dejó el stock en 0 en el maestro (no se puede escribir negativo) con nota de alerta. Confirmar urgente.</div>
-    </div>
-    <div class="alert good">
-      <span class="tag">Resuelto</span>
-      <div><strong>Llegó Ventas UY (export del 24/08, 20:08 hs) — ranking, canales de entrega y stock quedaron actualizados con datos reales, no con el stock en depósito de ML.</strong> 249 unidades netas / 258 brutas − 9 canceladas, 1–24 ago. Coincide exacto con Evolución de negocio día a día (verificado 1–23 ago, cifra por cifra).</div>
-    </div>
-    <div class="alert warning">
-      <span class="tag">Hallazgo de calidad de datos</span>
-      <div><strong>El export de Ventas UY del 19/08 (usado en el pase anterior) estaba cortado a las 18:05 hs — se perdieron ventas tardías de ese mismo día.</strong> Comparando ese pase contra este export completo: PMCU0004 tenía 3 unidades vendidas sin contar (11 reales vs. 8 aplicadas) y PHDH0004 tenía 1 (7 vs. 6). El resto de los 11 SKU recalculados el 19/08 coinciden exacto — no fue un error sistemático, solo estos dos, probablemente porque son los productos con más ventas nocturnas. <b>Regla nueva: revisar la hora de corte en el encabezado del reporte ("Estado de tus ventas al... hs") antes de asumir que el día está completo.</b></div>
-    </div>
-    <div class="alert critical">
-      <span class="tag">Sin dato</span>
-      <div><strong>Sigue sin llegar el reporte de envíos en agencias — el canal que estaba en 55%/73% (muy por debajo del umbral de 90%).</strong> Van dos ciclos sin este dato. No hay forma de saber si se recuperó o empeoró. Es el dato más urgente pendiente. Detalle en Envíos, arriba.</div>
-    </div>
-    <div class="alert warning">
-      <span class="tag">Empeoró</span>
-      <div><strong>Flex bajó de "Excelente" (94%) a "Regular, sin destaque" (90%).</strong> Los 2 únicos incumplimientos de la semana son el mismo producto, PMCU0004, despachado desde dos zonas distintas — hipótesis: puede ser un problema del propio producto (empaque/tamaño) más que de zona. Detalle en Envíos, arriba.</div>
-    </div>
-    <div class="alert warning">
-      <span class="tag">Se sostiene, 3er ciclo</span>
-      <div><strong>Correo (agencias) sigue concentrando los pedidos más grandes: 1,54 unidades por envío contra 1,24 de Flex.</strong> 11 de los 19 paquetes multiproducto del mes salen por correo. Tercer ciclo seguido con el mismo patrón — empieza a dejar de ser casualidad. Detalle en Envíos, arriba.</div>
-    </div>
-    <div class="alert warning">
-      <span class="tag">Cambio de formato</span>
-      <div><strong>Fichas técnicas llegó en un formato distinto: ya no es la auditoría completa del catálogo (antes 54 categorías / 149 publicaciones), sino una lista acotada de ML con 10 categorías y 17 publicaciones pendientes de completar, deadline "antes del 31 de agosto".</strong> Ninguna de las dos categorías que venían peor (Bebederos 59,8%, Lámparas 20,1%) aparece en esta lista — <b>no se puede confirmar desde acá si ya se completaron o si este export simplemente no las incluye</b>. Ver Salud de catálogo y Pendientes.</div>
-    </div>
-    <div class="alert good">
-      <span class="tag">Nuevo tipo de reporte</span>
-      <div><strong>Llegó "Reporte de rendimiento de cupones", distinto del de promociones — se agregó al router.</strong> El cupón "Nuevos Seguidores" (10% OFF a quien sigue Mi Página, tope $500) generó <b>46 unidades y $28.642,67 en ventas brutas</b> a cambio de <b>$2.853,96</b> en descuento absorbido (≈10% del bruto, coherente con el descuento nominal). Es el hallazgo comercial más grande del ciclo — pero sin poder afirmar cuánto de eso es incremental (ventas que no hubieran pasado sin el cupón) ni comparar contra un período sin el cupón activo. Ver Cupones, abajo.</div>
-    </div>
-    <div class="alert warning">
-      <span class="tag">Se acota, no se resuelve</span>
-      <div><strong>"Rendimiento de publicaciones" (188 unidades, 1–19 ago) sigue sin coincidir con Ventas UY — pero la diferencia bajó de 14 a 10 unidades con el dato limpio (198 unidades netas en Ventas UY para el mismo período).</strong> Sigue sin explicación exacta; no se usa para las cifras del panel, solo de referencia. Sin blancos de SKU en Ventas UY que expliquen la diferencia — descartado como causa esta vez.</div>
-    </div>
-    <div class="alert good">
-      <span class="tag">Cambio de ubicación</span>
-      <div><strong>El maestro STOCK_MT_FINAL se movió: ahora es un Google Sheet propio en la cuenta <code>multitrenduy@gmail.com</code>, ya no el .xlsx en la carpeta compartida.</strong> La convención de SKU sigue en <code>PHCO</code>, 143 SKU en el maestro. Actualizado en <code>areas/multitrend-toolkit-mt.md</code>.</div>
-    </div>
-    <div class="alert good">
-      <span class="tag">Cerrado, confirmado con datos de venta</span>
-      <div><strong>Los SKU de las publicaciones siguen corregidos — confirmado ahora con Ventas UY, no solo con Publicaciones.</strong> Las únicas ventas con SKU en forma vieja (<code>PHC0####</code>) en todo el período 1–24/08 son del <b>12/08</b> — ninguna posterior. El tema sigue cerrado.</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2 style="margin-bottom:4px;">Qué hacer ahora <span class="n">(ordenado por impacto — cada uno dice qué hacer, por qué, y cómo saber que terminaste)</span></h2>
-    <p style="font-size:12.5px;color:var(--text-secondary);margin:0 0 10px;">Con Ventas UY ya cruzado, las dos primeras vuelven a ser sobre el negocio, no sobre archivos faltantes.</p>
-
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Confirmá el stock físico real de PMCU0004 (Comedero/Bebedero) y PHDH0004 (Lámpara Aurora) — y reponé.</strong><span><b>Por qué:</b> Quedan entre 2 y 6 unidades según dos fuentes independientes que casi coinciden (Ventas UY recalculado: 2 y 5; depósito ML: 3 y 6). Son los dos "Estrella" — más margen, más volumen. A la velocidad de la última semana (8 y 5 envíos Flex) se agotan en días.<br><b>Listo cuando:</b> Confirmás el stock físico real y tenés reposición en camino o pedida.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Revisá PTGC0002: se vendieron 2 unidades el 22/08 con el stock en 0 desde el 19/08.</strong><span><b>Por qué:</b> La venta es real, no cancelada. O hubo una reposición que no se reflejó en el maestro, o se despachó (o está por despacharse) sin stock físico real.<br><b>Listo cuando:</b> Sabés si esa venta se puede cumplir o hay que contactar al comprador.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Subí el reporte de envíos en agencias en el próximo ciclo, aunque sea desactualizado.</strong><span><b>Por qué:</b> Van dos ciclos sin este dato. Es el canal que estaba en 55%/73%, muy por debajo del umbral de 90% de ML. Sin él no hay forma de saber si la exposición de todo el catálogo se sigue penalizando o se recuperó.<br><b>Listo cuando:</b> El panel vuelve a tener un % de agencias, aunque sea malo.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Decidí: reponés PTSV0002, PMOT0005, PHCO0023VERD y PTGC0001, o confirmás que quedan pausados.</strong><span><b>Por qué:</b> Los 4 siguen en stock 0, sin ventas nuevas en la ventana 20-24/08 pero con historial de venta reciente en el período. Una publicación activa sin stock termina en una venta que no podés despachar.<br><b>Listo cuando:</b> Cada una tiene stock cargado o está pausada.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio alta">Alta</span>
-      <div class="txt"><strong>Completá las 17 publicaciones que pide Fichas técnicas, deadline 31 de agosto.</strong><span><b>Por qué:</b> Es una lista corta y acotada de ML (10 categorías, 17 publicaciones) — la más rápida de sacarse de encima. Auriculares es la que más vendió de este lote (10 unidades) y ya está en 90,6% — quedan pocos campos.<br><b>Listo cuando:</b> Las 17 publicaciones están completas. Aparte, confirmá si Bebederos y Lámparas (las categorías que venían peor) ya están resueltas o simplemente no entraron en este export — no se puede saber desde acá.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio media">Media</span>
-      <div class="txt"><strong>Actualizá el maestro con el Excel de este ciclo (18 SKU corregidos).</strong><span><b>Por qué:</b> No se pudo escribir directo en el Google Sheet desde acá (sin herramienta de edición de celdas). El Excel adjunto ya tiene el stock correcto y la fila de Historial de cada cambio.<br><b>Listo cuando:</b> El Google Sheet refleja los 18 valores nuevos.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio media">Media</span>
-      <div class="txt"><strong>Revisá PHDH0006 (Botellas Vidrio Ámbar): el maestro dice 200, ML dice 100 en depósito.</strong><span><b>Por qué:</b> El maestro ya tenía anotada la sospecha de que el conteo estaba en packs y no en piezas ("deberían ser ~100 packs") — el número de ML (100) coincide con esa sospecha. Parece confirmarse, pero falta que lo confirmes vos para corregir el maestro con seguridad.<br><b>Listo cuando:</b> Sabés si son 100 o 200, y el maestro queda corregido.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio media">Media</span>
-      <div class="txt"><strong>Pausá el anuncio de "Caja De Arena Inteligente" (dato del ciclo anterior, sin Ads este ciclo).</strong><span><b>Por qué:</b> Venía de ~$3.750 acumulados en dos ciclos sin una sola venta. No llegó reporte de Ads este ciclo para confirmar si sigue así — si no lo pausaste todavía, es un buen momento.<br><b>Listo cuando:</b> El anuncio está pausado.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio media">Media</span>
-      <div class="txt"><strong>Confirmá si conviene ofrecer Flex más agresivo en el checkout para pedidos grandes.</strong><span><b>Por qué:</b> Tercer ciclo seguido en el que correo (agencias) concentra los pedidos multiproducto (1,54 u/envío vs. 1,21-1,24 de Flex). Ya no parece casualidad, y agencias es justo el canal con reputación floja.<br><b>Listo cuando:</b> Decidís si mover ese tipo de pedido a Flex, y por qué (costo, operación, o límite del canal).</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>¿El Comedero/Bebedero 2en1 (PMCU0004) tiene un problema propio de despacho, más allá de la zona?</strong><span><b>Por qué:</b> Los 2 únicos incumplimientos de Flex esta semana son ese mismo producto, en zonas distintas (Zona 7 y Zona 10). Con solo 8 envíos de ese producto en la semana, la muestra es chica para afirmar nada — pero si se repite el próximo ciclo deja de ser casualidad.<br><b>Listo cuando:</b> Tenés 2-3 ciclos más de datos de ese producto en Flex para confirmar o descartar el patrón.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>Confirmá qué es "Potenciá tus ventas": campaña puntual o descuento permanente del club de ML.</strong><span><b>Por qué:</b> Vigencia de 6 meses (3/08–3/02/2027), $44.459 en ventas brutas asociadas este período — el monto más alto de todas las promociones. Si es permanente, el incremental se mide distinto que "Fecha doble" o "Día del niño".<br><b>Listo cuando:</b> Sabés cuál de las dos es.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>¿Cuánto del cupón "Nuevos Seguidores" es venta incremental?</strong><span><b>Por qué:</b> Generó 46 unidades y $28.642,67 por $2.853,96 de descuento — el número más alto del ciclo. Pero "generó" no es lo mismo que "causó": no hay forma desde acá de saber cuántas de esas 46 unidades se hubieran vendido igual sin el cupón.<br><b>Listo cuando:</b> Podés comparar la tasa de conversión de nuevos seguidores con cupón activo contra un período sin el cupón.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>Pedido de Javi (dejado en el repo el 24/08): diferenciar en Fichas técnicas el estado de la publicación (Activo/Pausado/Sin stock) y detectar cuáles son de catálogo.</strong><span><b>Por qué:</b> Hoy la completitud no distingue si una publicación con atributos vacíos está activa vendiendo o pausada sin stock — eso cambia la prioridad real. Tampoco se identifica qué publicaciones son variantes de catálogo de ML (duplicación esperada, no error).<br><b>Listo cuando:</b> La tabla de salud de catálogo muestra el estado ML de cada publicación y marca las de catálogo — pendiente de implementar, requiere cruzar Fichas técnicas + Publicaciones + maestro por ITEM_ID en el mismo pase.</span></div>
-    </div>
-    <div class="pendiente">
-      <span class="prio investigar">Investigar</span>
-      <div class="txt"><strong>¿De dónde salen las 10 unidades de diferencia entre "Rendimiento de publicaciones" (188) y Ventas UY (198), 1–19 ago?</strong><span><b>Por qué:</b> Bajó de 14 a 10 con datos limpios, pero sigue sin explicación. No hay filas sin SKU que lo expliquen esta vez.<br><b>Listo cuando:</b> Se identifica el origen exacto, o se descarta usar ese reporte para cifras del panel.</span></div>
-    </div>
-</div>
-
-  <div class="card">
-    <div class="card-head">
-      <h2>Ranking de productos <span class="n">(53 SKU con venta en 1–24 ago · actualizado con Ventas UY · click en un producto para abrir su publicación)</span></h2>
-    </div>
-    <div class="toolbar">
-      <div class="search"><input id="search-input" type="text" placeholder="Buscar por nombre o SKU..."></div>
-      <button class="chip active" data-filter="Todos">Todos</button>
-      <button class="chip" data-filter="Estrella">Estrella</button>
-      <button class="chip" data-filter="Rentable y escalable">Rentable</button>
-      <button class="chip" data-filter="Baja rotación / investigar">Investigar</button>
-      <button class="chip" data-filter="Riesgo de quiebre">Riesgo quiebre</button>
-      <button class="chip" data-filter="Estable">Estable</button>
-    </div>
-    <div class="table-scroll"><table id="tabla-productos">
-      <thead>
-        <tr>
-          <th data-key="SKU">SKU <span class="arrow">↕</span></th>
-          <th data-key="NAME">Producto <span class="arrow">↕</span></th>
-          <th class="num" data-key="unidades_vendidas">Unid. <span class="arrow">↕</span></th>
-          <th class="num" data-key="stock_estimado_post_venta">Stock actual <span class="arrow">↕</span></th>
-          <th class="num" data-key="Margen bruto %">Margen % <span class="arrow">↕</span></th>
-          <th data-key="clasificacion">Clasificación <span class="arrow">↕</span></th>
-        </tr>
-      </thead>
-      <tbody id="tabla-body"></tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">Unidades = mes a la fecha (1–24 ago, Ventas UY, neto de canceladas). Stock actual = maestro confirmado el 16/08 menos todas las ventas netas desde entonces (incluye la corrección retroactiva de PMCU0004/PHDH0004 — ver Alertas). Clasificación: Estrella (≥8u y margen ≥45%) · Alto volumen/bajo margen (≥8u y margen &lt;35%) · Rentable y escalable (≥3u y margen ≥50%) · Baja rotación/investigar (≤1u y stock &gt;30) · Riesgo de quiebre (stock ≤0) · Estable (el resto).</div>
-  </div>
-
-  <div class="card">
-    <h2 style="margin-bottom:12px;">Rendimiento de promociones <span class="n">(top 10 por ventas brutas · export del 24/08)</span></h2>
-    <div class="table-scroll"><table>
-      <thead><tr><th>Promoción</th><th>Vigencia</th><th>Estado</th><th class="num">Visitas</th><th class="num">Unid. vendidas</th><th class="num">Ventas brutas</th></tr></thead>
-      <tbody>
-<tr>
-      <td>Potenciá tus ventas</td>
-      <td class="n">3 ago 2026 – 3 feb 2027</td>
-      <td><span class="pill pill-live">Activa</span></td>
-      <td class="num">2.594</td>
-      <td class="num">60</td>
-      <td class="num">$ 44.459,06</td>
-    </tr>
-<tr>
-      <td>Fecha doble 8/8</td>
-      <td class="n">26 jul – 16 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">4.379</td>
-      <td class="num">52</td>
-      <td class="num">$ 23.875,75</td>
-    </tr>
-<tr>
-      <td>Dia del niño 2026</td>
-      <td class="n">2 – 16 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">3.920</td>
-      <td class="num">15</td>
-      <td class="num">$ 7.814,70</td>
-    </tr>
-<tr>
-      <td>Dia del niño</td>
-      <td class="n">20 jul – 19 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">2.854</td>
-      <td class="num">18</td>
-      <td class="num">$ 5.319,00</td>
-    </tr>
-<tr>
-      <td>Oferta relámpago</td>
-      <td class="n">fechas específicas</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">305</td>
-      <td class="num">6</td>
-      <td class="num">$ 2.218,02</td>
-    </tr>
-<tr>
-      <td>Oferta relámpago</td>
-      <td class="n">6 – 7 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">96</td>
-      <td class="num">3</td>
-      <td class="num">$ 1.451,37</td>
-    </tr>
-<tr>
-      <td>Oferta relámpago</td>
-      <td class="n">12 – 13 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">70</td>
-      <td class="num">2</td>
-      <td class="num">$ 1.399,68</td>
-    </tr>
-<tr>
-      <td>Herramientas y Construc.</td>
-      <td class="n">16 – 30 ago</td>
-      <td><span class="pill pill-live">Activa</span></td>
-      <td class="num">184</td>
-      <td class="num">4</td>
-      <td class="num">$ 1.385,00</td>
-    </tr>
-<tr>
-      <td>Oferta relámpago</td>
-      <td class="n">4 – 5 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">83</td>
-      <td class="num">2</td>
-      <td class="num">$ 1.222,26</td>
-    </tr>
-<tr>
-      <td>Martes de mascota 04-08</td>
-      <td class="n">3 – 4 ago</td>
-      <td><span class="pill pill-off">Finalizada</span></td>
-      <td class="num">184</td>
-      <td class="num">2</td>
-      <td class="num">$ 855,00</td>
-    </tr>
-      </tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">Las promociones pueden solaparse entre sí (una misma venta puede contar en más de una) — no sumar las columnas para estimar el total. "Potenciá tus ventas" (vigencia 6 meses) sigue sin confirmarse si es campaña puntual o descuento permanente del club ML — ver Pendientes. "Gamer Days" y "Nostalgia Fashion-Beauty" (activas, 16–30 ago) siguen en 0 ventas.</div>
-  </div>
-
-  <div class="card">
-    <h2 style="margin-bottom:4px;">Rendimiento de cupones <span class="n">(nuevo tipo de reporte, primera vez que se recibe · export del 24/08)</span></h2>
-    <p style="font-size:12.5px;color:var(--text-secondary);margin:0 0 10px;">Distinto de las promociones: acá el descuento lo activa el comprador con un código, no ML de forma automática. La pregunta no es solo "¿vendió?" — es cuánto de esto es incremental. Sin un período de comparación sin el cupón activo, esto queda marcado como hallazgo a favor, no como causa comprobada.</p>
-    <div class="table-scroll"><table>
-      <thead><tr><th>Cupón</th><th>Audiencia</th><th class="num">Aplicados</th><th class="num">Canjeados</th><th class="num">Unid. vendidas</th><th class="num">Ventas brutas</th><th class="num">Descuento absorbido</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><b>Nuevos Seguidores</b></td>
-          <td class="n">Nuevos seguidores de Mi Página · 10% OFF, tope $500</td>
-          <td class="num">319</td>
-          <td class="num">18</td>
-          <td class="num" style="font-weight:700">46</td>
-          <td class="num" style="font-weight:700">$ 28.642,67</td>
-          <td class="num">$ 2.853,96</td>
-        </tr>
-        <tr>
-          <td>Cupom para carrinhos abandonados</td>
-          <td class="n">Todos los compradores · 5% OFF, tope $200</td>
-          <td class="num">223</td>
-          <td class="num">1</td>
-          <td class="num">1</td>
-          <td class="num">$ 1.113,00</td>
-          <td class="num">$ 55,65</td>
-        </tr>
-      </tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">"Nuevos Seguidores" es el hallazgo comercial más grande del ciclo: $2.853,96 de descuento (≈10% del bruto, coherente con el % nominal) generaron $28.642,67 en ventas y 46 unidades — pero eso mide venta atribuida, no venta incremental. Ver Pendientes.</div>
-  </div>
-
-  <div class="card">
-    <div class="card-head"><h2>Rendimiento de Mercado Ads <span class="n">(sin datos nuevos este ciclo — Ads es opcional y no llegó · última foto: 1–18 ago)</span></h2></div>
-    <div class="alert warning" style="margin-bottom:12px;">
-      <span class="tag">Sin actualizar</span>
-      <div>No llegó reporte de Ads este ciclo. Lo de abajo es <b>la última foto disponible (1–18 ago)</b>, no datos de este período — se deja como referencia pero no se puede confirmar si "Caja De Arena Inteligente" se pausó o si sigue quemando presupuesto.</div>
-    </div>
-    <div class="table-scroll"><table>
-      <thead><tr><th>Campaña</th><th class="num">Impr.</th><th class="num">Clics</th><th class="num">Inversión</th><th class="num">Ingresos</th><th class="num">ACOS</th><th class="num">ROAS</th><th class="num">Ventas atrib.</th></tr></thead>
-      <tbody>
-<tr><td>Campaña Mercado Libre</td><td class="num">607.748</td><td class="num">2.653</td><td class="num">$ 13.257,61</td><td class="num">$ 64.586,81</td><td class="num">20.5%</td><td class="num">4.87x</td><td class="num">107</td></tr>
-<tr><td>Campaña Electro hasta $2000</td><td class="num">203.207</td><td class="num">572</td><td class="num">$ 3.766,98</td><td class="num">$ 16.335,49</td><td class="num">23.1%</td><td class="num">4.34x</td><td class="num">12</td></tr>
-<tr><td>Campaña All $600 - $1000</td><td class="num">370.639</td><td class="num">731</td><td class="num">$ 3.086,18</td><td class="num">$ 7.991,30</td><td class="num">38.6%</td><td class="num">2.59x</td><td class="num">20</td></tr>
-      </tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">Inversión estimada como CPC × Clics de cada anuncio (el reporte no trae inversión directa). Ingresos por publicidad = $88.913,60, coincide exactamente entre el reporte "por anuncios" y el de "ventas por publicidad" — buena señal de consistencia.</div>
-
-    <div class="alert critical" style="margin-top:14px;">
-      <span class="tag">Hallazgo</span>
-      <div><strong>61% de los anuncios con margen conocido (51 de 84) tuvieron contribución neta negativa: -$4.499,40 en el período.</strong> Con margen bruto ponderado, el margen generado por los $56.476 de ingresos matcheados con el maestro ronda $19.159 contra $13.411 invertidos → contribución neta positiva de ~$5.748 en esos 84 anuncios agregados, <b>pero eso esconde que 51 de ellos pierden plata individualmente</b> mientras unos pocos ganadores (como PMCU0004 y PHDH0004, los dos "Estrella") sostienen el promedio. 12 anuncios no matchearon con el maestro por nombre/ID ($6.699 invertidos, $32.437 en ingresos — no evaluables por margen).</div>
-    </div>
-    <div class="foot-note" style="margin-top:10px;">
-      <p><b>56 anuncios tuvieron inversión y 0 ventas atribuidas</b> ($4.466,85 en total). El peor caso, otra vez: <b>Caja De Arena Inteligente</b> ($1.864,59, 0 ventas) — mismo producto que ya había sido el peor caso hace un ciclo. Le siguen Frasco Flip Separador ($757,90) y Auriculares Gamer Imice HD490 ($348,48).</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-head"><h2>Salud de catálogo — fichas técnicas <span class="n">(export del 24/08 · formato nuevo y acotado · deadline según ML: 31 de agosto)</span></h2></div>
-
-    <div class="alert warning">
-      <span class="tag">Cambio de formato</span>
-      <div><strong>Este export ya no es la auditoría completa del catálogo — es la lista puntual de ML con lo que falta completar ahora mismo: 10 categorías, 17 publicaciones, deadline "antes del 31 de agosto".</strong>
-      <ul>
-        <li>El ciclo anterior (16/08–19/08) medía 54 categorías y 149 publicaciones con 68,0% de completitud global. Esta lista es un subconjunto — probablemente lo que ML considera prioritario resolver ahora, no todo el catálogo.</li>
-        <li><b>Ni Bebederos y comederos (59,8% el 19/08) ni Lámparas de mesa (20,1%) — las dos peores y las de más venta — aparecen en esta lista.</b> No se puede confirmar desde acá si ya se completaron o si el export simplemente no las incluye. Es la pregunta más importante de esta sección — ver Pendientes.</li>
-        <li>De las 10 categorías de este lote, las más completas ya están casi listas (Pelapapas y Botellas deportivas al 100%, Porta especieros 96,4%) y las más flojas tienen poca venta asociada (Procesadoras de alimentos 60,0%, 0 unidades; Selladoras de bolsas 78,6%, 0 unidades).</li>
-      </ul></div>
-    </div>
-
-    <div class="table-scroll"><table>
-      <thead><tr><th>Categoría</th><th class="num">Publicaciones</th><th class="num">Unid. vendidas (1–19 ago)</th><th class="num">Completitud</th><th class="num">Campos vacíos</th></tr></thead>
-      <tbody>
-<tr><td>Auriculares</td><td class="num">4</td><td class="num">10</td><td class="num" style="color:var(--good);font-weight:700">90,6%</td><td class="num">6</td></tr>
-<tr><td>Teclados para computadoras</td><td class="num">2</td><td class="num">5</td><td class="num" style="color:var(--good);font-weight:700">87,5%</td><td class="num">6</td></tr>
-<tr><td>Rascadores para gatos</td><td class="num">1</td><td class="num">3</td><td class="num" style="color:var(--good);font-weight:700">94,1%</td><td class="num">1</td></tr>
-<tr><td>Loncheras</td><td class="num">2</td><td class="num">1</td><td class="num" style="color:var(--good);font-weight:700">93,8%</td><td class="num">2</td></tr>
-<tr><td>Porta especieros</td><td class="num">2</td><td class="num">0</td><td class="num" style="color:var(--good);font-weight:700">96,4%</td><td class="num">1</td></tr>
-<tr><td>Procesadoras de alimentos</td><td class="num">1</td><td class="num">0</td><td class="num" style="color:#8a6400;font-weight:700">60,0%</td><td class="num">6</td></tr>
-<tr><td>Selladoras de bolsas industriales</td><td class="num">2</td><td class="num">0</td><td class="num" style="color:#8a6400;font-weight:700">78,6%</td><td class="num">6</td></tr>
-<tr><td>Pelapapas</td><td class="num">1</td><td class="num">0</td><td class="num" style="color:var(--good);font-weight:700">100,0%</td><td class="num">0</td></tr>
-<tr><td>Ralladores de cocina</td><td class="num">1</td><td class="num">0</td><td class="num" style="color:var(--good);font-weight:700">90,0%</td><td class="num">1</td></tr>
-<tr><td>Botellas deportivas y de bazar</td><td class="num">1</td><td class="num">0</td><td class="num" style="color:var(--good);font-weight:700">100,0%</td><td class="num">0</td></tr>
-      </tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">Las 10 categorías de este export, ordenadas por unidades vendidas 1–19 ago (dato más reciente disponible por SKU). Se midió solo sobre columnas tipo ATTRIBUTE. Cuentan como vacías las celdas nulas y los placeholders del tipo "Escribe el código".</div>
-
-    <div class="foot-note" style="margin-top:14px;">
-      <p><b>Pedido de Javi, dejado en el repo el 24/08:</b> diferenciar el estado de la publicación (Activo/Pausado/Sin stock) al medir completitud, y distinguir cuáles son publicaciones de catálogo (variantes esperadas, no error). No implementado todavía — requiere cruzar este reporte con Publicaciones y el maestro por ITEM_ID en el mismo pase. Queda anotado en Pendientes.</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-head"><h2>Archivos del ciclo <span class="n">(inventario — ningún archivo recibido queda sin destino declarado)</span></h2></div>
-    <div class="table-scroll"><table>
-      <thead><tr><th>Archivo</th><th>Tipo</th><th>Período que cubre</th><th>Destino</th></tr></thead>
-      <tbody>
-        <tr><td>Reporte_evolucion_negocio_2026_08_01…24</td><td>Evolución de negocio (serie diaria de cuenta)</td><td>1–24 ago</td><td><span class="pill pill-live">Procesado</span></td></tr>
-        <tr><td>Reporte_desempeño_producto_2026_08_01…24</td><td>Desempeño de producto (serie diaria de cuenta, no por SKU)</td><td>1–24 ago</td><td><span class="pill pill-live">Procesado</span> — cruzado contra Negocio, coincide exacto</td></tr>
-        <tr><td>Reporte_rendimiento_promociones…</td><td>Promociones</td><td>vigencias variables, hasta 24 ago</td><td><span class="pill pill-live">Procesado</span></td></tr>
-        <tr><td>Reporte_rendimiento_cupones…</td><td><b>Nuevo tipo de reporte:</b> cupones (distinto de promociones)</td><td>vigencias variables, hasta 24 ago</td><td><span class="pill pill-live">Procesado</span> — primera vez, agregado al router</td></tr>
-        <tr><td>Reporte_rendimiento_publicaciones_2026_08_01…19</td><td>Visitas y ventas por SKU/publicación</td><td>1–19 ago</td><td><span class="pill pill-warn">Duplicado</span> — mismos 188 unidades del pase del 19/08, sin datos nuevos</td></tr>
-        <tr><td>Publicaciones_2026_08_2407_31</td><td>Publicaciones (SKU, stock en depósito, precio, estado)</td><td>Foto al 24/08</td><td><span class="pill pill-live">Procesado</span> — verificación de SKU (0 en forma vieja) + hallazgo crítico de stock (PMCU0004/PHDH0004)</td></tr>
-        <tr><td>Fichas_tecnicas_2026_08_2407_32</td><td>Planilla de atributos de catálogo (formato nuevo, acotado)</td><td>Foto al 24/08</td><td><span class="pill pill-live">Procesado</span> — salud de catálogo</td></tr>
-        <tr><td>reporte_de_envios_flex_20260824</td><td>Envíos Flex</td><td>17–23 ago</td><td><span class="pill pill-live">Procesado</span> — estado de cuenta</td></tr>
-        <tr><td>20260824_Ventas_UY..._2008hs</td><td><b>Segundo envío:</b> Ventas UY (detalle transaccional)</td><td>1–24 ago (hasta 20:08hs)</td><td><span class="pill pill-live">Procesado</span> — ranking, canales, stock recalculado</td></tr>
-        <tr><td><i>(no llegó)</i></td><td>Envíos en agencias de ML</td><td>—</td><td><span class="pill pill-bad">Faltante</span> — reputación en 55%/73% al último dato, dos ciclos sin visibilidad</td></tr>
-        <tr><td><i>(no llegó, opcional este ciclo)</i></td><td>Mercado Ads</td><td>—</td><td><span class="pill pill-off">No aplica</span> — Javi lo pidió como opcional para esta corrida</td></tr>
-      </tbody>
-    </table></div>
-    <div class="chart-tooltip-hint">9 archivos recibidos en total este ciclo (8 + Ventas UY en un segundo envío), todos con destino declarado. STOCK_MT_FINAL bajado del Drive (Google Sheet propio) y cruzado con Ventas UY para recalcular stock — 18 SKU actualizados, Excel entregado por chat porque no hay forma de escribir en el Sheet desde acá. Solo el reporte de agencias sigue faltando.</div>
-  </div>
-
-  <div class="card">
-    <h2 style="margin-bottom:10px;">Notas de calidad de datos</h2>
-    <div class="alert critical" style="margin-top:10px;">
-      <span class="tag">Cambio de proceso</span>
-      <div><strong>Este ciclo se procesó por chat, no por el bridge a la Mac.</strong> Desde el 24/08 el flujo esperado era que Javi bajara los reportes a <code>~/Downloads</code> y la sesión los leyera por el bridge — pero esta corrida es una tarea programada en la nube, sin acceso a la computadora de Javi. Por eso volvió el flujo anterior: archivos subidos al chat y token de GitHub pegado en el mensaje. Si las próximas corridas también son programadas, conviene asumir este flujo como el que realmente se usa, no el del bridge.</div>
-    </div>
-    <div class="alert good" style="margin-top:10px;">
-      <span class="tag">Fuente de verdad</span>
-      <div><strong>El maestro de SKU es STOCK_MT_FINAL y la convención correcta es <code>PHCO</code>.</strong> <b>Cambió de ubicación:</b> ahora es un Google Sheet propio en la cuenta <code>multitrenduy@gmail.com</code> (antes era un .xlsx en una carpeta compartida desde <code>javotrico28@gmail.com</code>). 143 SKU, 0 en la forma vieja <code>PHC0####</code> (confirmado con el reporte Publicaciones del 24/08).</div>
-    </div>
-    <div class="alert warning" style="margin-top:10px;">
-      <span class="tag">Hallazgo del ciclo — export cortado</span>
-      <div><strong>El export de Ventas UY usado en el pase del 19/08 estaba cortado a las 18:05 hs — el encabezado del reporte lo dice ("Estado de tus ventas al... hs") y no se había revisado antes.</strong> Comparando ese pase contra el export completo de este ciclo, 9 de los 11 SKU recalculados el 19/08 coinciden exacto; solo PMCU0004 (3 unidades) y PHDH0004 (1 unidad) quedaron subestimados, corregidos ahora con retroactividad. <b>Nueva regla de proceso: revisar siempre esa hora de corte antes de asumir que un día está completo.</b></div>
-    </div>
-    <div class="alert good" style="margin-top:10px;">
-      <span class="tag">Validación cruzada</span>
-      <div><strong>El recálculo desde Ventas UY (stock derivado de restar ventas) y el stock en depósito que reporta ML en Publicaciones (leído directo, sin restar nada) coinciden dentro de 1 unidad para los SKU comparados</strong> — PMCU0004: 2 vs. 3; PHDH0004: 5 vs. 6; PHCO0011: 3 vs. 3 (exacto). Da confianza de que ambos métodos están midiendo lo mismo razonablemente bien; la diferencia de 1 unidad es consistente con el desfasaje horario entre exports, no con un error de cálculo.</div>
-    </div>
-    <div class="foot-note">
-      <p><b>Evolución de negocio y Desempeño de producto coinciden exacto</b> en visitas únicas (8.078) y cantidad de ventas (215) para el período 1–24 ago. Ventas UY coincide exacto con Evolución de negocio día por día en unidades brutas para el 1–23 ago (verificado los 23 días); el 24/08 Ventas UY trae 5 unidades más porque se exportó más tarde en el día (20:08 hs vs. la foto más temprana de Negocio).</p>
-      <p><b>Ventas brutas del panel ($148.400, KPI) vs. "Ingresos por productos" de Ventas UY neto de canceladas ($144.294,51):</b> diferencia de ~$4.100 sin explicar del todo — probablemente parte del desfasaje horario del 24/08 más diferencias de qué componentes incluye cada columna (envío, impuestos). No es una inconsistencia grave (~2,8% del total) pero queda como nota, no se investigó a fondo por tiempo.</p>
-      <p><b>Paquetes multiproducto parseados por envío, no por fila:</b> 187 envíos netos (258 unidades brutas − 9 canceladas = 249 netas) sobre 193 "# de venta" físicos detectados, sin huérfanos (0 mismatches entre cabeceras "Paquete de N productos" y sus N filas hijas).</p>
-      <p><b>"Reporte de rendimiento de publicaciones" (188 unidades, 1–19 ago) vs. Ventas UY del mismo período (198 unidades netas):</b> la diferencia bajó de 14 a 10 con el dato limpio, pero sigue sin explicación exacta. No se usó para cifras del panel.</p>
-      <p><b>Reporte de cupones — primera vez que se recibe, formato distinto al de promociones</b> (trae "Presupuesto consumido" además de "Ventas brutas", que las promociones no tienen). Se agregó a <code>reference/reportes.md</code> como tipo de reporte nuevo.</p>
-      <p><b>Envíos Flex de este ciclo no trae hoja de "últimas 4 semanas"</b> (sí la trajo el 17/08) — solo el detalle semanal. No se puede calcular la tendencia de 4 semanas para Flex este ciclo.</p>
-      <p><b>Fichas técnicas cambió de alcance:</b> de 54 categorías/149 publicaciones (auditoría completa) a 10 categorías/17 publicaciones (checklist puntual de ML). No es comparable 1 a 1 con la completitud global del 68,0% de ciclos anteriores — son universos distintos. Ver Salud de catálogo.</p>
-      <p><b>El maestro no se pudo actualizar directo en el Google Sheet</b> — las herramientas de Drive disponibles solo editan metadata (título, carpeta), no contenido de celdas. El Excel con los 18 SKU corregidos se entregó por chat, igual que cuando el maestro era un .xlsx.</p>
-      <p><b>"Margen bruto %" del maestro</b> se sigue usando tal cual para estimar contribución neta — es un supuesto de que ya viene neto de comisión ML y logística, documentado pero no verificado con Javi (pendiente desde hace varios ciclos).</p>
-    </div>
-  </div>
-
-</div>
-
-<script>
-const PRODUCTOS = [{"SKU": "PMCU0004", "unidades_vendidas": 47.0, "NAME": "Comedero Y Bebedero 2 En 1 Para Perros Y Gatos - Dispensador", "CATEGORY": "Mascotas", "STOCK": 17.0, "Precio ML": 450.0, "Margen bruto %": 0.524349296, "stock_estimado_post_venta": 2.0, "clasificacion": "Estrella", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1412556516", "confirmado_usuario": false, "nota_correccion": "Corrección retroactiva: el pase 19/08 subestimó la venta 17-19/08 en 3u (export cortado a las 18:05hs). Recalculado desde cero con Ventas UY completo: 25 confirmadas (16/08) − 26 vendidas desde entonces = 2. Cruza con el stock en depósito de ML (3, snapshot 24/08 mañana) dentro de 1 unidad.", "ingresos_ciclo": 20272.5, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0004", "unidades_vendidas": 42.0, "NAME": "Lámpara Led Aurora Boreal  Efecto Relajante De Luces Rgb", "CATEGORY": "Decoración hogar", "STOCK": 19.0, "Precio ML": 684.0, "Margen bruto %": 0.5438, "stock_estimado_post_venta": 5.0, "clasificacion": "Estrella", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-882392434", "confirmado_usuario": false, "nota_correccion": "Corrección retroactiva: el pase 19/08 subestimó la venta 17-19/08 en 1u (export cortado a las 18:05hs). Recalculado desde cero con Ventas UY completo: 25 confirmadas (16/08) − 20 vendidas desde entonces = 5. Cruza con el stock en depósito de ML (6, snapshot 24/08 mañana) dentro de 1 unidad.", "ingresos_ciclo": 22102.51, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0011", "unidades_vendidas": 16.0, "NAME": "Mini Sartén Antiadherente 5 Cm Para Huevos-panqueques", "CATEGORY": "Cocina", "STOCK": 6.0, "Precio ML": 650.0, "Margen bruto %": 0.3005282462, "stock_estimado_post_venta": 3.0, "clasificacion": "Alto volumen / bajo margen", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697313474", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 9465.52, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0009BLAN", "unidades_vendidas": 9.0, "NAME": "Dispensador Y Organizador De Huevos Para Heladera Y Cocina", "CATEGORY": "Cocina", "STOCK": 283.0, "Precio ML": 270.0, "Margen bruto %": 0.570274, "stock_estimado_post_venta": 281.0, "clasificacion": "Estrella", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698239606", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1537.24, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0005", "unidades_vendidas": 8.0, "NAME": "Lámpara Halo Mesa Multitrend Sunset Lamp Elegante Y Moderna", "CATEGORY": "Decoración hogar", "STOCK": 192.0, "Precio ML": 430.0, "Margen bruto %": 0.4932749767, "stock_estimado_post_venta": 188.0, "clasificacion": "Estrella", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-880989136", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 2396.76, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0025", "unidades_vendidas": 7.0, "NAME": "Tetera De Vidrio Resistente Al Calor Con Infusor De Té", "CATEGORY": "Cocina", "STOCK": 43.0, "Precio ML": 571.0, "Margen bruto %": 0.5506020876, "stock_estimado_post_venta": 42.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884537514", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 3719.25, "ingreso_estimado_paquete": false}, {"SKU": "PMOT0006", "unidades_vendidas": 7.0, "NAME": "Mxsimedarby 2pzs Guantes Quita Pelo Mascotas Grande Negro", "CATEGORY": "Mascotas", "STOCK": 34.0, "Precio ML": 390.0, "Margen bruto %": 0.7125214954, "stock_estimado_post_venta": 33.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1412556404", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 980.0, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0022", "unidades_vendidas": 7.0, "NAME": "5pcs Soporte Pared Adhesivo Para Escoba, Pala, Fregones", "CATEGORY": "Cocina", "STOCK": 395.0, "Precio ML": 400.0, "Margen bruto %": 0.742355, "stock_estimado_post_venta": 392.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-880896958", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1500.0, "ingreso_estimado_paquete": true}, {"SKU": "PMOT0007", "unidades_vendidas": 6.0, "NAME": "Tapete Sanitario Césped Sintético Para Perros 64x51 Cm", "CATEGORY": "Mascotas", "STOCK": 40.0, "Precio ML": 2200.0, "Margen bruto %": 0.5249809455, "stock_estimado_post_venta": 39.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-693763327", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 12798.72, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0001", "unidades_vendidas": 5.0, "NAME": "Dispensador De Agua Automático Usb Recargable Vmi", "CATEGORY": "Cocina", "STOCK": 94.0, "Precio ML": 295.0, "Margen bruto %": 0.4248189831, "stock_estimado_post_venta": 92.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-699478638", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1414.07, "ingreso_estimado_paquete": false}, {"SKU": "PTGC0002", "unidades_vendidas": 5.0, "NAME": "Teclado Gamer Imice Gk-700 Retroiluminado Con Apoya Muñeca", "CATEGORY": "Tecnologia", "STOCK": 0.0, "Precio ML": 1660.0, "Margen bruto %": 0.3, "stock_estimado_post_venta": -2.0, "clasificacion": "Riesgo de quiebre", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1461927248", "confirmado_usuario": false, "nota_correccion": "Se vendieron 2 unidades el 22/08 con el stock ya en 0 desde el 19/08 — venta real, no cancelada. Stock dejado en 0 (no se escribe negativo). Confirmar disponibilidad física urgente.", "ingresos_ciclo": 8300.0, "ingreso_estimado_paquete": false}, {"SKU": "PTSV0002", "unidades_vendidas": 5.0, "NAME": "Auriculares Unicorn Ah-902a", "CATEGORY": "Tecnologia", "STOCK": 0.0, "Precio ML": 1260.0, "Margen bruto %": 0.3, "stock_estimado_post_venta": 0.0, "clasificacion": "Riesgo de quiebre", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1461981790", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 6300.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0024", "unidades_vendidas": 4.0, "NAME": "Magic Brush Cepillo De Limpieza 5 En 1", "CATEGORY": "Cocina", "STOCK": 23.0, "Precio ML": 625.0, "Margen bruto %": 0.550604672, "stock_estimado_post_venta": 22.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884381452", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1750.0, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0002BEIG", "unidades_vendidas": 4.0, "NAME": "Gestionador 2.0 Organizador De Cables", "CATEGORY": "Decoración hogar", "STOCK": 47.0, "Precio ML": 570.0, "Margen bruto %": 0.5932546905, "stock_estimado_post_venta": 46.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-880947316", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 518.7, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0021", "unidades_vendidas": 4.0, "NAME": "Calendario Pizarra Magnética Multitrend 21x29,7 Cm Compacta", "CATEGORY": "Cocina", "STOCK": 46.0, "Precio ML": 1250.0, "Margen bruto %": 0.650215232, "stock_estimado_post_venta": 45.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-881040054", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 3535.0, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0029GRIS", "unidades_vendidas": 4.0, "NAME": "Apoya Ollas De Silicona Anticalor - Posavasos Y Protector", "CATEGORY": "Cocina", "STOCK": 44.0, "Precio ML": 130.0, "Margen bruto %": 0.5614738585, "stock_estimado_post_venta": 44.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-694188393", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PHOR0003", "unidades_vendidas": 4.0, "NAME": "Cesto Para Ropa Sucia Portátil Con Asas Color Durazno", "CATEGORY": "Decoración hogar", "STOCK": 42.0, "Precio ML": 1120.0, "Margen bruto %": 0.523114595, "stock_estimado_post_venta": 42.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1396835940", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 4312.0, "ingreso_estimado_paquete": false}, {"SKU": "PMCA0003", "unidades_vendidas": 3.0, "NAME": "Cama Tipo Banana Para Mascota Pequeña", "CATEGORY": "Mascotas", "STOCK": 46.0, "Precio ML": 1060.0, "Margen bruto %": 0.5224338868, "stock_estimado_post_venta": 45.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-693763467", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 2039.86, "ingreso_estimado_paquete": true}, {"SKU": "PMOT0001", "unidades_vendidas": 3.0, "NAME": "Removedor De Pelo Para Mascotas Pet Fountain - 4 Unidades", "CATEGORY": "Mascotas", "STOCK": 468.0, "Precio ML": 175.0, "Margen bruto %": 0.4205312, "stock_estimado_post_venta": 467.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697287242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PMCU0003VERD", "unidades_vendidas": 3.0, "NAME": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "CATEGORY": "Mascotas", "STOCK": 5.0, "Precio ML": 75.0, "Margen bruto %": 0.4187744, "stock_estimado_post_venta": 5.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884301986", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0001LOVE", "unidades_vendidas": 3.0, "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 82.0, "Precio ML": 395.0, "Margen bruto %": 0.5524913418, "stock_estimado_post_venta": 82.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 253.0, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0001SATU", "unidades_vendidas": 3.0, "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 44.0, "Precio ML": 395.0, "Margen bruto %": 0.5524913418, "stock_estimado_post_venta": 44.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 253.0, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0001ASTR", "unidades_vendidas": 3.0, "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 38.0, "Precio ML": 395.0, "Margen bruto %": 0.5524913418, "stock_estimado_post_venta": 38.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 506.0, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0027", "unidades_vendidas": 3.0, "NAME": "Molinillo De Sal Eléctrico Molinillo De Pimienta Automático Negro Y Transparente", "CATEGORY": "Cocina", "STOCK": 8.0, "Precio ML": 1370.0, "Margen bruto %": 0.4291869664, "stock_estimado_post_venta": 8.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1474354232", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 3904.5, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0029NEGR", "unidades_vendidas": 3.0, "NAME": "Apoya Ollas De Silicona Anticalor - Posavasos Y Protector", "CATEGORY": "Cocina", "STOCK": 46.0, "Precio ML": 130.0, "Margen bruto %": 0.5614738585, "stock_estimado_post_venta": 46.0, "clasificacion": "Rentable y escalable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-694198193", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PMOT0005", "unidades_vendidas": 3.0, "NAME": "Rascador Cama Gato Doble Nivel Infinito Reductor Estrés", "CATEGORY": "Mascotas", "STOCK": 0.0, "Precio ML": 1480.0, "Margen bruto %": 0.5502880919, "stock_estimado_post_venta": 0.0, "clasificacion": "Riesgo de quiebre", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884548334", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 3339.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0004BLAN", "unidades_vendidas": 2.0, "NAME": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "CATEGORY": "Cocina", "STOCK": 10.0, "Precio ML": 590.0, "Margen bruto %": 0.2841261017, "stock_estimado_post_venta": 10.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696559194", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1072.0, "ingreso_estimado_paquete": false}, {"SKU": "PHDH0001GISP", "unidades_vendidas": 2.0, "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 31.0, "Precio ML": 395.0, "Margen bruto %": 0.5524913418, "stock_estimado_post_venta": 31.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 253.0, "ingreso_estimado_paquete": true}, {"SKU": "PHDH0001BALL", "unidades_vendidas": 2.0, "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 20.0, "Precio ML": 395.0, "Margen bruto %": 0.5524913418, "stock_estimado_post_venta": 20.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0017", "unidades_vendidas": 2.0, "NAME": "Frasco Flip Separador De Alimentos Y Liquido Multitrend", "CATEGORY": "Cocina", "STOCK": 8.0, "Precio ML": 810.0, "Margen bruto %": 0.4971146667, "stock_estimado_post_venta": 8.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-882389536", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0004VEAQ", "unidades_vendidas": 2.0, "NAME": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "CATEGORY": "Cocina", "STOCK": 11.0, "Precio ML": 590.0, "Margen bruto %": 0.2841261017, "stock_estimado_post_venta": 11.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696559194", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 964.0, "ingreso_estimado_paquete": false}, {"SKU": "PMCU0003NEGR", "unidades_vendidas": 2.0, "NAME": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "CATEGORY": "Mascotas", "STOCK": 3.0, "Precio ML": 75.0, "Margen bruto %": 0.4187744, "stock_estimado_post_venta": 3.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884548970", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PMCU0003ROJO", "unidades_vendidas": 2.0, "NAME": "Plato Plegable En Silicona Comedero - Bebedero Para Mascotas", "CATEGORY": "Mascotas", "STOCK": 3.0, "Precio ML": 75.0, "Margen bruto %": 0.4187744, "stock_estimado_post_venta": 3.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884470894", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PMOT0004", "unidades_vendidas": 2.0, "NAME": "Rascador Sisal Para Gatos Cama Y Juguete De Rascar Para Gato", "CATEGORY": "Mascotas", "STOCK": 46.0, "Precio ML": 700.0, "Margen bruto %": 0.58944752, "stock_estimado_post_venta": 46.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884436698", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1400.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0008", "unidades_vendidas": 2.0, "NAME": "Centrifugadora De Frutas Y Verduras - Salad Spinner - 5 L", "CATEGORY": "Cocina", "STOCK": 45.0, "Precio ML": 1180.0, "Margen bruto %": 0.5811444068, "stock_estimado_post_venta": 45.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-699324588", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 2301.0, "ingreso_estimado_paquete": false}, {"SKU": "PAAA0001VERD", "unidades_vendidas": 2.0, "NAME": "Ksd Manopla De Microfibra Multifuncional Para Auto Y Casa", "CATEGORY": "Autos", "STOCK": 25.0, "Precio ML": 160.0, "Margen bruto %": 0.431072, "stock_estimado_post_venta": 25.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698277334", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 288.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0010", "unidades_vendidas": 2.0, "NAME": "Dispensador Vmi Para Papel Film Y Aluminio Con Cortador", "CATEGORY": "Cocina", "STOCK": 128.0, "Precio ML": 550.0, "Margen bruto %": 0.4998267636, "stock_estimado_post_venta": 128.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-699478666", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 990.0, "ingreso_estimado_paquete": false}, {"SKU": "PHDH0002GRIS", "unidades_vendidas": 1.0, "NAME": "Gestionador 2.0 Organizador De Cables", "CATEGORY": "Decoración hogar", "STOCK": 57.0, "Precio ML": 605.0, "Margen bruto %": 0.605215163, "stock_estimado_post_venta": 56.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-880921336", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PHCO0012VERD", "unidades_vendidas": 1.0, "NAME": "Pelador De Verduras Y Frutas Genérica 20 Cm Abs", "CATEGORY": "Cocina", "STOCK": 113.0, "Precio ML": 90.0, "Margen bruto %": 0.574544, "stock_estimado_post_venta": 112.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-645895169", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 90.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0023VERD", "unidades_vendidas": 1.0, "NAME": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca", "CATEGORY": "Cocina", "STOCK": 0.0, "Precio ML": 720.0, "Margen bruto %": 0.551486, "stock_estimado_post_venta": 0.0, "clasificacion": "Riesgo de quiebre", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884404890", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 517.0, "ingreso_estimado_paquete": false}, {"SKU": "PHDH0001LUNA", "unidades_vendidas": 1.0, "NAME": "Lámpara 3d Cristal Decorativa Base Madera Usb Luz 6cm", "CATEGORY": "Decoración hogar", "STOCK": 32.0, "Precio ML": 395.0, "Margen bruto %": 0.5524913418, "stock_estimado_post_venta": 32.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-697415242", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PAAA0003", "unidades_vendidas": 1.0, "NAME": "Cenicero Para Puerta Del Auto  Resistente Al Viento", "CATEGORY": "Autos", "STOCK": 6.0, "Precio ML": 515.0, "Margen bruto %": 0.4249828971, "stock_estimado_post_venta": 6.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884303380", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 515.0, "ingreso_estimado_paquete": false}, {"SKU": "PTOR0001", "unidades_vendidas": 1.0, "NAME": "Smartwatch Smartband M7 Con Salud Y Deporte", "CATEGORY": "Tecnologia", "STOCK": 9.0, "Precio ML": 800.0, "Margen bruto %": 0.4875, "stock_estimado_post_venta": 9.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696031467", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 800.0, "ingreso_estimado_paquete": false}, {"SKU": "PTSV0007NEGR", "unidades_vendidas": 1.0, "NAME": "Auriculares Vincha Inalámbricos Akz 08c Para Niños", "CATEGORY": "Tecnologia", "STOCK": 3.0, "Precio ML": 1160.0, "Margen bruto %": 0.3, "stock_estimado_post_venta": 3.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1461983784", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1015.49, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0033", "unidades_vendidas": 1.0, "NAME": "Frasco Tarro Para Ensaladas Con Apertura Lateral | 1000ml", "CATEGORY": "Cocina", "STOCK": 18.0, "Precio ML": 500.0, "Margen bruto %": 0.520905968, "stock_estimado_post_venta": 18.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-1469269370", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 475.0, "ingreso_estimado_paquete": false}, {"SKU": "PMOT0003AMAR", "unidades_vendidas": 1.0, "NAME": "Pelota De Juguete Para Mascotas Interactiva Con Velocidades", "CATEGORY": "Mascotas", "STOCK": 64.0, "Precio ML": 190.0, "Margen bruto %": 0.5524298947, "stock_estimado_post_venta": 64.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884431970", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 180.5, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0030", "unidades_vendidas": 1.0, "NAME": "Picadora Manual 1.5l Con Cuerda - Procesador De Alimentos", "CATEGORY": "Cocina", "STOCK": 94.0, "Precio ML": 370.0, "Margen bruto %": 0.5275915416, "stock_estimado_post_venta": 94.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-694198565", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 351.5, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0004GRCL", "unidades_vendidas": 1.0, "NAME": "Set 12 Utensilios Cocina Silicona Mango Madera Antiadherente", "CATEGORY": "Cocina", "STOCK": 11.0, "Precio ML": 590.0, "Margen bruto %": 0.2841261017, "stock_estimado_post_venta": 11.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696559194", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 482.0, "ingreso_estimado_paquete": false}, {"SKU": "PMCA0002", "unidades_vendidas": 1.0, "NAME": "Cama S Para Mascotas Perro Suertudo - Algodón Hidratable", "CATEGORY": "Mascotas", "STOCK": 43.0, "Precio ML": 720.0, "Margen bruto %": 0.425948, "stock_estimado_post_venta": 43.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698226916", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 720.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0002PAND", "unidades_vendidas": 1.0, "NAME": "Babero Silicona Hyundai Hy-w003 Varios Colores", "CATEGORY": "Cocina", "STOCK": 7.0, "Precio ML": 200.0, "Margen bruto %": 0.4679648, "stock_estimado_post_venta": 7.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-704261762", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 200.0, "ingreso_estimado_paquete": false}, {"SKU": "PTGC0001", "unidades_vendidas": 1.0, "NAME": "Teclado Imice Ak-100 Retroiluminado Qwerty", "CATEGORY": "Tecnologia", "STOCK": 0.0, "Precio ML": 1500.0, "Margen bruto %": 0.3, "stock_estimado_post_venta": 0.0, "clasificacion": "Riesgo de quiebre", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-696045949", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 1500.0, "ingreso_estimado_paquete": false}, {"SKU": "PHCO0023MARR", "unidades_vendidas": 1.0, "NAME": "Lunchera Tupper Térmica Hermética Acero Inox. Comida Fresca", "CATEGORY": "Cocina", "STOCK": 7.0, "Precio ML": 720.0, "Margen bruto %": 0.551486, "stock_estimado_post_venta": 7.0, "clasificacion": "Estable", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-884521848", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}, {"SKU": "PAAA0002", "unidades_vendidas": 1.0, "NAME": "Toalla De Microfibra Para Limpieza Auto Linna - X 4 Unidades", "CATEGORY": "Autos", "STOCK": 432.0, "Precio ML": 260.0, "Margen bruto %": 0.615536, "stock_estimado_post_venta": 432.0, "clasificacion": "Baja rotación / investigar", "Enlace ML": "https://articulo.mercadolibre.com.uy/MLU-698277484", "confirmado_usuario": false, "nota_correccion": "", "ingresos_ciclo": 0, "ingreso_estimado_paquete": true}];
-const DAILY = [{"Fecha": "01/08/26", "Visitas": 344, "Cantidad de ventas": 10, "Unidades vendidas": 12, "Ventas brutas": 7652}, {"Fecha": "02/08/26", "Visitas": 335, "Cantidad de ventas": 5, "Unidades vendidas": 5, "Ventas brutas": 3684}, {"Fecha": "03/08/26", "Visitas": 407, "Cantidad de ventas": 10, "Unidades vendidas": 11, "Ventas brutas": 7715}, {"Fecha": "04/08/26", "Visitas": 390, "Cantidad de ventas": 12, "Unidades vendidas": 13, "Ventas brutas": 6445}, {"Fecha": "05/08/26", "Visitas": 421, "Cantidad de ventas": 10, "Unidades vendidas": 11, "Ventas brutas": 8241}, {"Fecha": "06/08/26", "Visitas": 336, "Cantidad de ventas": 11, "Unidades vendidas": 13, "Ventas brutas": 6457}, {"Fecha": "07/08/26", "Visitas": 302, "Cantidad de ventas": 7, "Unidades vendidas": 7, "Ventas brutas": 5690}, {"Fecha": "08/08/26", "Visitas": 328, "Cantidad de ventas": 6, "Unidades vendidas": 7, "Ventas brutas": 3861}, {"Fecha": "09/08/26", "Visitas": 357, "Cantidad de ventas": 14, "Unidades vendidas": 17, "Ventas brutas": 8006}, {"Fecha": "10/08/26", "Visitas": 476, "Cantidad de ventas": 17, "Unidades vendidas": 21, "Ventas brutas": 11575}, {"Fecha": "11/08/26", "Visitas": 473, "Cantidad de ventas": 6, "Unidades vendidas": 6, "Ventas brutas": 3010}, {"Fecha": "12/08/26", "Visitas": 401, "Cantidad de ventas": 12, "Unidades vendidas": 17, "Ventas brutas": 9371}, {"Fecha": "13/08/26", "Visitas": 384, "Cantidad de ventas": 8, "Unidades vendidas": 9, "Ventas brutas": 8665}, {"Fecha": "14/08/26", "Visitas": 299, "Cantidad de ventas": 14, "Unidades vendidas": 18, "Ventas brutas": 8387}, {"Fecha": "15/08/26", "Visitas": 328, "Cantidad de ventas": 8, "Unidades vendidas": 9, "Ventas brutas": 4239}, {"Fecha": "16/08/26", "Visitas": 252, "Cantidad de ventas": 3, "Unidades vendidas": 3, "Ventas brutas": 1546}, {"Fecha": "17/08/26", "Visitas": 319, "Cantidad de ventas": 14, "Unidades vendidas": 15, "Ventas brutas": 8306}, {"Fecha": "18/08/26", "Visitas": 319, "Cantidad de ventas": 2, "Unidades vendidas": 2, "Ventas brutas": 3209}, {"Fecha": "19/08/26", "Visitas": 260, "Cantidad de ventas": 8, "Unidades vendidas": 10, "Ventas brutas": 4850}, {"Fecha": "20/08/26", "Visitas": 338, "Cantidad de ventas": 13, "Unidades vendidas": 13, "Ventas brutas": 7976}, {"Fecha": "21/08/26", "Visitas": 302, "Cantidad de ventas": 7, "Unidades vendidas": 10, "Ventas brutas": 4586}, {"Fecha": "22/08/26", "Visitas": 250, "Cantidad de ventas": 5, "Unidades vendidas": 10, "Ventas brutas": 6993}, {"Fecha": "23/08/26", "Visitas": 421, "Cantidad de ventas": 13, "Unidades vendidas": 14, "Ventas brutas": 7936}, {"Fecha": "24/08/26", "Visitas": 36, "Cantidad de ventas": 0, "Unidades vendidas": 0, "Ventas brutas": 0}];
-
-// ---------- Charts (SVG bars con tooltip) ----------
-function barChart(container, values, labels, opts) {
-  const w = container.clientWidth || 500, h = 170;
-  const padL=6, padR=6, padT=8, padB=22;
-  const plotW = w - padL - padR, plotH = h - padT - padB;
-  const n = values.length, gap = 4;
-  const barW = (plotW - gap*(n-1)) / n;
-  const maxV = Math.max(...values, 1);
-  let bars = '';
-  values.forEach((v,i) => {
-    const bh = (v/maxV) * plotH;
-    const x = padL + i*(barW+gap);
-    const y = padT + (plotH - bh);
-    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${opts.color}" class="bar" data-label="${labels[i]}" data-value="${opts.fmt(v)}"><title>${labels[i]}: ${opts.fmt(v)}</title></rect>`;
-  });
-  const baseline = `<line x1="${padL}" y1="${padT+plotH}" x2="${w-padR}" y2="${padT+plotH}" stroke="#e1e0d9" stroke-width="1"/>`;
-  const lblFirst = `<text x="${padL}" y="${h-6}" font-size="10" fill="#8b968f" font-family="Rethink Sans, sans-serif">${labels[0]}</text>`;
-  const lblLast = `<text x="${w-padR}" y="${h-6}" font-size="10" fill="#8b968f" text-anchor="end" font-family="Rethink Sans, sans-serif">${labels[n-1]}</text>`;
-  container.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" xmlns="http://www.w3.org/2000/svg">${baseline}${bars}${lblFirst}${lblLast}</svg>
-    <style>.bar{transition:opacity .1s} .bar:hover{opacity:.72;cursor:pointer}</style>`;
-}
-barChart(document.getElementById('chart-ventas'), DAILY.map(d=>d['Ventas brutas']), DAILY.map(d=>d['Fecha']), {color:'#2BEA60', fmt: v => '$'+v.toLocaleString('es-UY')});
-barChart(document.getElementById('chart-visitas'), DAILY.map(d=>d['Visitas']), DAILY.map(d=>d['Fecha']), {color:'#0C0C0C', fmt: v => v.toLocaleString('es-UY')+' visitas'});
-
-// ---------- Tabla interactiva ----------
-const badgeColors = {
-  "Estrella": ["#0ca30c","#eafbea"],
-  "Rentable y escalable": ["#25BF50","#D5FBDF"],
-  "Alto volumen / bajo margen": ["#fab219","#fff8e6"],
-  "Baja rotación / investigar": ["#8b968f","#f2f2f0"],
-  "Riesgo de quiebre": ["#d03b3b","#fdf1f1"],
-  "Estable": ["#55625a","#f2f2f0"],
-  "Confirmado OK": ["#25BF50","#D5FBDF"],
-  "Sin stock (pausada)": ["#8b968f","#f2f2f0"],
-  "Sin stock (pausada / sin venta este ciclo)": ["#8b968f","#f2f2f0"],
-};
-
-let sortKey = 'unidades_vendidas', sortDir = -1, activeFilter = 'Todos', searchTerm = '';
-
-function render() {
-  let rows = PRODUCTOS.filter(p => {
-    if (activeFilter !== 'Todos' && p.clasificacion !== activeFilter) return false;
-    if (searchTerm) {
-      const norm = str => String(str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const s = norm(searchTerm);
-      if (!(norm(p.NAME).includes(s) || norm(p.SKU).includes(s))) return false;
-    }
-    return true;
-  });
-  rows.sort((a,b) => {
-    let av = a[sortKey], bv = b[sortKey];
-    if (typeof av === 'string') { av = (av||'').toLowerCase(); bv = (bv||'').toLowerCase(); return av < bv ? -1*sortDir : av > bv ? 1*sortDir : 0; }
-    av = av==null? -Infinity : av; bv = bv==null? -Infinity: bv;
-    return (av - bv) * sortDir;
-  });
-  const tbody = document.getElementById('tabla-body');
-  tbody.innerHTML = rows.map(p => {
-    const stockPost = p.stock_estimado_post_venta;
-    let stockStyle = '';
-    if (stockPost <= 0) stockStyle = 'color:#d03b3b;font-weight:700;';
-    else if (stockPost <= 5) stockStyle = 'color:#c98500;font-weight:700;';
-    const margen = p['Margen bruto %'] != null ? (p['Margen bruto %']*100).toFixed(1).replace('.',',')+'%' : '—';
-    const [fg,bg] = badgeColors[p.clasificacion] || ['#55625a','#f2f2f0'];
-    const link = p['Enlace ML'] ? `<a class="prod-link" href="${p['Enlace ML']}" target="_blank" rel="noopener">${p.NAME||''}<span class="ext">↗</span></a>` : (p.NAME||'');
-    const confirmedTag = p.confirmado_usuario ? `<span class="confirmed-tag">✓ confirmado</span>` : '';
-    const notaTitle = p.nota_correccion ? ` title="${p.nota_correccion.replace(/"/g,'&quot;')}"` : '';
-    return `<tr${notaTitle}>
-      <td class="mono">${p.SKU||''}</td>
-      <td>${link}${confirmedTag}</td>
-      <td class="num">${(p.unidades_vendidas||0).toFixed(0)}</td>
-      <td class="num" style="${stockStyle}">${stockPost!=null? stockPost.toFixed(0):'—'}</td>
-      <td class="num">${margen}</td>
-      <td><span class="badge" style="color:${fg};background:${bg};">${p.clasificacion||''}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-document.querySelectorAll('#tabla-productos th[data-key]').forEach(th => {
-  th.addEventListener('click', () => {
-    const key = th.dataset.key;
-    if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = -1; }
-    render();
-  });
-});
-document.querySelectorAll('.chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    activeFilter = chip.dataset.filter;
-    render();
-  });
-});
-document.getElementById('search-input').addEventListener('input', e => { searchTerm = e.target.value; render(); });
-
-render();
-</script>
-
+<script>window.MT_CFG = { base: './', view: 'hub' };</script>
+<script src="assets/reportes.js"></script>
 </body>
 </html>

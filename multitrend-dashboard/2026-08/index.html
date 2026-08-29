@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F6F9F7">
+<meta name="description" content="Reporte mensual de Multitrend Uruguay en Mercado Libre: los ciclos corridos durante el mes y el cierre con la rentabilidad real.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%230C0C0C%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%277%27 fill=%27%232BEA60%27/%3E%3C/svg%3E">
+<title>Agosto 2026 — Reportes Multitrend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/reportes.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <span class="dot"></span>
+      <span>Multitrend</span>
+      <span class="brand-sub">Reportes · Mercado Libre UY</span>
+    </div>
+    <span class="spacer"></span>
+    <a class="btn" href="../">← Todos los meses</a>
+  </div>
+</div>
+
+<main class="wrap" id="contenido">
+
+  <section class="hero">
+    <p class="eyebrow" id="mes-conteo">&nbsp;</p>
+    <h1 id="mes-nombre">&nbsp;</h1>
+    <p id="mes-ventana"></p>
+  </section>
+
+  <div id="mes-aviso"></div>
+
+  <section class="section">
+    <div class="section-head"><h2>Cierre del mes</h2><span class="hint">Cifras del último corte publicado</span></div>
+    <div class="kpi-row" id="mes-kpis"></div>
+  </section>
+
+  <section class="section">
+    <div class="serie" id="mes-serie"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head"><h2>Lo más importante del mes</h2></div>
+    <div id="mes-titulares"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Ciclos del mes</h2>
+      <span class="hint">Del más reciente al más viejo</span>
+    </div>
+    <div class="cycles" id="mes-ciclos"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Cada panel guardado es el HTML tal como se publicó ese día. No se edita después: si un dato se corrigió más adelante, la corrección está en el ciclo siguiente.</p>
+    <p><a href="../">← Volver a todos los meses</a></p>
+  </div>
+</footer>
+
+<script>window.MT_CFG = { base: '../', view: 'mes', mes: '2026-08' };</script>
+<script src="../assets/reportes.js"></script>
+</body>
+</html>
