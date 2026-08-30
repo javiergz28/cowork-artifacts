@@ -36,6 +36,24 @@
     return conPanel.sort(function (a, b) { return a.fecha < b.fecha ? 1 : -1; })[0];
   }
 
+  /* Muestra hasta 3 KPIs, en orden de prioridad, salteando los que el mes no tiene.
+     Un mes sin Ventas UY (ej. julio 2026) no tiene unidades ni contribución: cae en ventas/visitas. */
+  function tarjetasKpi(r) {
+    var cand = [
+      { l: 'Unidades', v: r.unidades, f: num },
+      { l: 'Contribución', v: r.contribucion_neta, f: money, extra: r.contribucion_pct != null ? pct(r.contribucion_pct) : null },
+      { l: 'Ventas', v: r.ventas, f: num },
+      { l: 'Visitas', v: r.visitas, f: num },
+      { l: 'ROAS', v: r.roas, f: mult }
+    ];
+    var out = cand.filter(function (c) { return c.v != null; }).slice(0, 3);
+    if (!out.length) return '<div><p class="kpi-label">Sin KPIs</p><p class="kpi-value">—</p></div>';
+    return out.map(function (c) {
+      return '<div><p class="kpi-label">' + c.l + '</p><p class="kpi-value">' + c.f(c.v) +
+        (c.extra ? ' <small>' + c.extra + '</small>' : '') + '</p></div>';
+    }).join('');
+  }
+
   /* ---------------- HUB ---------------- */
   function renderHub(data) {
     var cont = document.getElementById('meses');
@@ -56,12 +74,7 @@
           '<span class="chip' + (m.estado === 'cerrado' ? '' : ' chip-warn') + '">' +
             (m.estado === 'cerrado' ? 'Cerrado' : 'En curso') + '</span>' +
         '</div>' +
-        '<div class="month-kpis">' +
-          '<div><p class="kpi-label">Unidades</p><p class="kpi-value">' + num(r.unidades) + '</p></div>' +
-          '<div><p class="kpi-label">Contribución</p><p class="kpi-value">' + money(r.contribucion_neta) +
-            (r.contribucion_pct != null ? ' <small>' + pct(r.contribucion_pct) + '</small>' : '') + '</p></div>' +
-          '<div><p class="kpi-label">ROAS</p><p class="kpi-value">' + mult(r.roas) + '</p></div>' +
-        '</div>' +
+        '<div class="month-kpis">' + tarjetasKpi(r) + '</div>' +
         '<div class="month-foot"><span>' + conReportes.length + ' ciclo' + (conReportes.length === 1 ? '' : 's') +
           ' · ' + ciclos.length + ' pase' + (ciclos.length === 1 ? '' : 's') + '</span><span class="arrow">Ver el mes →</span></div>';
       cont.appendChild(a);
@@ -87,7 +100,9 @@
     document.title = mes.nombre + ' ' + mes.anio + ' — Reportes Multitrend';
     setText('mes-nombre', mes.nombre + ' ' + mes.anio);
     setText('mes-ventana', 'Período informado: ' + mes.ventana);
-    setText('mes-conteo', ciclos.length + ' pases · ' + ciclos.filter(function (c) { return c.snapshot; }).length + ' paneles guardados');
+    var nPan = ciclos.filter(function (c) { return c.snapshot; }).length;
+    setText('mes-conteo', ciclos.length + (ciclos.length === 1 ? ' pase' : ' pases') + ' · ' +
+      nPan + (nPan === 1 ? ' panel guardado' : ' paneles guardados'));
 
     var aviso = document.getElementById('mes-aviso');
     if (aviso) {
@@ -96,13 +111,15 @@
     }
 
     var kpis = [
-      { l: 'Unidades netas', v: num(r.unidades), n: 'descontadas las canceladas' },
-      { l: 'Ingresos por productos', v: money(r.ingresos_productos), n: 'antes de cargas de ML' },
-      { l: 'Neto liquidado por ML', v: money(r.neto_liquidado), n: r.carga_ml_pct != null ? 'carga de ML ' + pct(r.carga_ml_pct) : '' },
-      { l: 'Contribución neta', v: money(r.contribucion_neta), n: r.contribucion_pct != null ? pct(r.contribucion_pct) + ' de los ingresos' : '' },
-      { l: 'ROAS / ACOS', v: mult(r.roas) + ' <small>' + pct(r.acos) + '</small>', n: 'inversión ' + money(r.inversion_ads) },
-      { l: 'Envíos', v: num(r.envios), n: 'netos del período' }
-    ];
+      { l: 'Unidades netas', d: r.unidades, v: num(r.unidades), n: 'descontadas las canceladas' },
+      { l: 'Cantidad de ventas', d: r.ventas, v: num(r.ventas), n: 'líneas de producto, no unidades' },
+      { l: 'Visitas', d: r.visitas, v: num(r.visitas), n: 'totales del período' },
+      { l: 'Ingresos por productos', d: r.ingresos_productos, v: money(r.ingresos_productos), n: 'antes de cargas de ML' },
+      { l: 'Neto liquidado por ML', d: r.neto_liquidado, v: money(r.neto_liquidado), n: r.carga_ml_pct != null ? 'carga de ML ' + pct(r.carga_ml_pct) : '' },
+      { l: 'Contribución neta', d: r.contribucion_neta, v: money(r.contribucion_neta), n: r.contribucion_pct != null ? pct(r.contribucion_pct) + ' de los ingresos' : '' },
+      { l: 'ROAS / ACOS', d: r.roas, v: mult(r.roas) + ' <small>' + pct(r.acos) + '</small>', n: r.inversion_ads != null ? 'inversión ' + money(r.inversion_ads) : '' },
+      { l: 'Envíos', d: r.envios, v: num(r.envios), n: 'netos del período' }
+    ].filter(function (k) { return k.d != null; });
     var kr = document.getElementById('mes-kpis');
     if (kr) kpis.forEach(function (k) {
       kr.appendChild(el('div', 'kpi-card',
@@ -125,7 +142,7 @@
     var host = document.getElementById('mes-serie');
     if (!host) return;
     var pts = ciclos.filter(function (c) { return c.ventana === 'mes a la fecha' && c.kpis && c.kpis.unidades != null; });
-    if (pts.length < 2) { host.remove(); return; }
+    if (pts.length < 2) { (host.closest('section') || host).remove(); return; }
 
     var narrow = window.innerWidth < 700;
     var W = narrow ? 360 : 720, H = narrow ? 200 : 190;

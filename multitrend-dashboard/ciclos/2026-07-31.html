@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0C0C0C">
+<meta name="description" content="Panel comercial de Multitrend Uruguay — julio 2026: demanda, Mercado Ads, promociones y cupones.">
+<title>Julio 2026 — Panel Multitrend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --mt-green:#2BEA60; --mt-green-dark:#16A34A; --mt-green-light:#D5FBDF;
+  --mt-black:#0C0C0C; --surface:#fff; --page:#f6f9f7;
+  --text:#0C0C0C; --text-2:#55625a; --text-3:#8b968f;
+  --border:rgba(12,12,12,.08); --grid:#ecf3ef;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+  --shadow:0 1px 2px rgba(12,12,12,.04), 0 8px 24px -12px rgba(12,12,12,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font-family:"Rethink Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.num{font-family:Outfit,ui-sans-serif,system-ui,sans-serif}
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto}
+@media(max-width:640px){.wrap{width:min(1180px,100% - 24px)}}
+
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--border)}
+.topbar-inner{display:flex;align-items:center;gap:12px;height:56px}
+.brand{display:flex;align-items:center;gap:9px;font-family:Outfit;font-weight:700;letter-spacing:-.02em}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--mt-green);box-shadow:0 0 0 4px rgba(43,234,96,.18)}
+.brand-sub{font-weight:500;color:var(--text-3);font-size:13px}
+@media(max-width:720px){.brand-sub{display:none}}
+.update-pill{margin-left:auto;font-size:12.5px;font-weight:600;color:#12703A;background:var(--mt-green-light);border:1px solid rgba(22,163,74,.2);padding:5px 12px;border-radius:999px;white-space:nowrap}
+
+.hero{background:var(--mt-black);color:#fff;padding:44px 0 38px;border-bottom:4px solid var(--mt-green)}
+.hero .eyebrow{font-family:Outfit;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mt-green);margin:0 0 12px}
+.hero h1{font-size:clamp(32px,5.4vw,50px);line-height:1.04;letter-spacing:-.035em;font-weight:800;margin:0 0 14px}
+.hero p{margin:0;max-width:74ch;color:rgba(255,255,255,.74);font-size:15.5px}
+.hero p strong{color:#fff}
+.hero-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.hero-chips span{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}
+
+section{padding:34px 0}
+.shead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.shead h2{font-size:21px;font-weight:700;letter-spacing:-.025em;margin:0}
+.shead .src{font-size:12.5px;color:var(--text-3)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 17px;box-shadow:var(--shadow)}
+.kpi .lbl{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin:0 0 5px}
+.kpi .val{font-family:Outfit;font-size:26px;font-weight:700;letter-spacing:-.03em;margin:0;line-height:1.1}
+.kpi .sub{font-size:11.5px;color:var(--text-3);margin:5px 0 0;line-height:1.35}
+.kpi.hl{background:linear-gradient(180deg,#EFFEF4,#fff);border-color:rgba(22,163,74,.28)}
+.kpi.hl .val{color:#12703A}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+.tw{overflow-x:auto;border-radius:16px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow)}
+th{text-align:left;font-family:Outfit;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:13px 14px;border-bottom:1px solid var(--border);white-space:nowrap;background:#fbfdfc}
+td{padding:11px 14px;border-bottom:1px solid var(--grid);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:hover{background:#fbfdfc}
+tfoot td{font-weight:700;background:#fbfdfc;border-top:2px solid var(--border)}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+.tag.g{background:var(--mt-green-light);color:#12703A}
+.tag.r{background:#FDECEC;color:#9B2020}
+.tag.y{background:#FFF6E3;color:#8A5B00}
+.tag.m{background:#F1F3F2;color:var(--text-2)}
+.bar{height:6px;border-radius:3px;background:var(--grid);overflow:hidden;margin-top:5px;min-width:70px}
+.bar i{display:block;height:100%;background:var(--mt-green-dark)}
+
+.note{display:flex;gap:12px;border-radius:14px;padding:15px 17px;font-size:13.8px;line-height:1.55}
+.note.warn{background:#FFF9EC;border:1px solid rgba(250,178,25,.32);color:#6B4E00}
+.note.crit{background:#FDF0F0;border:1px solid rgba(208,59,59,.28);color:#7A1F1F}
+.note b{color:inherit}
+.note .ic{font-size:17px;line-height:1.3}
+
+.alert{border-left:3px solid var(--border);padding:2px 0 2px 16px;margin-bottom:20px}
+.alert.c{border-left-color:var(--crit)} .alert.w{border-left-color:var(--warn)} .alert.g{border-left-color:var(--good)}
+.alert h3{font-size:15.5px;margin:0 0 5px;letter-spacing:-.015em}
+.alert p{margin:0;color:var(--text-2);font-size:13.8px}
+.todo{border:1px solid var(--border);border-radius:14px;padding:16px 18px;background:var(--surface);margin-bottom:12px;box-shadow:var(--shadow)}
+.todo h3{font-size:15.5px;margin:0 0 8px;letter-spacing:-.015em}
+.todo dl{margin:0;font-size:13.5px;color:var(--text-2)}
+.todo dt{font-weight:700;color:var(--text);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-top:7px}
+.todo dd{margin:2px 0 0}
+.pri{float:right;margin-left:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.foot{border-top:1px solid var(--border);padding:26px 0 44px;color:var(--text-3);font-size:12.8px}
+.foot p{margin:0 0 6px}
+</style>
+</head>
+<body>
+
+<!-- mt-nav: barra de navegación del histórico de reportes -->
+<div id="mt-nav"></div>
+<script src="../assets/nav.js" defer></script>
+
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand"><span class="dot"></span><span>Multitrend</span><span class="brand-sub">Panel comercial · Mercado Libre UY</span></div>
+    <span class="update-pill">Julio 2026 · procesado el 29/08</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Ciclo retroactivo · Multitrend Uruguay</p>
+    <h1>Julio 2026</h1>
+    <p>Panel armado <strong>después</strong> del cierre del mes, para tener un punto de comparación anterior a agosto. Cubre <strong>ventas, canales de entrega, Mercado Ads, promociones, cupones y demanda</strong>. <strong>No se cruzó contra el maestro STOCK_MT_FINAL</strong> — las correcciones de SKU y márgenes se hicieron después de julio y cruzarlas sería anacrónico: por eso no hay costo de producto, margen ni contribución neta.</p>
+    <div class="hero-chips">
+      <span>Período 1–31 jul 2026</span>
+      <span>10 archivos procesados</span>
+      <span>Ventana propia del mes</span>
+      <span>Sin cruce con el maestro</span>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section>
+  <div class="note warn">
+    <span class="ic">⚠️</span>
+    <div><b>Lo que este panel NO puede decir.</b> Llega hasta el <b>neto liquidado por Mercado Libre</b>, no hasta la utilidad: sin cruce con el maestro no hay costo de producto, margen ni contribución neta. Falta además <b>Evolución de negocio</b> de julio (sin serie diaria de visitas ni corte por rango de precios o tipo de comprador), y no hay reportes de <b>envíos, publicaciones ni fichas técnicas</b> del mes.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Demanda del mes</h2><span class="src">Fuente: Desempeño de producto · 1–31 jul 2026</span></div>
+  <div class="kpis">
+    <div class="kpi"><p class="lbl">Visitas totales</p><p class="val">13.673</p><p class="sub">441 por día · 4.906 visitantes únicos</p></div>
+    <div class="kpi"><p class="lbl">Cantidad de ventas</p><p class="val">135</p><p class="sub">líneas de producto · 4,35 por día</p></div>
+    <div class="kpi"><p class="lbl">Conversión</p><p class="val">0,99%</p><p class="sub">135 ventas / 13.673 visitas (cálculo propio)</p></div>
+    <div class="kpi"><p class="lbl">Intención de compra</p><p class="val">6,24%</p><p class="sub">306 visitantes únicos con intención</p></div>
+    <div class="kpi"><p class="lbl">Unidades con intención</p><p class="val">433</p><p class="sub">395 intenciones de compra</p></div>
+    <div class="kpi"><p class="lbl">Monto de intención</p><p class="val">$ 178.489</p><p class="sub">bruto de intención, <b>no es facturación</b></p></div>
+    <div class="kpi"><p class="lbl">Me gusta</p><p class="val">259</p><p class="sub">sobre las publicaciones del mes</p></div>
+  </div>
+</section>
+
+
+<section>
+  <div class="shead"><h2>Resultado del mes</h2><span class="src">Fuente: Ventas UY · 1–31 jul 2026 · corte 28/08 22:45 hs</span></div>
+  <div class="kpis">
+    <div class="kpi hl"><p class="lbl">Ingresos por productos</p><p class="val">$ 67.887</p><p class="sub">antes de cargas de ML</p></div>
+    <div class="kpi"><p class="lbl">Neto liquidado por ML</p><p class="val">$ 60.693</p><p class="sub">lo que efectivamente entra</p></div>
+    <div class="kpi"><p class="lbl">Carga de ML</p><p class="val">− $ 19.156</p><p class="sub">28,2% de los ingresos</p></div>
+    <div class="kpi"><p class="lbl">Unidades netas</p><p class="val">152</p><p class="sub">160 brutas − 8 canceladas</p></div>
+    <div class="kpi"><p class="lbl">Envíos netos</p><p class="val">107</p><p class="sub">112 brutos − 5 cancelados</p></div>
+    <div class="kpi"><p class="lbl">Precio por unidad</p><p class="val">$ 447</p><p class="sub">ingresos / unidades netas</p></div>
+  </div>
+  <div class="tw" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Concepto</th><th class="n">UYU</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td>Ingresos por productos</td><td class="n">67.886,61</td><td>lo que pagaron los compradores por la mercadería</td></tr>
+        <tr><td>Ingresos por envío cobrados</td><td class="n">12.635,00</td><td>envío que pagó el comprador</td></tr>
+        <tr><td>Descuentos y bonificaciones de ML</td><td class="n">3.038,00</td><td>lo que puso Mercado Libre</td></tr>
+        <tr><td>Cargo por venta (comisión)</td><td class="n">−10.053,46</td><td>14,8% de los ingresos por productos</td></tr>
+        <tr><td>Costo fijo por publicación</td><td class="n">−2.640,00</td><td></td></tr>
+        <tr><td>Costos de envío absorbidos</td><td class="n">−6.463,00</td><td>neto de envíos: +$6.172</td></tr>
+        <tr><td>Anulaciones y reembolsos</td><td class="n">−3.015,77</td><td>5 ventas canceladas + 3 reclamos con reembolso</td></tr>
+        <tr><td><b>Otros ajustes de ML no desglosados</b></td><td class="n"><b>−694,40</b></td><td>ML no cuadra su propia columna Total</td></tr>
+      </tbody>
+      <tfoot><tr><td>= Neto liquidado por ML <span class="tag g">columna Total</span></td><td class="n">60.692,98</td><td>89,4% de los ingresos por productos</td></tr></tfoot>
+    </table>
+  </div>
+  <div style="margin-top:14px" class="note warn">
+    <span class="ic">🟡</span>
+    <div><b>El residuo sin desglosar reaparece.</b> La suma de los componentes que lista ML da $61.387,38 y la columna Total dice $60.692,98: <b>$694,40 sin explicar</b>. Es el mismo patrón que en agosto ($3.500,61). Se toma el Total de ML como cifra buena y el residuo se publica como línea propia.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Canales de entrega</h2><span class="src">Ventas UY · 107 envíos netos · contado por envío físico, no por fila</span></div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Canal</th><th class="n">Envíos</th><th class="n">%</th><th class="n">Unidades</th><th class="n">Unid./envío</th><th class="n">Paq. multiproducto</th></tr></thead>
+      <tbody>
+        <tr><td>Mercado Envíos Flex</td><td class="n">55</td><td class="n">51,4%</td><td class="n">83</td><td class="n"><b>1,51</b></td><td class="n">8</td></tr>
+        <tr><td>Correo y puntos de despacho</td><td class="n">41</td><td class="n">38,3%</td><td class="n">55</td><td class="n">1,34</td><td class="n">8</td></tr>
+        <tr><td>Acuerdo con el comprador (en persona)</td><td class="n">11</td><td class="n">10,3%</td><td class="n">14</td><td class="n">1,27</td><td class="n">0</td></tr>
+      </tbody>
+      <tfoot><tr><td>Total</td><td class="n">107</td><td class="n">100%</td><td class="n">152</td><td class="n">1,42</td><td class="n">16</td></tr></tfoot>
+    </table>
+  </div>
+  <div style="margin-top:14px" class="note crit">
+    <span class="ic">🔴</span>
+    <div><b>En julio los pedidos grandes salían por Flex, no por correo.</b> Flex 1,51 unidades por envío contra 1,34 de correo — y los paquetes multiproducto estaban repartidos 8 y 8. En agosto el patrón está dado vuelta (correo 1,53 vs Flex 1,25, con 11 de 21 multiproducto por correo) y se venía leyendo como estructural desde hace cuatro ciclos. <b>Con julio a la vista, no lo es: arrancó en agosto.</b> Antes de mover nada en el checkout hay que entender qué cambió entre los dos meses.</div>
+  </div>
+  <div style="margin-top:12px" class="note warn">
+    <span class="ic">📦</span>
+    <div><b>Serie diaria.</b> 29 días con venta sobre 31. Por semana: 40 · 31 · 29 · 29 · 23 unidades (la 5ª son 3 días). Mejor día: <b>21/07 con 18 unidades</b>, más del triple del promedio diario de 4,9. Sin Evolución de negocio no se puede cruzar contra visitas para saber si fue tráfico o conversión.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Julio contra agosto</h2><span class="src">Julio 1–31 · Agosto 1–24 (último corte con visitas publicado)</span></div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Métrica</th><th class="n">Julio (31 d)</th><th class="n">Agosto (24 d)</th><th class="n">Variación diaria</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td>Visitas por día</td><td class="n">441</td><td class="n">337</td><td class="n"><span class="tag r">−23,7%</span></td><td>Julio tenía casi un cuarto más de tráfico diario</td></tr>
+        <tr><td>Ventas por día</td><td class="n">4,35</td><td class="n">8,96</td><td class="n"><span class="tag g">+106%</span></td><td>Agosto vendió el doble por día con menos visitas</td></tr>
+        <tr><td>Conversión</td><td class="n">0,99%</td><td class="n">2,66%</td><td class="n"><span class="tag g">+169%</span></td><td>El salto de agosto es de conversión, no de tráfico</td></tr>
+        <tr><td>Precio promedio por unidad</td><td class="n">$ 447</td><td class="n">$ 569</td><td class="n"><span class="tag g">+27%</span></td><td>Agosto vendió unidades más caras (Ventas UY, mismo concepto)</td></tr>
+        <tr><td>Carga de ML</td><td class="n">28,2%</td><td class="n">25,3%</td><td class="n"><span class="tag g">−2,9 pp</span></td><td>Comisión + costo fijo + envíos absorbidos, sobre ingresos</td></tr>
+        <tr><td>Unidades por envío</td><td class="n">1,42</td><td class="n">1,33</td><td class="n"><span class="tag y">−6,3%</span></td><td>Julio movía carritos algo más grandes</td></tr>
+        <tr><td>Inversión en Ads</td><td class="n">$ 11.734</td><td class="n">$ 25.324</td><td class="n">×2,2</td><td>Agosto duplicó la inversión (mes completo 1–27)</td></tr>
+        <tr><td>ROAS</td><td class="n">3,42×</td><td class="n">4,75×</td><td class="n"><span class="tag g">+39%</span></td><td>Más inversión y mejor retorno a la vez</td></tr>
+        <tr><td>ACOS</td><td class="n">29,22%</td><td class="n">21,06%</td><td class="n"><span class="tag g">−8,2 pp</span></td><td>La publicidad se abarató en términos relativos</td></tr>
+        <tr><td>CTR</td><td class="n">0,324%</td><td class="n">0,324%</td><td class="n"><span class="tag m">igual</span></td><td>Idéntico en los dos meses</td></tr>
+        <tr><td>CPC</td><td class="n">$ 5,27</td><td class="n">$ 4,76</td><td class="n"><span class="tag g">−9,7%</span></td><td>Cada clic costó menos en agosto</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:14px" class="note warn">
+    <span class="ic">🔎</span>
+    <div><b>Correlación, no causa.</b> El salto de conversión coincide con la duplicación de la inversión en Ads, pero <b>Ads explicó el 66% de las ventas en los dos meses</b> (89 de 135 en julio), así que el share publicitario no cambió. Con los datos disponibles no se puede afirmar qué produjo la mejora. <b>Métrica que lo validaría:</b> conversión de las publicaciones no publicitadas, mes a mes.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Mercado Ads</h2><span class="src">Fuente: reportes por campañas, por anuncios, de ventas y por espacios · 1–31 jul 2026</span></div>
+  <div class="kpis">
+    <div class="kpi hl"><p class="lbl">Inversión</p><p class="val">$ 11.734</p><p class="sub">1–31 jul</p></div>
+    <div class="kpi"><p class="lbl">Ingresos atribuidos</p><p class="val">$ 40.164</p><p class="sub">directas + indirectas</p></div>
+    <div class="kpi"><p class="lbl">ROAS</p><p class="val">3,42×</p><p class="sub">ACOS 29,22%</p></div>
+    <div class="kpi"><p class="lbl">Impresiones</p><p class="val">687.754</p><p class="sub">2.227 clics · CTR 0,324%</p></div>
+    <div class="kpi"><p class="lbl">CPC promedio</p><p class="val">$ 5,27</p><p class="sub">por clic</p></div>
+    <div class="kpi"><p class="lbl">Ventas atribuidas</p><p class="val">89</p><p class="sub">85 unidades · 66% de las ventas del mes</p></div>
+  </div>
+
+  <h3 style="font-size:15px;margin:26px 0 10px">Por campaña</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Campaña</th><th class="n">Impresiones</th><th class="n">Clics</th><th class="n">Inversión</th><th class="n">Ingresos</th><th class="n">ROAS</th><th class="n">ACOS</th><th class="n">Unid.</th></tr></thead>
+      <tbody>
+        <tr><td>Campaña All $600 - $1000</td><td class="n">249.711</td><td class="n">546</td><td class="n">$ 2.348,70</td><td class="n">$ 15.937,76</td><td class="n"><span class="tag g">6,79×</span></td><td class="n">14,7%</td><td class="n">26</td></tr>
+        <tr><td>Campaña Mercado Libre</td><td class="n">108.758</td><td class="n">617</td><td class="n">$ 3.450,58</td><td class="n">$ 10.060,26</td><td class="n">2,92×</td><td class="n">34,3%</td><td class="n">16</td></tr>
+        <tr><td>Menos vendidos</td><td class="n">95.130</td><td class="n">520</td><td class="n">$ 2.946,99</td><td class="n">$ 7.691,75</td><td class="n">2,61×</td><td class="n">38,3%</td><td class="n">21</td></tr>
+        <tr><td>Más Vendidos</td><td class="n">227.929</td><td class="n">504</td><td class="n">$ 2.786,96</td><td class="n">$ 6.474,25</td><td class="n"><span class="tag y">2,32×</span></td><td class="n">43,0%</td><td class="n">22</td></tr>
+        <tr><td>Campaña Electro hasta $2000</td><td class="n">6.226</td><td class="n">40</td><td class="n">$ 200,79</td><td class="n">$ 0,00</td><td class="n"><span class="tag r">0×</span></td><td class="n">—</td><td class="n">0</td></tr>
+      </tbody>
+      <tfoot><tr><td>Total</td><td class="n">687.754</td><td class="n">2.227</td><td class="n">$ 11.734,02</td><td class="n">$ 40.164,02</td><td class="n">3,42×</td><td class="n">29,22%</td><td class="n">85</td></tr></tfoot>
+    </table>
+  </div>
+  <p style="font-size:12.8px;color:var(--text-3);margin:9px 0 0">Hay además 4 campañas con presupuesto asignado y <b>cero impresiones</b> en el mes (3 «Campaña Mercado Libre» y 1 «Campaña»). No consumieron inversión, pero conviene revisar si están apagadas a propósito.</p>
+
+  <h3 style="font-size:15px;margin:26px 0 10px">Por espacio publicitario</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Página · Espacio</th><th class="n">Impresiones</th><th class="n">Clics</th><th class="n">CTR</th><th class="n">Inversión</th><th class="n">Ingresos</th><th class="n">ROAS</th></tr></thead>
+      <tbody>
+        <tr><td>Búsqueda · Resto de resultados</td><td class="n">69.479</td><td class="n">908</td><td class="n">1,31%</td><td class="n">$ 5.390,97</td><td class="n">$ 17.974,48</td><td class="n">3,33×</td></tr>
+        <tr><td>Página de producto · Carrusel</td><td class="n">542.990</td><td class="n">614</td><td class="n"><span class="tag r">0,11%</span></td><td class="n">$ 3.373,01</td><td class="n">$ 8.956,21</td><td class="n">2,66×</td></tr>
+        <tr><td>Búsqueda · Primeros resultados</td><td class="n">19.579</td><td class="n">430</td><td class="n"><span class="tag g">2,20%</span></td><td class="n">$ 1.786,18</td><td class="n">$ 8.793,76</td><td class="n"><span class="tag g">4,92×</span></td></tr>
+        <tr><td>Página de producto · Desplaz. vertical</td><td class="n">54.203</td><td class="n">275</td><td class="n">0,51%</td><td class="n">$ 1.203,90</td><td class="n">$ 3.967,57</td><td class="n">3,30×</td></tr>
+        <tr><td>Búsqueda · Carrusel</td><td class="n">185</td><td class="n">0</td><td class="n">0%</td><td class="n">$ 0,00</td><td class="n">$ 0,00</td><td class="n">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:14px" class="note warn">
+    <span class="ic">📊</span>
+    <div><b>Búsqueda rinde mucho más que Página de producto.</b> El carrusel de página de producto se llevó el <b>79% de las impresiones</b> del mes (542.990) con un CTR de 0,11% y ROAS 2,66×. «Primeros resultados» de Búsqueda, con 28 veces menos impresiones, tuvo <b>CTR 2,20% y el mejor ROAS del mes (4,92×)</b> — y solo recibió el 15% de la inversión.</div>
+  </div>
+
+  <div class="grid2" style="margin-top:26px">
+    <div>
+      <h3 style="font-size:15px;margin:0 0 10px">Los que funcionaron</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Anuncio</th><th class="n">Inv.</th><th class="n">Ingresos</th><th class="n">ROAS</th></tr></thead>
+        <tbody>
+          <tr><td>Frasco Flip Separador<br><span style="color:var(--text-3);font-size:11.5px">MLU882389536</span></td><td class="n">$ 427</td><td class="n">$ 6.773</td><td class="n"><span class="tag g">15,8×</span></td></tr>
+          <tr><td>Set 12 Utensilios Cocina<br><span style="color:var(--text-3);font-size:11.5px">MLU696559194</span></td><td class="n">$ 409</td><td class="n">$ 3.619</td><td class="n"><span class="tag g">8,8×</span></td></tr>
+          <tr><td>Magic Brush Cepillo 5 en 1<br><span style="color:var(--text-3);font-size:11.5px">MLU884381452</span></td><td class="n">$ 203</td><td class="n">$ 2.646</td><td class="n"><span class="tag g">13,0×</span></td></tr>
+          <tr><td>Lámpara 3D Cristal<br><span style="color:var(--text-3);font-size:11.5px">MLU697415242</span></td><td class="n">$ 834</td><td class="n">$ 3.742</td><td class="n">4,5×</td></tr>
+          <tr><td>Sartén Antiadherente<br><span style="color:var(--text-3);font-size:11.5px">MLU1314661544</span></td><td class="n">$ 596</td><td class="n">$ 2.417</td><td class="n">4,1×</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div>
+      <h3 style="font-size:15px;margin:0 0 10px">Los que quemaron presupuesto sin vender</h3>
+      <div class="tw"><table>
+        <thead><tr><th>Anuncio</th><th class="n">Inv.</th><th class="n">Clics</th><th class="n">Impr.</th></tr></thead>
+        <tbody>
+          <tr><td>Frasco Flip Separador <span class="tag y">2ª campaña</span><br><span style="color:var(--text-3);font-size:11.5px">MLU882389536</span></td><td class="n">$ 365</td><td class="n">58</td><td class="n">41.642</td></tr>
+          <tr><td>Tapete Sanitario Césped<br><span style="color:var(--text-3);font-size:11.5px">MLU693763327</span></td><td class="n">$ 253</td><td class="n">20</td><td class="n">2.146</td></tr>
+          <tr><td>Gestionador 2.0 Cables Gris<br><span style="color:var(--text-3);font-size:11.5px">MLU880921336</span></td><td class="n">$ 209</td><td class="n">18</td><td class="n">7.303</td></tr>
+          <tr><td>Bolsa Al Vacío 60x80<br><span style="color:var(--text-3);font-size:11.5px">MLU884473292</span></td><td class="n">$ 94</td><td class="n">25</td><td class="n">11.297</td></tr>
+          <tr><td>Caja De Arena Inteligente<br><span style="color:var(--text-3);font-size:11.5px">MLU693695781</span></td><td class="n">$ 67</td><td class="n">1</td><td class="n">622</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <p style="font-size:12.8px;color:var(--text-3);margin:12px 0 0"><b>101 de 125 anuncios (81%) no generaron ni una venta</b> en julio: $2.117,81, el 18,0% de la inversión del mes.</p>
+</section>
+
+<section>
+  <div class="shead"><h2>Promociones</h2><span class="src">Fuente: Rendimiento de promociones · export 28/08 22:48</span></div>
+  <div class="kpis">
+    <div class="kpi"><p class="lbl">Promociones activas</p><p class="val">58</p><p class="sub">45 de ellas son ofertas relámpago</p></div>
+    <div class="kpi"><p class="lbl">Unidades vendidas</p><p class="val">124</p><p class="sub">102 ventas con promoción</p></div>
+    <div class="kpi hl"><p class="lbl">Ventas brutas</p><p class="val">$ 51.511</p><p class="sub">con alguna promoción aplicada</p></div>
+    <div class="kpi"><p class="lbl">Conversión</p><p class="val">0,8%</p><p class="sub">102 ventas / 12.417 visitas a promos</p></div>
+  </div>
+  <div class="tw" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Promoción</th><th class="n">Instancias</th><th class="n">Visitas</th><th class="n">Ventas</th><th class="n">Unid.</th><th class="n">Bruto</th><th class="n">Conv.</th></tr></thead>
+      <tbody>
+        <tr><td>Oferta relámpago <span class="tag m">agregado</span></td><td class="n">45</td><td class="n">3.940</td><td class="n">50</td><td class="n">53</td><td class="n">$ 19.417,83</td><td class="n">1,3%</td></tr>
+        <tr><td>Potenciá tus ventas<br><span style="color:var(--text-3);font-size:11.5px">28 jun – 3 ago</span></td><td class="n">1</td><td class="n">905</td><td class="n">11</td><td class="n">22</td><td class="n">$ 13.571,09</td><td class="n">1,2%</td></tr>
+        <tr><td>Día del padre 2026<br><span style="color:var(--text-3);font-size:11.5px">28 jun – 12 jul</span></td><td class="n">1</td><td class="n">2.001</td><td class="n">23</td><td class="n">25</td><td class="n">$ 8.131,94</td><td class="n">1,1%</td></tr>
+        <tr><td>Fecha doble 8/8<br><span style="color:var(--text-3);font-size:11.5px">26 jul – 16 ago</span></td><td class="n">1</td><td class="n">977</td><td class="n">8</td><td class="n">10</td><td class="n">$ 6.532,00</td><td class="n">0,8%</td></tr>
+        <tr><td>Descuentazos Julio<br><span style="color:var(--text-3);font-size:11.5px">12 – 26 jul</span></td><td class="n">1</td><td class="n">1.037</td><td class="n">3</td><td class="n">4</td><td class="n">$ 2.432,00</td><td class="n"><span class="tag r">0,3%</span></td></tr>
+        <tr><td>Hogar: Muebles en Caja</td><td class="n">1</td><td class="n">792</td><td class="n">1</td><td class="n">1</td><td class="n">$ 560,50</td><td class="n"><span class="tag r">0,1%</span></td></tr>
+        <tr><td>Día del niño<br><span style="color:var(--text-3);font-size:11.5px">20 jul – 19 ago</span></td><td class="n">1</td><td class="n">1.360</td><td class="n">4</td><td class="n">6</td><td class="n">$ 432,00</td><td class="n"><span class="tag r">0,3%</span></td></tr>
+        <tr><td>Oferta del día</td><td class="n">1</td><td class="n">345</td><td class="n">1</td><td class="n">1</td><td class="n">$ 253,17</td><td class="n">0,3%</td></tr>
+        <tr><td>Día del padre X2</td><td class="n">1</td><td class="n">653</td><td class="n">1</td><td class="n">2</td><td class="n">$ 180,80</td><td class="n">0,2%</td></tr>
+        <tr><td>Martes de mascota <span class="tag m">×3</span> · Compartidas Iluminación · Fecha doble 7.7</td><td class="n">5</td><td class="n">407</td><td class="n">0</td><td class="n">0</td><td class="n">$ 0,00</td><td class="n"><span class="tag r">0%</span></td></tr>
+      </tbody>
+      <tfoot><tr><td>Total</td><td class="n">58</td><td class="n">12.417</td><td class="n">102</td><td class="n">124</td><td class="n">$ 51.511,33</td><td class="n">0,8%</td></tr></tfoot>
+    </table>
+  </div>
+  <div style="margin-top:14px" class="note warn">
+    <span class="ic">🎯</span>
+    <div><b>Las ofertas relámpago son el motor y también el desperdicio.</b> 45 instancias en el mes generaron 53 unidades y $19.418 — el 38% del bruto con promoción. Pero <b>22 de esas 45 no vendieron nada</b>. Las que funcionan tienden a ser las de rango de dos días; las de un día suelto concentran los ceros. <b>Hipótesis, no conclusión:</b> hace falta comparar contra un período sin relámpagos para saber cuánto es incremental.</div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Cupones</h2><span class="src">Fuente: Rendimiento de cupones · export 28/08 22:48</span></div>
+  <div class="kpis">
+    <div class="kpi"><p class="lbl">Cupones aplicados</p><p class="val">1.314</p><p class="sub">6 cupones vigentes en el mes</p></div>
+    <div class="kpi"><p class="lbl">Canjeados</p><p class="val">6</p><p class="sub">tasa de canje <b>0,46%</b></p></div>
+    <div class="kpi"><p class="lbl">Unidades</p><p class="val">15</p><p class="sub">2,5 unidades por canje</p></div>
+    <div class="kpi"><p class="lbl">Ventas brutas</p><p class="val">$ 8.815</p><p class="sub">con cupón aplicado</p></div>
+    <div class="kpi"><p class="lbl">Descuento absorbido</p><p class="val">$ 694</p><p class="sub">7,9% del bruto</p></div>
+  </div>
+  <div class="tw" style="margin-top:16px">
+    <table>
+      <thead><tr><th>Cupón</th><th>Vigencia</th><th>Audiencia</th><th class="n">Aplic.</th><th class="n">Canj.</th><th class="n">Unid.</th><th class="n">Bruto</th><th class="n">Absorbido</th></tr></thead>
+      <tbody>
+        <tr><td><b>Nuevos Seguidores</b> <span class="tag g">10% OFF</span></td><td>24 jul – 24 ago</td><td>Nuevos seguidores<br><span style="color:var(--text-3);font-size:11.5px">69 seguidores en 8 días</span></td><td class="n">69</td><td class="n">3</td><td class="n">7</td><td class="n">$ 3.479,85</td><td class="n">$ 347,06</td></tr>
+        <tr><td>Cupom para carrinhos abandonados <span class="tag m">5% OFF</span></td><td>13 jul – 11 sep</td><td>Todos los compradores</td><td class="n">403</td><td class="n">1</td><td class="n">3</td><td class="n">$ 3.328,00</td><td class="n">$ 166,40</td></tr>
+        <tr><td>NEWFOLLOWER <span class="tag m">5% OFF</span></td><td>6 – 31 jul</td><td>Nuevos seguidores<br><span style="color:var(--text-3);font-size:11.5px">125 seguidores en 26 días</span></td><td class="n">125</td><td class="n">1</td><td class="n">1</td><td class="n">$ 1.184,00</td><td class="n">$ 57,42</td></tr>
+        <tr><td>MISSEGUIDORES <span class="tag m">15% OFF</span></td><td>25 jun – 26 jul</td><td>Seguidores existentes</td><td class="n">15</td><td class="n">1</td><td class="n">4</td><td class="n">$ 823,44</td><td class="n">$ 123,52</td></tr>
+        <tr><td>Cupón para carritos abandonados <span class="tag r">10% OFF</span></td><td>12 jun – 12 jul</td><td>Todos los compradores</td><td class="n">677</td><td class="n"><span class="tag r">0</span></td><td class="n">0</td><td class="n">$ 0,00</td><td class="n">$ 0,00</td></tr>
+        <tr><td>PARA SEGUIDORES <span class="tag r">15% OFF</span></td><td>24 jun – 25 jul</td><td>Seguidores existentes</td><td class="n">25</td><td class="n"><span class="tag r">0</span></td><td class="n">0</td><td class="n">$ 0,00</td><td class="n">$ 0,00</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="note crit"><span class="ic">🔴</span><div><b>Carritos abandonados: 1.080 cupones aplicados, 1 canje.</b> El de junio-julio (10% OFF) tuvo <b>677 aplicados y cero canjes</b>; el de julio-septiembre (5% OFF) lleva 403 aplicados y 1 canje. Dos ventanas seguidas con conversión prácticamente nula — no es un mal mes, es sistemático.</div></div>
+    <div class="note warn"><span class="ic">💡</span><div><b>El 10% capta más seguidores que el 5%.</b> «NEWFOLLOWER» (5% OFF) trajo 125 seguidores en 26 días = <b>4,8 por día</b>. «Nuevos Seguidores» (10% OFF) trajo 69 en 8 días = <b>8,6 por día</b>, y canjeó 3 veces contra 1. Refuerza la decisión de agosto de volver al 10%.</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Alertas del ciclo</h2></div>
+  <div class="alert c">
+    <h3>El carrusel de página de producto se come el 79% de las impresiones con CTR 0,11%</h3>
+    <p>542.990 impresiones, 614 clics, ROAS 2,66×. En el mismo mes, «Primeros resultados» de Búsqueda hizo 2,20% de CTR y ROAS 4,92× con 19.579 impresiones. La distribución de espacios no la elige el vendedor directamente, pero sí se puede influir con la puja y el presupuesto por campaña.</p>
+  </div>
+  <div class="alert c">
+    <h3>81% de los anuncios no vendió nada</h3>
+    <p>101 de 125 anuncios, $2.117,81 (18,0% de la inversión). En agosto el patrón se repite con otra proporción: 68 anuncios sin ventas y 20,8% de la inversión. Es estructural, no del mes.</p>
+  </div>
+  <div class="alert c">
+    <h3>Los cupones de carrito abandonado no convierten desde junio</h3>
+    <p>1.080 cupones aplicados entre las dos ventanas, 1 solo canje. El problema no es el porcentaje de descuento — se probó 10% y 5% con el mismo resultado.</p>
+  </div>
+  <div class="alert c">
+    <h3>El patrón «correo concentra los pedidos grandes» no existía en julio</h3>
+    <p>Julio: Flex 1,51 unidades por envío contra 1,34 de correo. Agosto: correo 1,53 contra Flex 1,25. La inferencia venía repitiéndose hace cuatro ciclos como si fuera estructural del negocio — con julio a la vista, empezó en agosto. Cualquier decisión de empujar Flex en el checkout tiene que esperar a entender qué cambió.</p>
+  </div>
+  <div class="alert g">
+    <h3>Resuelto: «Cantidad de ventas» del reporte de Desempeño son líneas de producto</h3>
+    <p>Ventas UY de julio tiene 152 filas, de las cuales 17 son cabeceras de paquete: <b>152 − 17 = 135</b>, exactamente la «Cantidad de ventas» que informa Desempeño de producto. No son envíos (107 netos) ni unidades (152 netas). <b>Verificar la identidad en el próximo ciclo antes de darla por cerrada.</b></p>
+  </div>
+  <div class="alert w">
+    <h3>Las dos formas de medir «% de ventas por publicidad» siguen sin coincidir</h3>
+    <p>Ventas UY marca 56 de 107 envíos netos como venta por publicidad (52,3%). Mercado Ads atribuye 89 ventas sobre 135 líneas (65,9%). Es el mismo desacuerdo anotado en el ciclo del 15/08, ahora con datos de julio: no se resuelve solo.</p>
+  </div>
+  <div class="alert w">
+    <h3>«Caja De Arena Inteligente» ya quemaba plata en julio</h3>
+    <p>$67,07 con 1 clic y 0 ventas. Con julio son <b>cuatro meses seguidos</b> del mismo anuncio sin una sola venta (jul $67 · 31/07–15/08 $1.885 · 19/08 $1.865 · agosto $1.866).</p>
+  </div>
+  <div class="alert w">
+    <h3>«Campaña Electro hasta $2000»: $200,79 sin ingresos</h3>
+    <p>6.226 impresiones, 40 clics, 0 ventas atribuidas en el mes.</p>
+  </div>
+  <div class="alert g">
+    <h3>«Potenciá tus ventas» aparece como dos instancias consecutivas</h3>
+    <p>En julio figura con vigencia <b>28 jun – 3 ago</b> y estado Finalizada; el ciclo de agosto registró otra con vigencia <b>3 ago – 3 feb 2027</b>. <b>Inferencia:</b> es un programa que Mercado Libre renueva, no una campaña puntual. Avanza el pendiente que estaba abierto hace cuatro ciclos, aunque todavía falta confirmar si el vendedor puede optar por no participar.</p>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Qué hacer ahora</h2></div>
+  <div class="todo">
+    <span class="tag r pri">Alta</span>
+    <h3>Subir el presupuesto de las campañas que ganan en Búsqueda antes de tocar cualquier otra cosa.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>«Primeros resultados» dio ROAS 4,92× con solo el 15% de la inversión del mes; el carrusel de producto dio 2,66× con el 29%.</dd>
+      <dt>Listo cuando</dt><dd>Los espacios de Búsqueda concentren más inversión que Página de producto en el reporte del mes siguiente.</dd>
+    </dl>
+  </div>
+  <div class="todo">
+    <span class="tag r pri">Alta</span>
+    <h3>Pausar «Caja De Arena Inteligente» de una vez.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>Cuatro meses seguidos sin una sola venta atribuida. Acumula ~$5.680 contando julio.</dd>
+      <dt>Listo cuando</dt><dd>El anuncio no aparezca en el reporte por anuncios del próximo ciclo.</dd>
+    </dl>
+  </div>
+  <div class="todo">
+    <span class="tag y pri">Media</span>
+    <h3>Cambiar el cupón de carritos abandonados por otra mecánica, no por otro porcentaje.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>10% y 5% dieron el mismo resultado: 1.080 aplicados, 1 canje. El descuento no es la palanca.</dd>
+      <dt>Listo cuando</dt><dd>Haya un ciclo completo con la mecánica nueva y una tasa de canje medible contra este 0,09%.</dd>
+    </dl>
+  </div>
+  <div class="todo">
+    <span class="tag y pri">Media</span>
+    <h3>Dejar de programar ofertas relámpago de un día suelto.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>22 de las 45 instancias del mes no vendieron nada, y las de un día concentran los ceros.</dd>
+      <dt>Listo cuando</dt><dd>Un mes con relámpagos solo de dos días y el bruto por instancia comparado contra julio.</dd>
+    </dl>
+  </div>
+  <div class="todo">
+    <span class="tag y pri">Media</span>
+    <h3>No tocar el mix de canales hasta entender por qué se dio vuelta entre julio y agosto.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>En julio los pedidos grandes salían por Flex (1,51 u/envío) y en agosto por correo (1,53). La lectura de «correo concentra los multiproducto» venía de cuatro ciclos mirando solo agosto.</dd>
+      <dt>Listo cuando</dt><dd>Haya un tercer mes que confirme cuál de los dos patrones es el normal.</dd>
+    </dl>
+  </div>
+  <div class="todo">
+    <span class="tag m pri">Investigar</span>
+    <h3>Exportar Evolución de negocio de julio.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>Es lo único que falta para cerrar el mes: serie diaria de visitas, corte por rango de precios y por tipo de comprador. Ventas UY ya llegó.</dd>
+      <dt>Listo cuando</dt><dd>El panel tenga la evolución diaria de visitas cruzada contra las ventas.</dd>
+    </dl>
+  </div>
+  <div class="todo">
+    <span class="tag m pri">Investigar</span>
+    <h3>Revisar por qué julio tuvo un 24% más de tráfico diario y menos de la mitad de ventas por día.</h3>
+    <dl>
+      <dt>Por qué</dt><dd>Conversión 0,99% en julio contra 2,66% en agosto. Ads explicó el 66% de las ventas en los dos meses, así que el share publicitario no lo explica.</dd>
+      <dt>Listo cuando</dt><dd>Haya conversión de las publicaciones no publicitadas, mes a mes.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Archivos del ciclo</h2><span class="src">10 recibidos · 10 con destino declarado</span></div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Archivo</th><th>Tipo identificado</th><th>Período</th><th>Destino</th></tr></thead>
+      <tbody>
+        <tr><td>20260828_Ventas_UY…2245hs</td><td>Ventas UY</td><td>1–31 jul (corte 28/08 22:45)</td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>Reporte_desempeño_producto_2026_07_01–2026_07_31</td><td>Desempeño de producto</td><td>1–31 jul</td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>reportcampaigns_report…971880211</td><td>Mercado Ads — por campañas</td><td>1–31 jul</td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>reportpads_report…971840873</td><td>Mercado Ads — por anuncios</td><td>1–31 jul</td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>reportsales_report…971860219</td><td>Mercado Ads — ventas por publicidad</td><td>1–31 jul</td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>reportplacement_report_campaign…971897766</td><td>Mercado Ads — por espacios publicitarios</td><td>1–31 jul</td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>Reporte_rendimiento_promociones-2026_08_28 22:48</td><td>Promociones</td><td>ventana de julio <span class="tag y">inferido</span></td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>Reporte_rendimiento_cupones-2026_08_28 22:48</td><td>Cupones</td><td>ventana de julio <span class="tag y">inferido</span></td><td><span class="tag g">procesar</span></td></tr>
+        <tr><td>reportpads_report…930514714</td><td>Mercado Ads — por anuncios</td><td><b>1–27 ago</b></td><td><span class="tag m">no aplica</span> — ya procesado en el ciclo del 28/08</td></tr>
+        <tr><td>reportplacement_report_campaign…930588069</td><td>Mercado Ads — por espacios</td><td><b>1–27 ago</b></td><td><span class="tag m">no aplica</span> — ya procesado en el ciclo del 28/08</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:15px;margin:22px 0 10px">Reportes habituales que no llegaron</h3>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Reporte</th><th>Qué falta por no tenerlo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Evolución de negocio</b></td><td>Serie diaria de visitas, corte por rango de precios y tipo de comprador — <b>es lo único crítico que sigue faltando</b></td></tr>
+        <tr><td>Publicaciones</td><td>Stock en depósito, estado y precio por publicación en julio</td></tr>
+        <tr><td>Fichas técnicas</td><td>Completitud de catálogo en julio</td></tr>
+        <tr><td>Envíos en agencias / Flex</td><td>Reputación y % de despachos a tiempo del mes</td></tr>
+        <tr><td>Rendimiento de publicaciones</td><td>Visitas y ventas por SKU</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="shead"><h2>Notas de calidad de datos</h2></div>
+  <div class="grid2">
+    <div class="note crit"><span class="ic">🔴</span><div><b>El reporte de Desempeño de producto trae una fila «Agosto».</b> El encabezado declara «desde el 1 de julio hasta el 31 de julio», pero además de la fila «Julio» hay una fila «Agosto» con 344 visitantes únicos, 1.298 visitas y 10 ventas. No se sumó a los totales de julio. Sin explicación de ML.</div></div>
+    <div class="note crit"><span class="ic">🔴</span><div><b>La fila «Valores totales del período» dice 26 en todas las columnas.</b> No es el total de nada (Julio + Agosto da 5.250 visitantes únicos, no 26). Es un bug del export: se ignoró.</div></div>
+    <div class="note warn"><span class="ic">🟢</span><div><b>Confirmada la ventana de promociones y cupones.</b> Los tres archivos se exportaron el 28/08 entre las 22:45 y las 22:48, y Ventas UY —el único de los tres que declara período— trae exactamente <b>1 al 31 de julio</b>. Los otros dos comparten la misma ventana. Queda cerrada la duda que tenía este panel al publicarse.</div></div>
+    <div class="note warn"><span class="ic">🟢</span><div><b>«Cantidad de ventas» son líneas de producto.</b> Ventas UY de julio tiene 152 filas y 17 cabeceras de paquete: 152 − 17 = 135, la cifra exacta que informa Desempeño de producto. No son envíos (107) ni unidades (152). Verificar la identidad en el próximo ciclo.</div></div>
+    <div class="note warn"><span class="ic">🟡</span><div><b>Seis SKU en la forma vieja <code>PHC0####</code> aparecen en julio</b> (PHC00017, PHC00019, PHC00022, PHC00024, PHC00025, PHC00027). Todos son anteriores al 12/08/2026, así que <b>no reabren el tema</b> según la regla vigente. PHC00019 no estaba en la tabla histórica: es una variante más del mismo typo, no un problema nuevo.</div></div>
+    <div class="note warn"><span class="ic">🟡</span><div><b>El parseo por envío cierra sin huérfanos:</b> 152 filas → 112 envíos (17 paquetes: 12 de 2 productos, 4 de 3 y 1 de 4), 0 filas sueltas. Cancelados evaluados sobre las filas hijas, no sobre la cabecera.</div></div>
+    <div class="note warn"><span class="ic">🟡</span><div><b>Un mismo producto aparece en dos anuncios.</b> «Frasco Flip Separador» (MLU882389536) y «Set 12 Utensilios» (MLU696559194) corren en dos campañas cada uno, con resultados opuestos: el Frasco hizo ROAS 15,8× en una y $365 sin ventas en la otra. Los totales están bien, pero al mirar por producto hay que sumar las dos filas.</div></div>
+    <div class="note warn"><span class="ic">🟡</span><div><b>Sin cruce con el maestro STOCK_MT_FINAL</b>, por pedido explícito: las correcciones de SKU y de márgenes se aplicaron después de julio. Por eso no hay contribución por anuncio, margen, clasificación de productos ni stock en este panel.</div></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>Panel de julio 2026</b> · procesado retroactivamente el 29/08/2026 a partir de 9 archivos exportados de Mercado Libre.</p>
+    <p>Este panel queda congelado: si un dato se corrige más adelante, la corrección aparece en el ciclo siguiente, no acá.</p>
+  </div>
+</footer>
+
+</body>
+</html>

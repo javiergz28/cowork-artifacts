@@ -7,6 +7,35 @@
   },
   "meses": [
     {
+      "id": "2026-07",
+      "nombre": "Julio",
+      "anio": 2026,
+      "slug": "2026-07",
+      "estado": "cerrado",
+      "ventana": "1–31 jul 2026",
+      "aviso": "Ciclo retroactivo, procesado el 29/08. Llega hasta el neto liquidado por Mercado Libre: sin cruce con el maestro STOCK_MT_FINAL no hay costo de producto, margen ni contribución neta. Falta Evolución de negocio de julio (serie diaria de visitas).",
+      "resumen": {
+        "unidades": 152,
+        "ventas": 135,
+        "visitas": 13673,
+        "ingresos_productos": 67886.61,
+        "neto_liquidado": 60692.98,
+        "carga_ml_pct": 28.2,
+        "envios": 107,
+        "roas": 3.42,
+        "acos": 29.22,
+        "inversion_ads": 11734.02,
+        "contribucion_neta": null
+      },
+      "titulares": [
+        "Ingresos por productos $67.887 y neto liquidado por ML $60.693. La carga de Mercado Libre fue 28,2% de los ingresos, casi 3 puntos más que en agosto.",
+        "Julio tuvo un 24% más de tráfico diario que agosto y menos de la mitad de ventas por día: conversión 0,99% contra 2,66%. El precio promedio por unidad fue $447 contra $569 en agosto.",
+        "El patrón «correo concentra los pedidos grandes» no existía en julio: Flex movía 1,51 unidades por envío contra 1,34 de correo. En agosto está dado vuelta.",
+        "Mercado Ads: $11.734 de inversión, ROAS 3,42× y ACOS 29,22%. 101 de 125 anuncios (81%) no vendieron nada.",
+        "Cupones de carrito abandonado: 1.080 aplicados entre dos ventanas y un solo canje. El descuento no es la palanca."
+      ]
+    },
+    {
       "id": "2026-08",
       "nombre": "Agosto",
       "anio": 2026,
@@ -35,6 +64,37 @@
     }
   ],
   "ciclos": [
+    {
+      "id": "2026-07-31",
+      "mes": "2026-07",
+      "fecha": "2026-07-31",
+      "titulo": "Julio completo — demanda, Ads, promociones y cupones",
+      "tipo": "cierre",
+      "periodo": "1 – 31 jul 2026",
+      "ventana": "ciclo",
+      "procesado": "2026-08-29",
+      "archivos": 10,
+      "kpis": {
+        "ventas": 67886.61,
+        "ventas_concepto": "Ingresos por productos (Ventas UY)",
+        "unidades": 152,
+        "unidades_concepto": "netas (160 brutas − 8 canceladas)",
+        "visitas": 13673,
+        "conversion": 0.99,
+        "envios": 107,
+        "roas": 3.42,
+        "acos": 29.22,
+        "inversion_ads": 11734.02
+      },
+      "hallazgos": [
+        "Neto liquidado por ML $60.693 sobre $67.887 de ingresos por productos. Carga de ML 28,2% (agosto: 25,3%). Sin COGS no se llega a la contribución.",
+        "El patrón «correo concentra los pedidos grandes», leído como estructural durante cuatro ciclos, no existía en julio: arrancó en agosto.",
+        "«Cantidad de ventas» del reporte de Desempeño son líneas de producto: 152 filas − 17 cabeceras de paquete = 135, la cifra exacta que informa ML.",
+        "81% de los anuncios sin una sola venta ($2.118, el 18% de la inversión). Búsqueda rinde 4,92× contra 2,66× de Página de producto.",
+        "«Potenciá tus ventas» aparece como dos instancias consecutivas (28 jun–3 ago y 3 ago–3 feb): es un programa que ML renueva, no una campaña puntual."
+      ],
+      "snapshot": "ciclos/2026-07-31.html"
+    },
     {
       "id": "2026-08-15",
       "mes": "2026-08",
