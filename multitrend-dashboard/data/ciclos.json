@@ -1,6 +1,6 @@
 {
   "meta": {
-    "actualizado": "2026-08-29",
+    "actualizado": "2026-08-30",
     "moneda": "UYU",
     "fuente": "Reportes exportados de Mercado Libre UY, cruzados con el maestro STOCK_MT_FINAL",
     "nota": "Cada ciclo publica el período tal como lo entrega Mercado Libre. Algunos vienen recortados al ciclo y otros mes a la fecha: la columna Ventana lo indica y las cifras de ventanas distintas no se suman entre si."
@@ -251,9 +251,12 @@
         "Primer P&L real: contribución neta $56.762 (37,1%). La carga de ML es 25,3% de los ingresos y Ads 16,5%.",
         "Los dos estrella terminaron en stock 0 e inactivos. Cada día pausados cuesta ~$1.062 de contribución (inferencia).",
         "Fichas técnicas subieron de 68,0% a 78,2%. El deadline de ML es rotativo: confirmado.",
-        "Bug encontrado en el toolkit mt: los paquetes cancelados enteros se cuentan como vendidos."
+        "Bug encontrado en el toolkit mt: los paquetes cancelados enteros se cuentan como vendidos.",
+        "Medida por publicación, la deuda de fichas es mucho más chica: 19 publicaciones que ya venden necesitan 28 campos. El promedio por categoría la exageraba."
       ],
-      "snapshot": "ciclos/2026-08-28.html"
+      "snapshot": "ciclos/2026-08-28.html",
+      "reeditado": "2026-08-30",
+      "nota_reedicion": "Panel reeditado el 30/08 a pedido de Javi y Mika: fichas técnicas medidas por publicación en vez de por categoría (con distinción catálogo/propia), tablas de promociones y cupones ordenables y filtrables, y notas de calidad de datos expandibles. Los números del período no cambiaron."
     }
   ]
 }
