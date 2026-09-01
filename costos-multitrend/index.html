@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#153a31">
+<meta name="description" content="Acceso al panel protegido de costos, alertas y rentabilidad del Maestro de Multitrend.">
+<title>Costos y rentabilidad — Multitrend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f0e7;--paper:#fffdf7;--ink:#17231f;--soft:#5a6862;--green:#285f4f;--deep:#153a31;--lime:#d8ef87;--peach:#f4b98b;--border:#cfd6cc}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 78% 4%,rgba(216,239,135,.5),transparent 25rem),var(--bg);color:var(--ink);font-family:Outfit,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1180px,calc(100% - 2rem));margin:0 auto}
+.topbar{position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(40,95,79,.14);background:rgba(243,240,231,.9);backdrop-filter:blur(18px)}
+.topbar-inner{display:flex;align-items:center;min-height:68px;gap:1rem}
+.brand{display:flex;align-items:center;gap:.7rem;font-weight:700}
+.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--green);color:white;font-size:.75rem;box-shadow:0 8px 24px rgba(40,95,79,.2)}
+.brand-sub{color:var(--soft);font-size:.78rem;font-weight:500}
+.spacer{flex:1}
+.back{padding:.6rem .8rem;border:1px solid var(--border);border-radius:.7rem;color:var(--green);font-size:.78rem;font-weight:600}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:3rem;align-items:end;padding:clamp(5rem,10vw,9rem) 0 5rem}
+.eyebrow{margin:0;color:var(--green);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+h1{max-width:780px;margin:1rem 0 1.4rem;font-size:clamp(3.4rem,7vw,6.8rem);line-height:.91;letter-spacing:-.06em}
+.hero-copy{max-width:680px;margin:0;color:var(--soft);font-size:clamp(1rem,2vw,1.2rem);line-height:1.7}
+.actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.8rem 1rem;border:1px solid var(--border);border-radius:.75rem;background:var(--paper);font-size:.82rem;font-weight:700}
+.btn-primary{border-color:var(--green);background:var(--green);color:white;box-shadow:0 12px 30px rgba(40,95,79,.2)}
+.btn:hover{transform:translateY(-1px)}
+.secure-card{padding:1.5rem;border-radius:1.4rem;background:var(--deep);color:white;box-shadow:0 30px 80px rgba(21,58,49,.2)}
+.secure-card>span{color:var(--lime);font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.secure-card h2{margin:.7rem 0;font-size:clamp(2rem,4vw,3.3rem);line-height:1;letter-spacing:-.045em}
+.secure-card p{margin:0;color:#a9bbb5;line-height:1.6}
+.security-list{display:grid;gap:.6rem;margin-top:1.5rem}
+.security-list div{display:flex;gap:.6rem;align-items:flex-start;padding:.75rem;border:1px solid rgba(255,255,255,.1);border-radius:.75rem;background:rgba(255,255,255,.04);font-size:.75rem}
+.check{display:grid;flex:0 0 auto;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--lime);color:var(--deep);font-weight:700}
+.section{padding:5rem 0}
+.section-head{display:grid;grid-template-columns:1fr .8fr;gap:2rem;align-items:end;margin-bottom:2rem}
+.section-head h2{margin:0;font-size:clamp(2.4rem,5vw,4.5rem);line-height:.98;letter-spacing:-.05em}
+.section-head p{margin:0;color:var(--soft);line-height:1.7}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+.feature{min-height:240px;padding:1.25rem;border:1px solid var(--border);border-radius:1rem;background:rgba(255,253,247,.78)}
+.feature-num{color:var(--green);font-size:.7rem;font-weight:700}
+.feature h3{margin:2.4rem 0 .7rem;font-size:1.25rem}
+.feature p{margin:0;color:var(--soft);font-size:.82rem;line-height:1.6}
+.note{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:start;margin-top:1rem;padding:1rem;border-radius:.9rem;background:#e7ecd9;color:var(--soft);font-size:.78rem;line-height:1.55}
+.note strong{color:var(--ink)}
+.note-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:.6rem;background:var(--lime);color:var(--deep);font-weight:700}
+.cta{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;margin:1rem 0 5rem;padding:clamp(1.5rem,4vw,3rem);border-radius:1.4rem;background:var(--peach)}
+.cta h2{margin:0 0 .6rem;font-size:clamp(2rem,4vw,3.5rem);line-height:1;letter-spacing:-.045em}
+.cta p{max-width:650px;margin:0;color:#5f4938;line-height:1.6}
+.footer{padding:2rem 0;border-top:1px solid var(--border);color:var(--soft);font-size:.72rem}
+.footer-inner{display:flex;justify-content:space-between;gap:1rem}
+.footer a{color:var(--green);font-weight:600}
+@media(max-width:850px){.hero,.section-head{grid-template-columns:1fr}.features{grid-template-columns:1fr 1fr}.cta{grid-template-columns:1fr}.brand-sub{display:none}}
+@media(max-width:520px){.features{grid-template-columns:1fr}h1{font-size:3.3rem}.hero{padding-top:4rem}.topbar-inner{min-height:60px}.back{font-size:.7rem}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../multitrend-dashboard/"><span class="brand-mark">MT</span><span>Multitrend</span><span class="brand-sub">Costos y rentabilidad</span></a>
+    <span class="spacer"></span>
+    <a class="back" href="../multitrend-dashboard/">← Volver a reportes</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <p class="eyebrow">Herramienta de gestión</p>
+      <h1>Rentabilidad del Maestro, sin exponer el Maestro.</h1>
+      <p class="hero-copy">Un acceso ordenado al panel que transforma costos, stock y precios en alertas y decisiones comerciales. La presentación es pública; los datos del negocio requieren una cuenta autorizada.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://guia-costos-multitrend.javiergz28.chatgpt.site/" target="_blank" rel="noopener">Ingresar al panel protegido ↗</a>
+        <a class="btn" href="../multitrend-dashboard/">Ver reportes de Mercado Libre</a>
+      </div>
+    </div>
+    <aside class="secure-card">
+      <span>Acceso protegido</span>
+      <h2>El enlace es público. Los costos no.</h2>
+      <p>La aplicación verifica la identidad y la autorización antes de entregar información del Maestro.</p>
+      <div class="security-list">
+        <div><span class="check">✓</span><span>Inicio de sesión con ChatGPT.</span></div>
+        <div><span class="check">✓</span><span>Acceso limitado a cuentas autorizadas.</span></div>
+        <div><span class="check">✓</span><span>Los costos no se guardan en GitHub Pages.</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Qué permite revisar</h2>
+      <p>El panel convierte el bloque de costos de <strong>STOCK_MT_FINAL</strong> en una superficie de trabajo comprensible, sin reemplazar la planilla como fuente de verdad.</p>
+    </div>
+    <div class="features">
+      <article class="feature"><span class="feature-num">01</span><h3>Alertas accionables</h3><p>Artículos sin costo, margen bajo, stock sin publicar y otras excepciones explicadas.</p></article>
+      <article class="feature"><span class="feature-num">02</span><h3>Más y menos rentables</h3><p>Rankings por ganancia unitaria, margen porcentual y potencial del stock.</p></article>
+      <article class="feature"><span class="feature-num">03</span><h3>Explorador de artículos</h3><p>Búsqueda y filtros para comparar costo final, precio, margen y estado.</p></article>
+      <article class="feature"><span class="feature-num">04</span><h3>Método documentado</h3><p>Explicación del costo base, importación estimada, comisión y margen real.</p></article>
+    </div>
+    <div class="note"><span class="note-icon">i</span><div><strong>Esta página no contiene datos comerciales.</strong> Funciona como puerta de entrada desde GitHub Pages hacia la aplicación protegida.</div></div>
+  </section>
+
+  <section class="cta">
+    <div><h2>¿Tenés una cuenta autorizada?</h2><p>Abrí el panel, iniciá sesión y revisá el último corte incorporado del Maestro.</p></div>
+    <a class="btn btn-primary" href="https://guia-costos-multitrend.javiergz28.chatgpt.site/" target="_blank" rel="noopener">Abrir panel ↗</a>
+  </section>
+</main>
+
+<footer class="footer"><div class="wrap footer-inner"><span>Multitrend · Costos y rentabilidad</span><a href="../multitrend-dashboard/">Reportes Mercado Libre</a></div></footer>
+</body>
+</html>
