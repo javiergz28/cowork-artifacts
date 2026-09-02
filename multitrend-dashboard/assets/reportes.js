@@ -26,6 +26,16 @@
   function fechaCorta(iso) { var f = parseFecha(iso); return f.d + ' ' + MESES_CORTO[f.m]; }
   function fechaLarga(iso) { var f = parseFecha(iso); return f.d + ' de ' + MESES[f.m] + ' de ' + f.y; }
 
+  function cargarDatos(url) {
+    var embebidos = document.getElementById('mt-ciclos-data');
+    if (embebidos) {
+      try { return Promise.resolve(JSON.parse(embebidos.textContent)); }
+      catch (e) { return Promise.reject(e); }
+    }
+    return fetch(url, { cache: 'no-cache' })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+  }
+
   function ciclosDe(data, mesId) {
     return data.ciclos.filter(function (c) { return c.mes === mesId; })
       .sort(function (a, b) { return a.fecha === b.fecha ? (a.id < b.id ? -1 : 1) : (a.fecha < b.fecha ? -1 : 1); });
@@ -83,7 +93,7 @@
     var ult = ultimoConPanel(data);
     document.querySelectorAll('[data-ultimo]').forEach(function (n) {
       if (ult) {
-        n.href = CFG.base + ult.snapshot;
+        n.href = CFG.base + ult.snapshot + (n.getAttribute('data-ultimo-hash') || '');
         var lbl = n.querySelector('[data-ultimo-label]');
         if (lbl) lbl.textContent = 'Último panel · ' + fechaCorta(ult.fecha);
       } else { n.style.display = 'none'; }
@@ -218,8 +228,7 @@
   }
 
   /* ---------------- Arranque ---------------- */
-  fetch(CFG.base + 'data/ciclos.json', { cache: 'no-cache' })
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+  cargarDatos(CFG.base + 'data/ciclos.json')
     .then(function (data) {
       if (CFG.view === 'mes') renderMes(data); else renderHub(data);
       var act = document.getElementById('actualizado');

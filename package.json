@@ -1,0 +1,11 @@
+{
+  "name": "cowork-artifacts-tools",
+  "private": true,
+  "scripts": {
+    "build:multitrend-protected": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/build-protected-dashboard.ps1",
+    "stage:multitrend-protected": "node tools/stage-protected-dashboard.mjs"
+  },
+  "devDependencies": {
+    "staticrypt": "3.5.4"
+  }
+}

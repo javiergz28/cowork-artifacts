@@ -1,14 +1,18 @@
-# Cómo agregar un ciclo al histórico
+# Cómo agregar un ciclo protegido al histórico
 
-Cada ciclo se agrega en **3 pasos**. No hay que tocar `index.html`, ni la página del mes, ni los paneles viejos:
-todo se arma solo desde `data/ciclos.json`.
+La carpeta pública `multitrend-dashboard/` contiene solamente la versión cifrada. No se edita directamente.
+La fuente de trabajo vive en `_local/multitrend-source/multitrend-dashboard/`, excluida de Git.
+
+No hay que tocar `index.html`, la página del mes ni los paneles viejos: todo se arma desde el
+`data/ciclos.json` de la fuente privada.
 
 ## 1. Guardar el panel del ciclo
 
-Copiar el HTML del panel a `ciclos/AAAA-MM-DD.html` (la fecha del corte, no la del período).
+Copiar el HTML del panel a `ciclos/AAAA-MM-DD.html` dentro de la fuente privada
+(la fecha del corte, no la del período).
 
 ```bash
-cd multitrend-dashboard
+cd _local/multitrend-source/multitrend-dashboard
 cp /ruta/al/panel-generado.html ciclos/2026-09-05.html
 python3 ../_local/inyectar_nav.py ciclos/2026-09-05.html   # agrega la barra de navegación
 ```
@@ -23,7 +27,7 @@ Si no está el script, alcanza con pegar esto justo después de `<body>`:
 
 La barra resuelve sola el mes, el anterior y el siguiente. **Los paneles ya publicados no se tocan nunca más.**
 
-## 2. Agregar el ciclo a `data/ciclos.json`
+## 2. Agregar el ciclo al `data/ciclos.json` privado
 
 Un objeto nuevo al final de `"ciclos"`:
 
@@ -85,7 +89,22 @@ En `"meses"`:
 
 `resumen` se actualiza con el corte más reciente del mes y `estado` pasa a `"cerrado"` con el cierre mensual.
 
-## 4. Publicar
+## 4. Generar y preparar la versión protegida
+
+Desde la raíz del repositorio:
+
+```powershell
+npm run build:multitrend-protected
+npm run stage:multitrend-protected
+```
+
+El primer comando solicita la contraseña de forma oculta y genera una copia cifrada. El segundo comprueba
+que todos los HTML estén cifrados, que no haya JSON público y recién entonces actualiza la carpeta publicable.
+
+La contraseña nunca se escribe en el repositorio. `multitrend-dashboard/data/ciclos.json` no debe restaurarse:
+el manifiesto queda embebido dentro de cada página cifrada.
+
+## 5. Publicar
 
 ```bash
 git add -A && git commit -m "Ciclo 05/09/2026" && git push origin main
@@ -95,12 +114,15 @@ O directamente **Commit to main → Push origin** en GitHub Desktop.
 
 ## Verificación antes de pushear
 
-1. `python3 -m http.server 8000` dentro de `multitrend-dashboard/` y abrir `http://localhost:8000`.
-   **Con `file://` no funciona**: el `fetch` del JSON necesita un servidor.
-2. La tarjeta del mes muestra los KPIs nuevos.
-3. El ciclo nuevo aparece primero en la página del mes, con el botón «Abrir panel».
-4. `/ultimo/` redirige al panel nuevo.
-5. La barra negra del panel nuevo tiene el ciclo anterior a la izquierda.
+1. Servir `multitrend-dashboard/` con un servidor local y abrir la URL local.
+   **Con `file://` no funciona** porque el cifrado usa WebCrypto en HTTPS o localhost.
+2. La portada pide contraseña y una contraseña incorrecta no abre el contenido.
+3. Marcar «Recordarme» y comprobar que los meses y ciclos siguientes abren sin volver a pedirla.
+4. La tarjeta del mes muestra los KPIs nuevos.
+5. El ciclo nuevo aparece primero en la página del mes, con el botón «Abrir panel».
+6. `/ultimo/` redirige al panel nuevo.
+7. «Costos y rentabilidad» abre la sección `#rentabilidad` del último panel.
+8. La barra negra del panel nuevo tiene el ciclo anterior a la izquierda.
 
 ## URLs estables
 

@@ -7,6 +7,18 @@
   function corta(iso) { var p = iso.split('-'); return (+p[2]) + ' ' + MESES_CORTO[+p[1] - 1]; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
 
+  function cargarDatos(url) {
+    var embebidos = document.getElementById('mt-ciclos-data');
+    if (embebidos) {
+      try { return Promise.resolve(JSON.parse(embebidos.textContent)); }
+      catch (e) { return Promise.reject(e); }
+    }
+    return fetch(url, { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
+  }
+
   var host = document.getElementById('mt-nav');
   if (!host) return;
   var archivo = decodeURIComponent(location.pathname.split('/').pop() || '');
@@ -30,8 +42,7 @@
     document.head.appendChild(ic);
   }
 
-  fetch('../data/ciclos.json', { cache: 'no-cache' })
-    .then(function (r) { return r.json(); })
+  cargarDatos('../data/ciclos.json')
     .then(function (d) {
       var conPanel = d.ciclos.filter(function (c) { return c.snapshot; })
         .sort(function (a, b) { return a.fecha < b.fecha ? -1 : 1; });

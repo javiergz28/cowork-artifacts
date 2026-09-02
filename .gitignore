@@ -1,3 +1,4 @@
 # Archivos locales de trabajo, fuera del repo
 _local/
+node_modules/
 .DS_Store
