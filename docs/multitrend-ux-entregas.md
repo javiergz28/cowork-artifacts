@@ -25,3 +25,14 @@ La fuente privada vive en `_local/multitrend-source/multitrend-dashboard/` y no 
 - Revisar el diff y hacer commits/pushes separados. Evitar regenerar en Git los paneles históricos que no cambiaron.
 
 La contraseña vive sólo en el proceso de generación. No guardar credenciales ni snapshots en archivos versionados. Para cambiar la contraseña se requiere una decisión explícita; este flujo no la cambia.
+
+## Ampliación del cierre: distribución y lectura
+
+Revisión solicitada sobre el mismo cierre publicado. Orden: Resultado, Productos, Ads, Promociones y cupones, Operación y reputación, Salud del catálogo, Notas de calidad, Archivos del ciclo y Resumen para el equipo. La fecha de las fuentes y el resultado comercial original se conservan.
+
+- Ads tiene cuatro vistas independientes con todas las filas disponibles, detalles completos, búsqueda, filtros y orden. Los conteos y las diferencias entre reportes se explican; las vistas no se suman.
+- Los atributos del catálogo se enumeran completos desde la planilla de fichas. El cruce de ventas identifica la publicación, evitando trasladar ventas a otra publicación que comparta SKU. Se distingue una fila o variante de una publicación única.
+- Operación muestra ventanas, semanas, canales y zonas. Las coincidencias con ventas del mes tienen su cobertura declarada; no se publican compradores ni identificadores de transacciones.
+- Archivos queda cerrado al abrir la página, con las advertencias visibles arriba. El resumen final contiene como máximo diez puntos breves.
+
+La ampliación reutiliza `assets/cycle-final.js` para tablas y agrega `assets/cycle-review.js` para las nuevas vistas. El código público sólo contiene presentación; las fuentes y los datos siguen dentro del HTML cifrado.
