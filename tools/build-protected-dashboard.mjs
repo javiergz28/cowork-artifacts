@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { cp, mkdir, readFile, readdir, rm, unlink, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDir = join(repoRoot, '_local', 'multitrend-source', 'multitrend-dashboard');
@@ -16,6 +17,20 @@ const cliPath = join(repoRoot, 'node_modules', 'staticrypt', 'cli', 'index.js');
 if (!process.env.STATICRYPT_PASSWORD) {
   throw new Error('Falta la contraseña temporal de generación. Usá el comando npm run build:multitrend-protected.');
 }
+
+// Conservar el acceso existente: una clave equivocada no debe reemplazar el sitio.
+const require = createRequire(import.meta.url);
+const cryptoEngine = require('staticrypt/lib/cryptoEngine.js');
+const { decode } = require('staticrypt/lib/codec.js').init(cryptoEngine);
+const currentEntry = await readFile(join(repoRoot, 'multitrend-dashboard', 'index.html'), 'utf8');
+const cipher = currentEntry.match(/"staticryptEncryptedMsgUniqueVariableName":\s*"([^"]+)"/);
+const salt = currentEntry.match(/"staticryptSaltUniqueVariableName":\s*"([^"]+)"/);
+if (!cipher || !salt) throw new Error('No se pudo verificar la protección de la portada actual.');
+const key = await cryptoEngine.hashPassword(process.env.STATICRYPT_PASSWORD, salt[1]);
+const verified = await decode(cipher[1], key, salt[1]);
+if (!verified.success) throw new Error('La clave ingresada no corresponde al sitio actual. No se modificó la salida.');
+const savedConfig = JSON.parse(await readFile(configPath, 'utf8'));
+if (savedConfig.salt !== salt[1]) throw new Error('La configuración local de cifrado no coincide con el sitio actual.');
 
 function assertInside(parent, child) {
   const rel = relative(resolve(parent), resolve(child));

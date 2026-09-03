@@ -6,6 +6,9 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDir = join(repoRoot, '_local', 'multitrend-source', 'multitrend-dashboard');
 const outputDir = join(repoRoot, '_local', 'multitrend-protected', 'site', 'multitrend-dashboard');
 const publishDir = join(repoRoot, 'multitrend-dashboard');
+const argumentsList = process.argv.slice(2);
+const checkOnly = argumentsList.includes('--check');
+const requested = argumentsList.filter((arg) => arg !== '--check').map((arg) => arg.replaceAll('\\', '/'));
 
 function assertInside(parent, child) {
   const rel = relative(resolve(parent), resolve(child));
@@ -45,7 +48,23 @@ for (const htmlFile of htmlFiles) {
   }
 }
 
-for (const sourceFile of outputFiles) {
+const selectedFiles = requested.length ? outputFiles.filter((file) => {
+  const rel = relative(outputDir, file).replaceAll('\\', '/');
+  return requested.some((item) => rel === item || rel.startsWith(item.replace(/\/$/, '') + '/'));
+}) : outputFiles;
+for (const item of requested) {
+  if (!selectedFiles.some((file) => {
+    const rel = relative(outputDir, file).replaceAll('\\', '/');
+    return rel === item || rel.startsWith(item.replace(/\/$/, '') + '/');
+  })) throw new Error(`No existe en la salida protegida: ${item}`);
+}
+
+if (checkOnly) {
+  console.log(`${htmlFiles.length} páginas cifradas verificadas; ${selectedFiles.length} archivos seleccionados. Sin cambios.`);
+  process.exit(0);
+}
+
+for (const sourceFile of selectedFiles) {
   const rel = relative(outputDir, sourceFile);
   const targetFile = join(publishDir, rel);
   await mkdir(dirname(targetFile), { recursive: true });
@@ -54,5 +73,5 @@ for (const sourceFile of outputFiles) {
 
 await rm(join(publishDir, 'data', 'ciclos.json'), { force: true });
 
-console.log(`${htmlFiles.length} páginas cifradas preparadas para publicar.`);
+console.log(`${selectedFiles.length} archivos protegidos o recursos preparados para publicar.`);
 console.log('El manifiesto privado quedó solamente en _local/multitrend-source.');
