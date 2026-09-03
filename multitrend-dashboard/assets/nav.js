@@ -58,7 +58,8 @@
         + '<span class="mt-now"><span class="mt-dot"></span>'
         + (actual ? 'Panel del ' + esc(corta(actual.fecha)) + ' <span class="mt-sub">· ' + esc(actual.periodo) + '</span>' : 'Panel guardado')
         + '</span>'
-        + '<a href="../">Reportes</a>'
+        + '<a href="../">Inicio</a>'
+        + '<a href="../rentabilidad/">Rentabilidad del stock</a>'
         + (mesId ? '<a href="../' + esc(mesId) + '/">' + esc(mesNom) + '</a>' : '')
         + (prev ? '<a href="' + esc(prev.snapshot.split('/').pop()) + '">← ' + esc(corta(prev.fecha)) + '</a>'
                 : '<a class="mt-off" href="#">← anterior</a>')

@@ -121,7 +121,7 @@ O directamente **Commit to main → Push origin** en GitHub Desktop.
 4. La tarjeta del mes muestra los KPIs nuevos.
 5. El ciclo nuevo aparece primero en la página del mes, con el botón «Abrir panel».
 6. `/ultimo/` redirige al panel nuevo.
-7. «Costos y rentabilidad» abre la sección `#rentabilidad` del último panel.
+7. «Rentabilidad del stock» abre `/multitrend-dashboard/rentabilidad/`, independiente del ciclo.
 8. La barra negra del panel nuevo tiene el ciclo anterior a la izquierda.
 
 ## URLs estables
@@ -129,6 +129,7 @@ O directamente **Commit to main → Push origin** en GitHub Desktop.
 | URL | Qué es |
 |---|---|
 | `/multitrend-dashboard/` | Índice de reportes |
+| `/multitrend-dashboard/rentabilidad/` | Costos, precios y stock con fecha de lectura propia |
 | `/multitrend-dashboard/ultimo/` | Siempre el panel más reciente — es la que conviene compartir |
 | `/multitrend-dashboard/2026-08/` | Reporte del mes |
 | `/multitrend-dashboard/ciclos/2026-08-28.html` | Un panel congelado, no cambia nunca |

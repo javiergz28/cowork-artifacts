@@ -43,8 +43,10 @@
   function ultimoConPanel(data) {
     var conPanel = data.ciclos.filter(function (c) { return c.snapshot; });
     if (!conPanel.length) return null;
-    return conPanel.sort(function (a, b) { return a.fecha < b.fecha ? 1 : -1; })[0];
+    return conPanel.sort(function (a, b) { return a.fecha === b.fecha ? String(b.id).localeCompare(String(a.id)) : (a.fecha < b.fecha ? 1 : -1); })[0];
   }
+
+  function normalizar(s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
 
   /* Muestra hasta 3 KPIs, en orden de prioridad, salteando los que el mes no tiene.
      Un mes sin Ventas UY (ej. julio 2026) no tiene unidades ni contribución: cae en ventas/visitas. */
@@ -68,36 +70,70 @@
   function renderHub(data) {
     var cont = document.getElementById('meses');
     if (!cont) return;
-    var meses = data.meses.slice().sort(function (a, b) { return a.id < b.id ? 1 : -1; });
-    if (!meses.length) { cont.appendChild(el('div', 'empty', 'Todavía no hay meses publicados.')); return; }
-
-    meses.forEach(function (m) {
-      var ciclos = ciclosDe(data, m.id);
-      var conReportes = ciclos.filter(function (c) { return c.tipo !== 'proceso'; });
-      var r = m.resumen || {};
-      var a = el('a', 'month-card');
-      a.href = CFG.base + m.slug + '/';
-      a.innerHTML =
-        '<div class="month-top">' +
-          '<div><h3 class="month-name">' + esc(m.nombre) + ' ' + m.anio + '</h3>' +
-          '<p class="month-window">' + esc(m.ventana) + '</p></div>' +
-          '<span class="chip' + (m.estado === 'cerrado' ? '' : ' chip-warn') + '">' +
-            (m.estado === 'cerrado' ? 'Cerrado' : 'En curso') + '</span>' +
-        '</div>' +
-        '<div class="month-kpis">' + tarjetasKpi(r) + '</div>' +
-        '<div class="month-foot"><span>' + conReportes.length + ' ciclo' + (conReportes.length === 1 ? '' : 's') +
-          ' · ' + ciclos.length + ' pase' + (ciclos.length === 1 ? '' : 's') + '</span><span class="arrow">Ver el mes →</span></div>';
-      cont.appendChild(a);
-    });
-
+    var buscar = document.getElementById('mes-buscar');
+    var estado = document.getElementById('mes-estado');
+    var orden = document.getElementById('mes-orden');
     var ult = ultimoConPanel(data);
     document.querySelectorAll('[data-ultimo]').forEach(function (n) {
       if (ult) {
         n.href = CFG.base + ult.snapshot + (n.getAttribute('data-ultimo-hash') || '');
         var lbl = n.querySelector('[data-ultimo-label]');
-        if (lbl) lbl.textContent = 'Último panel · ' + fechaCorta(ult.fecha);
-      } else { n.style.display = 'none'; }
+        if (lbl) lbl.textContent = 'Abrir último ciclo';
+      } else { n.hidden = true; }
     });
+    if (ult) {
+      setText('ultimo-fecha', 'Publicado ' + fechaCorta(ult.fecha));
+      setText('ultimo-titulo', ult.titulo);
+      setText('ultimo-periodo', 'Período: ' + ult.periodo);
+    } else {
+      setText('ultimo-titulo', 'Todavía no hay ciclos publicados.');
+      setText('ultimo-periodo', 'El primer panel aparecerá acá cuando esté disponible.');
+    }
+
+    function mostrarMeses() {
+      var terminos = normalizar(buscar && buscar.value).split(/\s+/).filter(Boolean);
+      var filtroEstado = estado ? estado.value : 'todos';
+      var meses = data.meses.filter(function (m) {
+        var texto = normalizar(m.nombre + ' ' + m.anio + ' ' + m.id + ' ' + m.ventana);
+        return terminos.every(function (t) { return texto.indexOf(t) !== -1; }) &&
+          (filtroEstado === 'todos' || (filtroEstado === 'cerrado' ? m.estado === 'cerrado' : m.estado !== 'cerrado'));
+      }).sort(function (a, b) {
+        return (orden && orden.value === 'antiguo' ? 1 : -1) * a.id.localeCompare(b.id);
+      });
+      cont.innerHTML = '';
+      cont.setAttribute('aria-busy', 'false');
+      setText('mes-resultados', meses.length + (meses.length === 1 ? ' mes' : ' meses') + ' de ' + data.meses.length + ' publicados');
+      if (!meses.length) {
+        cont.appendChild(el('div', 'empty', data.meses.length
+          ? 'No encontramos meses con esos filtros. Probá otra búsqueda o elegí todos los estados.'
+          : 'Todavía no hay meses publicados.'));
+        return;
+      }
+      meses.forEach(function (m) {
+        var ciclos = ciclosDe(data, m.id);
+        var conReportes = ciclos.filter(function (c) { return c.tipo !== 'proceso'; });
+        var paneles = ciclos.filter(function (c) { return c.snapshot; }).length;
+        var r = m.resumen || {};
+        var a = el('a', 'month-card');
+        a.href = CFG.base + m.slug + '/';
+        a.innerHTML =
+          '<div class="month-top">' +
+            '<div><h3 class="month-name">' + esc(m.nombre) + ' ' + esc(m.anio) + '</h3>' +
+            '<p class="month-window">' + esc(m.ventana) + '</p></div>' +
+            '<span class="chip' + (m.estado === 'cerrado' ? '' : ' chip-warn') + '">' +
+              (m.estado === 'cerrado' ? 'Cerrado' : 'En curso') + '</span>' +
+          '</div>' +
+          '<div class="month-kpis">' + tarjetasKpi(r) + '</div>' +
+          '<p class="month-caption">Cifras del último corte de este mes.</p>' +
+          '<div class="month-foot"><span>' + conReportes.length + ' ciclo' + (conReportes.length === 1 ? '' : 's') +
+            ' · ' + paneles + ' panel' + (paneles === 1 ? '' : 'es') + '</span><span class="arrow">Ver mes <span aria-hidden="true">→</span></span></div>';
+        cont.appendChild(a);
+      });
+    }
+    if (buscar) buscar.addEventListener('input', mostrarMeses);
+    if (estado) estado.addEventListener('change', mostrarMeses);
+    if (orden) orden.addEventListener('change', mostrarMeses);
+    mostrarMeses();
   }
 
   /* ---------------- MES ---------------- */
@@ -116,16 +152,18 @@
 
     var aviso = document.getElementById('mes-aviso');
     if (aviso) {
-      if (mes.aviso) aviso.innerHTML = '<div class="notice"><span>⚠️</span><div><b>Ojo con la ventana.</b> ' + esc(mes.aviso) + '</div></div>';
+      if (mes.aviso) aviso.innerHTML = '<div class="notice"><div><b>Sobre este período.</b> ' + esc(mes.aviso) + '</div></div>';
       else aviso.remove();
     }
 
+    var unidadesCorte = ciclos.slice().reverse().filter(function (c) { return c.kpis && c.kpis.unidades === r.unidades && c.kpis.unidades_concepto; })[0];
+    var concepto = r.unidades_concepto || (unidadesCorte ? unidadesCorte.kpis.unidades_concepto : 'concepto no informado en el resumen');
     var kpis = [
-      { l: 'Unidades netas', d: r.unidades, v: num(r.unidades), n: 'descontadas las canceladas' },
+      { l: 'Unidades', d: r.unidades, v: num(r.unidades), n: concepto },
       { l: 'Cantidad de ventas', d: r.ventas, v: num(r.ventas), n: 'líneas de producto, no unidades' },
       { l: 'Visitas', d: r.visitas, v: num(r.visitas), n: 'totales del período' },
       { l: 'Ingresos por productos', d: r.ingresos_productos, v: money(r.ingresos_productos), n: 'antes de cargas de ML' },
-      { l: 'Neto liquidado por ML', d: r.neto_liquidado, v: money(r.neto_liquidado), n: r.carga_ml_pct != null ? 'carga de ML ' + pct(r.carga_ml_pct) : '' },
+      { l: 'Total informado por ML', d: r.neto_liquidado, v: money(r.neto_liquidado), n: 'importe del reporte; no acredita un depósito bancario' },
       { l: 'Contribución neta', d: r.contribucion_neta, v: money(r.contribucion_neta), n: r.contribucion_pct != null ? pct(r.contribucion_pct) + ' de los ingresos' : '' },
       { l: 'ROAS / ACOS', d: r.roas, v: mult(r.roas) + ' <small>' + pct(r.acos) + '</small>', n: r.inversion_ads != null ? 'inversión ' + money(r.inversion_ads) : '' },
       { l: 'Envíos', d: r.envios, v: num(r.envios), n: 'netos del período' }
@@ -147,12 +185,30 @@
 
   function setText(id, txt) { var n = document.getElementById(id); if (n) n.textContent = txt; }
 
-  /* Serie mes a la fecha: solo cortes comparables entre sí (misma ventana acumulada). */
+  /* No unir unidades netas, brutas u operativas: compartir ventana no alcanza.
+     Sólo se grafica el grupo más reciente que tenga dos cortes del mismo concepto. */
   function renderSerie(ciclos) {
     var host = document.getElementById('mes-serie');
     if (!host) return;
-    var pts = ciclos.filter(function (c) { return c.ventana === 'mes a la fecha' && c.kpis && c.kpis.unidades != null; });
-    if (pts.length < 2) { (host.closest('section') || host).remove(); return; }
+    var candidatos = ciclos.filter(function (c) { return c.ventana === 'mes a la fecha' && c.kpis && c.kpis.unidades != null; });
+    var grupos = {};
+    candidatos.forEach(function (c) {
+      var concepto = normalizar(c.kpis.unidades_concepto);
+      var clave = /^(netas|brutas|operativas)\b/.exec(concepto);
+      if (clave) (grupos[clave[1]] || (grupos[clave[1]] = [])).push(c);
+    });
+    var comparables = Object.keys(grupos).filter(function (clave) { return grupos[clave].length >= 2; })
+      .sort(function (a, b) { return grupos[b][grupos[b].length - 1].fecha.localeCompare(grupos[a][grupos[a].length - 1].fecha); });
+    if (!comparables.length) {
+      host.innerHTML = '<h3>Evolución entre cortes</h3><p class="hint">Todavía no hay dos cortes acumulados con el mismo concepto de unidades para trazar una comparación. Podés consultar cada período por separado abajo.</p>';
+      return;
+    }
+    var conceptoSerie = comparables[0];
+    var pts = grupos[conceptoSerie];
+    var excluidos = candidatos.filter(function (c) { return pts.indexOf(c) === -1; });
+    var notaExcluidos = excluidos.length ? ' No se incluyen ' + excluidos.map(function (c) {
+      return 'el corte del ' + fechaCorta(c.fecha) + ' (' + (c.kpis.unidades_concepto || 'concepto no informado') + ')';
+    }).join(' ni ') + '.' : '';
 
     var narrow = window.innerWidth < 700;
     var W = narrow ? 360 : 720, H = narrow ? 200 : 190;
@@ -171,13 +227,14 @@
     var dots = pts.map(function (p, i) {
       return '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(p.kpis.unidades).toFixed(1) + '" r="' + rDot + '" fill="#fff" stroke="#16A34A" stroke-width="2.5"/>' +
         '<text x="' + x(i).toFixed(1) + '" y="' + (y(p.kpis.unidades) - 13).toFixed(1) + '" text-anchor="middle" font-size="' + fsVal + '" font-weight="700" fill="#0C0C0C">' + p.kpis.unidades + '</text>' +
-        '<text x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="' + fsAxis + '" fill="#8B968F">' + fechaCorta(p.fecha) + '</text>';
+        '<text x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="' + fsAxis + '" fill="#657167">' + fechaCorta(p.fecha) + '</text>';
     }).join('');
 
     host.innerHTML =
-      '<h3>Cómo se fue armando el mes</h3>' +
-      '<p class="hint">Unidades netas acumuladas en cada corte. Solo se grafican los ciclos con ventana «mes a la fecha»: los de ventana propia no son comparables punto a punto.</p>' +
-      '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Unidades netas acumuladas por corte">' +
+      '<h3>Evolución de unidades ' + esc(conceptoSerie) + '</h3>' +
+      '<p class="hint">Cortes con el mismo concepto de unidades y período «mes a la fecha». Los valores son acumulados y no se suman.' + esc(notaExcluidos) + '</p>' +
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Unidades ' + esc(conceptoSerie) + ' acumuladas por corte">' +
+        '<title>' + esc(pts.map(function (p) { return fechaCorta(p.fecha) + ': ' + num(p.kpis.unidades) + ' unidades ' + conceptoSerie; }).join('; ')) + '</title>' +
         '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
           '<stop offset="0%" stop-color="#2BEA60" stop-opacity=".22"/><stop offset="100%" stop-color="#2BEA60" stop-opacity="0"/>' +
         '</linearGradient></defs>' +
@@ -237,6 +294,13 @@
     })
     .catch(function (e) {
       var host = document.getElementById('meses') || document.getElementById('mes-ciclos');
-      if (host) host.innerHTML = '<div class="empty">No se pudo cargar <code>data/ciclos.json</code> (' + esc(e.message) + ').<br>Si estás abriendo el archivo directo desde el disco, subilo a GitHub Pages o serví la carpeta con un servidor local.</div>';
+      if (host) {
+        host.setAttribute('aria-busy', 'false');
+        host.innerHTML = '<div class="empty"><p>No pudimos cargar los reportes. Volvé a intentar en unos momentos.</p><button class="btn" type="button" id="reintentar-datos">Volver a intentar</button></div>';
+        document.getElementById('reintentar-datos').addEventListener('click', function () { window.location.reload(); });
+      }
+      setText('mes-resultados', 'Los reportes no están disponibles en este momento.');
+      document.querySelectorAll('.archive-controls input, .archive-controls select').forEach(function (n) { n.disabled = true; });
+      console.error('No se pudo cargar el manifiesto de Multitrend:', e);
     });
 })();
