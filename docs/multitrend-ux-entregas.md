@@ -19,6 +19,7 @@ La fuente privada vive en `_local/multitrend-source/multitrend-dashboard/` y no 
 - Probar búsqueda, filtros, orden en ambos sentidos, paginación y detalles en navegador; escritorio y móvil.
 - Comprobar que el sitio conserva el cifrado y que los archivos de datos privados no entran en Git.
 - Generar con `npm run build:multitrend-protected`; solicita la contraseña de forma oculta y verifica que sea la del sitio existente antes de modificar la salida.
+- En Windows también se puede usar `powershell -NoProfile -File tools/build-protected-dashboard.ps1 -Dialog` para ingresar la clave en una ventana con campo oculto.
 - Validar con `npm run stage:multitrend-protected -- --check`.
 - Preparar sólo la entrega elegida pasando rutas relativas al comando de stage, por ejemplo `npm run stage:multitrend-protected -- index.html rentabilidad assets`.
 - Revisar el diff y hacer commits/pushes separados. Evitar regenerar en Git los paneles históricos que no cambiaron.

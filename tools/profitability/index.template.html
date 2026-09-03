@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0C0C0C">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Rentabilidad · Multitrend</title>
+  <link rel="icon" href="../assets/brand/multitrend-isotipo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/profitability.css">
+</head>
+<body>
+  <a class="skip" href="#contenido">Ir al contenido</a>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="../index.html" aria-label="Multitrend · Inicio"><img src="../assets/brand/multitrend-horizontal.svg" width="174" height="42" alt="Multitrend"></a>
+      <nav aria-label="Navegación principal"><a href="../index.html">Inicio</a><a href="../ultimo/">Ciclos</a><a href="./" aria-current="page">Rentabilidad</a></nav>
+    </div>
+  </header>
+  <main id="contenido" class="wrap">
+    <section class="hero" aria-labelledby="titulo">
+      <div><p class="eyebrow"><span class="brand-dot" aria-hidden="true"></span> Costos, stock y precios</p><h1 id="titulo">Entendé tu margen.<br><span>Decidí con claridad.</span></h1><p class="hero-copy">Lo que deja cada producto en web y Mercado Libre, qué datos revisar y por dónde empezar.</p></div>
+      <aside class="snapshot"><span class="micro-label">Foto del Maestro</span><strong id="snapshot-date">Cargando fecha…</strong><p id="snapshot-source">STOCK_MT_FINAL · Articulos + Parametros</p><p>Es una lectura guardada. Los cambios posteriores requieren actualizar este panel.</p><a id="source-link" href="#metodo">Ver fuente y cálculos <span aria-hidden="true">↗</span></a></aside>
+    </section>
+
+    <div class="app-error" id="app-error" role="alert" hidden></div>
+    <noscript><p class="app-error">Activá JavaScript para consultar los datos, filtrar y ver las explicaciones de cada producto.</p></noscript>
+    <section id="kpis" class="kpis" aria-label="Resumen del Maestro"></section>
+
+    <section class="section" id="acciones" aria-labelledby="acciones-title">
+      <div class="section-heading"><div><p class="eyebrow">Tu orden de trabajo</p><h2 id="acciones-title">Qué revisar primero</h2></div><a class="text-link" href="#criterios">Cómo se decide la prioridad <span aria-hidden="true">↗</span></a></div>
+      <p class="section-intro">Cada producto se cuenta una vez, en su prioridad más alta. Abrí un grupo para ver los productos y su siguiente paso.</p>
+      <div id="action-cards" class="action-cards"></div>
+      <p class="footnote">Son recomendaciones sobre los datos del Maestro. No ejecutan cambios ni estiman ventas, demanda o resultados de publicidad.</p>
+    </section>
+
+    <section class="explorer section" id="productos" aria-labelledby="productos-title">
+      <div class="section-heading"><div><p class="eyebrow">De lo general al producto</p><h2 id="productos-title">Explorá la rentabilidad</h2></div><button type="button" class="button" id="reset-filters">Limpiar filtros</button></div>
+      <p class="section-intro">Todos los importes están en pesos uruguayos y son por unidad o presentación registrada. Abrí el producto para ver el cálculo y la ficha completa.</p>
+      <form class="filters" id="filters" role="search" aria-label="Filtrar productos">
+        <label class="search-field">Buscar producto o SKU<input id="search" type="search" placeholder="Nombre, SKU, marca o nota…" autocomplete="off"></label>
+        <label>Categoría<select id="category"><option value="all">Todas las categorías</option></select></label>
+        <label>Prioridad<select id="priority"><option value="all">Todas las prioridades</option><option value="urgent">Urgentes</option><option value="high">Altas</option><option value="medium">Medias</option><option value="minor">Menores</option><option value="none">Sin alerta del panel</option></select></label>
+        <label>Stock<select id="stock"><option value="all">Todo el stock</option><option value="positive">Con stock</option><option value="zero">Sin stock</option><option value="unknown">Dato por revisar</option></select></label>
+        <label>Canal / datos<select id="channel"><option value="all">Todos los canales</option><option value="web">Web: margen calculable</option><option value="ml">ML: margen calculable</option><option value="both">Ambos: comparables</option><option value="missing-web">Web: sin precio</option><option value="missing-ml">ML: sin precio</option></select></label>
+      </form>
+      <div class="table-toolbar">
+        <p id="result-count" class="result-count" role="status" aria-live="polite"></p>
+        <div class="sort-controls"><label for="sort">Ordenar por</label><select id="sort"><option value="priority">Prioridad</option><option value="name">Producto</option><option value="sku">SKU</option><option value="category">Categoría</option><option value="stock">Stock</option><option value="cost">Costo final</option><option value="web-price">Precio web</option><option value="web-margin">Margen web $</option><option value="web-pct">Margen web %</option><option value="ml-price">Precio ML</option><option value="ml-margin">Margen ML $</option><option value="ml-pct">Margen ML %</option></select><button type="button" id="sort-direction" class="button" aria-label="Cambiar orden a descendente">Ascendente ↑</button></div>
+      </div>
+      <div class="table-container">
+        <table class="product-table" role="table">
+          <caption class="visually-hidden">Costos y márgenes por producto. Los encabezados permiten ordenar. El nombre abre el detalle.</caption>
+          <thead><tr role="row"><th scope="col" data-sort="name" aria-sort="none"><button type="button">Producto / SKU <span aria-hidden="true">↕</span></button></th><th scope="col" data-sort="stock" aria-sort="none"><button type="button">Stock <span aria-hidden="true">↕</span></button></th><th scope="col" data-sort="cost" aria-sort="none"><button type="button">Costo <span aria-hidden="true">↕</span></button></th><th scope="col" data-sort="web-pct" aria-sort="none"><button type="button">Web <span aria-hidden="true">↕</span></button></th><th scope="col" data-sort="ml-pct" aria-sort="none"><button type="button">Mercado Libre <span aria-hidden="true">↕</span></button></th><th scope="col" data-sort="priority" aria-sort="ascending"><button type="button">Qué hacer <span aria-hidden="true">↑</span></button></th></tr></thead>
+          <tbody id="product-rows"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="empty-state" hidden><strong>No hay productos con estos filtros.</strong><p>Probá con otra búsqueda o limpiá los filtros.</p><button class="button" type="button" id="empty-reset">Mostrar todos</button></div>
+      <div class="pagination"><label>Productos por página<select id="page-size"><option value="12">12</option><option value="24">24</option><option value="48">48</option><option value="all">Todos</option></select></label><div class="pager"><button type="button" class="button" id="previous">← Anterior</button><span id="page-status" role="status" aria-live="polite"></span><button type="button" class="button" id="next">Siguiente →</button></div></div>
+    </section>
+
+    <section id="metodo" class="section method" aria-labelledby="metodo-title">
+      <div class="section-heading"><div><p class="eyebrow">Sin vueltas</p><h2 id="metodo-title">Cómo leer estos números</h2></div><span class="subtle-tag">Estimación por producto</span></div>
+      <div class="formula-banner"><div><span class="formula-number">01</span><strong>Precio</strong><p>Lo que paga el cliente.</p></div><span class="operator" aria-hidden="true">−</span><div><span class="formula-number">02</span><strong>Costo final</strong><p>Lo que cuesta esa unidad.</p></div><span class="operator" aria-hidden="true">−</span><div><span class="formula-number">03</span><strong>Comisión</strong><p>El costo estimado de cobrar o vender.</p></div><span class="operator" aria-hidden="true">=</span><div class="formula-result"><span class="formula-number">Resultado</span><strong>Margen $</strong><p>Lo que queda antes de otros gastos.</p></div></div>
+      <div class="method-grid"><article class="info-card"><h3>El porcentaje cuenta otra cosa</h3><p><strong>Margen % = margen $ ÷ precio × 100.</strong> De cada $100 vendidos, ese porcentaje es lo que queda después del costo y de la comisión estimada.</p><p>No es la ganancia neta final: pueden faltar envíos absorbidos, publicidad, devoluciones, descuentos, impuestos adicionales y gastos del negocio.</p></article><article class="info-card"><h3>Multiplicador no es margen real</h3><p><strong>×2 significa un objetivo equivalente a dos veces el costo.</strong> El margen teórico de 50% todavía no contempla la comisión del canal.</p><p>Para conservar ese multiplicador después de la comisión, la referencia es <strong>costo × multiplicador ÷ (1 − comisión)</strong>. El margen sobre ese precio sigue siendo menor al teórico.</p></article></div>
+      <div id="worked-example" class="worked-example"></div>
+      <details class="method-details" open><summary>Parámetros de esta lectura</summary><div id="parameters" class="parameter-grid"></div><p class="footnote">Las comisiones son las estimaciones configuradas en el Maestro. El panel no comprobó tarifas de las cuentas. El envío es un texto informativo y no se resta en estas fórmulas.</p></details>
+      <details class="method-details" id="criterios"><summary>Reglas de prioridad y límites del panel</summary><div id="priority-rules" class="rules-copy"></div></details>
+      <details class="method-details"><summary>Qué significa cada columna del Maestro</summary><p class="section-intro">Primero el dato que se carga; después los cálculos. Estas explicaciones también aparecen en la ficha de cada producto.</p><div class="glossary" id="glossary"></div></details>
+    </section>
+  </main>
+  <footer class="wrap footer"><p><strong>Multitrend</strong> · Rentabilidad independiente de los ciclos</p><p id="footer-source"></p></footer>
+  <script id="profitability-data" type="application/json">__PROFITABILITY_DATA__</script>
+  <script src="../assets/profitability.js" defer></script>
+</body>
+</html>

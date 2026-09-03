@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, readdir, rm, unlink, writeFile } from 'node:fs/pro
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { hashTree } from './protected-site-integrity.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDir = join(repoRoot, '_local', 'multitrend-source', 'multitrend-dashboard');
@@ -52,6 +53,8 @@ async function listHtml(dir) {
 assertInside(join(repoRoot, '_local'), stagingRoot);
 assertInside(join(repoRoot, '_local'), outputRoot);
 
+const sourceHashes = await hashTree(sourceDir);
+
 await rm(stagingRoot, { recursive: true, force: true });
 await rm(outputRoot, { recursive: true, force: true });
 await mkdir(stagingRoot, { recursive: true });
@@ -78,6 +81,8 @@ const args = [
   '--recursive',
   '--directory', outputRoot,
   '--config', relative(repoRoot, configPath),
+  // Ya se comprobó que es la clave existente; no pedir una segunda entrada oculta.
+  '--short',
   '--remember', '30',
   '--template-title', 'Multitrend · Panel privado',
   '--template-instructions', 'Ingresá la contraseña compartida para abrir los reportes.',
@@ -101,6 +106,10 @@ if (result.error) throw result.error;
 if (result.status !== 0) process.exit(result.status ?? 1);
 
 await rm(stagingRoot, { recursive: true, force: true });
+
+await writeFile(join(localRoot, 'build-receipt.json'), JSON.stringify({
+  version: 1, generatedAt: new Date().toISOString(), source: sourceHashes, output: await hashTree(outputDir)
+}, null, 2), 'utf8');
 
 console.log('\nPanel protegido generado en:');
 console.log(outputDir);

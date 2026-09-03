@@ -1,6 +1,7 @@
 import { copyFile, mkdir, readFile, readdir, rm } from 'node:fs/promises';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hashTree, sameTree } from './protected-site-integrity.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDir = join(repoRoot, '_local', 'multitrend-source', 'multitrend-dashboard');
@@ -33,6 +34,17 @@ assertInside(join(repoRoot, '_local'), outputDir);
 
 const sourceManifest = join(sourceDir, 'data', 'ciclos.json');
 JSON.parse(await readFile(sourceManifest, 'utf8'));
+
+let receipt;
+try {
+  receipt = JSON.parse(await readFile(join(repoRoot, '_local', 'multitrend-protected', 'build-receipt.json'), 'utf8'));
+} catch {
+  throw new Error('Falta el recibo de generación. Ejecutá build:multitrend-protected antes de preparar la publicación.');
+}
+if (receipt.version !== 1 || !receipt.source || !receipt.output ||
+    !sameTree(receipt.source, await hashTree(sourceDir)) || !sameTree(receipt.output, await hashTree(outputDir))) {
+  throw new Error('La fuente o la salida cambió desde la generación. Volvé a generar el sitio antes de publicarlo.');
+}
 
 const outputFiles = await listFiles(outputDir);
 const htmlFiles = outputFiles.filter((file) => /\.html?$/i.test(file));
