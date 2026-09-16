@@ -1,0 +1,416 @@
+{
+  "version": 1,
+  "kind": "google-docs-trusted-read-context",
+  "target": {
+    "documentId": "1WD2GqICzlq0x-0RyLEQ-MGkTBSYJIthK-qaOKE0Fc8Q",
+    "title": "Multitrend — Sistema Operativo del Proyecto",
+    "revisionId": "ANLCKQkqyKDvD_y1KcOi-C7JalmuP0GicNjCJ6mHQy2Wuwj_Ow0iaYi9xTTeuycryExEL7GDzrHl5WqUV-HXfbTs7Cv6rrsi9kKt0zuw6fM",
+    "documentUrl": "https://docs.google.com/document/d/1WD2GqICzlq0x-0RyLEQ-MGkTBSYJIthK-qaOKE0Fc8Q",
+    "selectedTabId": "t.0"
+  },
+  "dropdownMetadata": {
+    "status": "unavailable",
+    "resolvedTool": null,
+    "authoritative": false,
+    "count": 0
+  },
+  "derivedControlInventory": {
+    "hasProtectedControls": false,
+    "authoritativeDropdownCount": 0,
+    "opaqueControlCount": 0,
+    "nativeElementCounts": {
+      "dateElement": 9,
+      "richLink": 6
+    },
+    "tabsScanned": [
+      "t.0"
+    ],
+    "controls": [],
+    "nativeElements": [
+      {
+        "type": "dateElement",
+        "startIndex": 123,
+        "endIndex": 124,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[3]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 110,
+          "endIndex": 125,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-16T03:00:00Z",
+          "locale": "en",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "Sep 16, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 9334,
+        "endIndex": 9335,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[77]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 9327,
+          "endIndex": 9336,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-10T15:00:00Z",
+          "locale": "en",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "Sep 10, 2026"
+        }
+      },
+      {
+        "type": "richLink",
+        "startIndex": 10453,
+        "endIndex": 10454,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[85]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 10430,
+          "endIndex": 10455,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": "kix.y4gnjsc1kfxq",
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "title": "STOCK_MT_FINAL",
+          "uri": "https://docs.google.com/spreadsheets/d/1sDn8kLM_ewCPgsYS01n9EQTUpfmNYvZreU1leYxDB6Q/edit",
+          "mimeType": "application/vnd.google-apps.ritz"
+        }
+      },
+      {
+        "type": "richLink",
+        "startIndex": 10475,
+        "endIndex": 10476,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[86]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 10455,
+          "endIndex": 10477,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": "kix.y4gnjsc1kfxq",
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "title": "Control Financiero - MT - SHEET",
+          "uri": "https://docs.google.com/spreadsheets/d/1wrqNtIfu2vrI4_mtZpW_RNQoGi2C4HNOnnhm7ml4Y5Y/edit",
+          "mimeType": "application/vnd.google-apps.ritz"
+        }
+      },
+      {
+        "type": "richLink",
+        "startIndex": 10494,
+        "endIndex": 10495,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[87]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 10477,
+          "endIndex": 10496,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": "kix.y4gnjsc1kfxq",
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "title": "Radar - datos",
+          "uri": "https://docs.google.com/spreadsheets/d/1FPD2pBdL-7fh1UT3JQxgr8cEmqPMnRQWcji1AqJHvPs/edit",
+          "mimeType": "application/vnd.google-apps.ritz"
+        }
+      },
+      {
+        "type": "richLink",
+        "startIndex": 10531,
+        "endIndex": 10532,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[88]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 10496,
+          "endIndex": 10533,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": "kix.y4gnjsc1kfxq",
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "title": "Como-funciona-el-stock-automatico.md",
+          "uri": "https://docs.google.com/document/d/1ZsMP6KWCqahIcrjiCVNlFmkNu3GqC-CsajlFkzoynvU/edit",
+          "mimeType": "application/vnd.google-apps.kix"
+        }
+      },
+      {
+        "type": "richLink",
+        "startIndex": 10568,
+        "endIndex": 10569,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[89]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 10533,
+          "endIndex": 10570,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": "kix.y4gnjsc1kfxq",
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "title": "Multitrend — Config & Plugins y Registro de Hitos",
+          "uri": "https://docs.google.com/document/d/1e_R5jXjuWMBTfBRaxeVgCZvfT4iw09qBXREmoWeQvLQ/edit",
+          "mimeType": "application/vnd.google-apps.kix"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 11470,
+        "endIndex": 11471,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[101]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 11454,
+          "endIndex": 11472,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-16T03:00:00Z",
+          "locale": "en",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "Sep 16, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 12391,
+        "endIndex": 12392,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[107]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 12370,
+          "endIndex": 12419,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-01T03:00:00Z",
+          "locale": "en",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "Sep 1, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 12395,
+        "endIndex": 12396,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[107]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 12370,
+          "endIndex": 12419,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-15T03:00:00Z",
+          "locale": "en",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "Sep 15, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 14078,
+        "endIndex": 14079,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[117]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 14062,
+          "endIndex": 14080,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-16T03:00:00Z",
+          "locale": "es",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "sept 16, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 15330,
+        "endIndex": 15331,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[127]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 15314,
+          "endIndex": 15332,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-16T03:00:00Z",
+          "locale": "es",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "sept 16, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 18344,
+        "endIndex": 18345,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[145]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 18322,
+          "endIndex": 18346,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-16T03:00:00Z",
+          "locale": "es",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "sept 16, 2026"
+        }
+      },
+      {
+        "type": "dateElement",
+        "startIndex": 19838,
+        "endIndex": 19839,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[156]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 19822,
+          "endIndex": 19840,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "timestamp": "2026-09-16T03:00:00Z",
+          "locale": "es",
+          "dateFormat": "DATE_FORMAT_MONTH_DAY_YEAR_ABBREVIATED",
+          "timeFormat": "TIME_FORMAT_DISABLED",
+          "displayText": "sept 16, 2026"
+        }
+      },
+      {
+        "type": "richLink",
+        "startIndex": 20232,
+        "endIndex": 20233,
+        "tabId": "t.0",
+        "segmentId": null,
+        "container": {
+          "kind": "paragraph",
+          "path": "root.tabs[0].body.content[159]",
+          "tabId": "t.0",
+          "segmentId": null,
+          "startIndex": 20199,
+          "endIndex": 20234,
+          "namedStyleType": "NORMAL_TEXT",
+          "listId": null,
+          "nestingLevel": null,
+          "table": null
+        },
+        "properties": {
+          "title": "RESPALDO_MAESTRO_ALEM_APPSHEET_PILOTO_2026-09-16_PRE_MIGRACION_PEDIDOS",
+          "uri": "https://docs.google.com/spreadsheets/d/10BFGDPSn5YhVGQc7SM1PeOQY6gsEkmW8cV1aciWDILw/edit",
+          "mimeType": "application/vnd.google-apps.ritz"
+        }
+      }
+    ]
+  },
+  "editGuidance": {
+    "advisoryOnly": true,
+    "requiresTargetedPreservation": false,
+    "recommendedBehavior": "No protected controls were detected in the scanned scope.",
+    "warnings": []
+  }
+}

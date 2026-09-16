@@ -1,0 +1,32 @@
+{
+  "bridgeVersion": "3.6",
+  "kind": "google-docs-trusted-read-receipt",
+  "status": "complete",
+  "target": {
+    "documentId": "1WD2GqICzlq0x-0RyLEQ-MGkTBSYJIthK-qaOKE0Fc8Q",
+    "title": "Multitrend — Sistema Operativo del Proyecto",
+    "revisionId": "ANLCKQkqyKDvD_y1KcOi-C7JalmuP0GicNjCJ6mHQy2Wuwj_Ow0iaYi9xTTeuycryExEL7GDzrHl5WqUV-HXfbTs7Cv6rrsi9kKt0zuw6fM",
+    "documentUrl": "https://docs.google.com/document/d/1WD2GqICzlq0x-0RyLEQ-MGkTBSYJIthK-qaOKE0Fc8Q",
+    "selectedTabId": "t.0"
+  },
+  "dropdownMetadata": {
+    "status": "unavailable",
+    "resolvedTool": null,
+    "authoritative": false,
+    "count": 0
+  },
+  "controlAwareness": {
+    "hasProtectedControls": false,
+    "authoritativeDropdownCount": 0,
+    "opaqueControlCount": 0,
+    "affectedParagraphCount": 0,
+    "nativeElementCounts": {
+      "dateElement": 9,
+      "richLink": 6
+    },
+    "preservationRequired": false,
+    "recommendedBehavior": "No protected controls were detected in the scanned scope."
+  },
+  "warnings": [],
+  "error": null
+}
