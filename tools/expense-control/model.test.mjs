@@ -25,9 +25,28 @@ test('usa los últimos tres cierres, agrupa gastos y excluye inversión de stock
   const control = buildExpenseControl(snapshot());
   assert.deepEqual(control.months.map(month => month.label), ['Junio 2026', 'Julio 2026', 'Agosto 2026']);
   assert.deepEqual(control.months.map(month => month.expenses), [100, 120, 160]);
-  assert.deepEqual(control.categories.find(category => category.label === 'Marketing').values, [60, 70, 110]);
-  assert.equal(control.categories.some(category => category.label === 'Stock / Inversión'), false);
+  assert.deepEqual(control.groups.find(group => group.label === 'Otros gastos de marketing').values, [60, 70, 110]);
+  assert.equal(control.groups.some(group => group.label === 'Stock / Inversión'), false);
   assert.equal(control.months[2].change, (160 - 120) / 120);
+});
+
+test('separa los costos, anuncios y suscripciones de Mercado Libre', () => {
+  const movements = [movementHeader,
+    expense('Mercado Libre', 'Plataforma / Tecnología', 40, 'Junio', 6),
+    [0, 'Gasto', 'Mensual', 'Mercado Libre Ads', 'Product Ads', 'Marketing', 20, 'Conciliado', 'Junio', '', 6],
+    [0, 'Gasto', 'Mensual', 'Alquiler depósito', 'Punta Box', 'Servicios', 40, 'Conciliado', 'Junio', '', 6],
+    expense('Mercado Libre', 'Plataforma / Tecnología', 50, 'Julio', 7),
+    [0, 'Gasto', 'Mensual', 'Mercado Libre Ads', 'Display Ads', 'Marketing', 30, 'Conciliado', 'Julio', '', 7],
+    [0, 'Gasto', 'Mensual', 'Alquiler depósito', 'Punta Box', 'Servicios', 40, 'Conciliado', 'Julio', '', 7],
+    expense('Mercado Libre', 'Plataforma / Tecnología', 60, 'Agosto', 8),
+    [0, 'Gasto', 'Mensual', 'Mercado Libre Ads', 'Product Ads', 'Marketing', 40, 'Conciliado', 'Agosto', '', 8],
+    [0, 'Gasto', 'Mensual', 'Alquiler depósito', 'Punta Box', 'Servicios', 60, 'Conciliado', 'Agosto', '', 8]
+  ];
+  const control = buildExpenseControl(snapshot({movements}));
+  assert.deepEqual(control.groups.find(group => group.label === 'Costos de vender en Mercado Libre').values, [40, 50, 60]);
+  assert.deepEqual(control.groups.find(group => group.label === 'Publicidad de Mercado Libre').values, [20, 30, 40]);
+  assert.deepEqual(control.groups.find(group => group.label === 'Depósito').values, [40, 40, 60]);
+  assert.match(control.months[2].comment, /Mercado Libre explicó/i);
 });
 
 test('no publica una lectura que no concilia contra Resumen Mensual', () => {

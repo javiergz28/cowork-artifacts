@@ -7,7 +7,29 @@ const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300
 const numeric = value => typeof value === 'number' && Number.isFinite(value) ? value : null;
 const sum = values => values.reduce((total, value) => total + value, 0);
 const closeEnough = (left, right) => Math.abs(left - right) <= 0.02;
-const displayCategory = value => normalize(value) === 'inversion' ? 'Inversión (gasto)' : value;
+
+// Esta taxonomía es una capa de lectura del panel: no cambia la categoría
+// contable de la Sheet. En particular, separa los cargos de Mercado Libre
+// para que no queden mezclados dentro de “Plataforma / Tecnología”.
+const EXPENSE_GROUPS = Object.freeze([
+  {id: 'ml-selling', section: 'Mercado Libre', label: 'Costos de vender en Mercado Libre', description: 'Cargo por venta, costo fijo, envíos, anulaciones, reembolsos, ajustes y residuales del canal.'},
+  {id: 'ml-ads', section: 'Mercado Libre', label: 'Publicidad de Mercado Libre', description: 'Product Ads y Display Ads facturados por Mercado Libre; no son ventas atribuídas.'},
+  {id: 'ml-promotions', section: 'Mercado Libre', label: 'Promociones y cupones de Mercado Libre', description: 'Cupones o descuentos identificados en la conciliación del canal.'},
+  {id: 'ml-my-page', section: 'Mercado Libre', label: 'Mi Página de Mercado Libre', description: 'Cargo de la tienda o página dentro de Mercado Libre.'},
+  {id: 'warehouse', section: 'Operación diaria', label: 'Depósito', description: 'Alquiler y costo de mantener el espacio operativo.'},
+  {id: 'fulfilment', section: 'Operación diaria', label: 'Envíos y cadetería propios', description: 'Servicios logísticos fuera de los costos de envío ya cobrados por Mercado Libre.'},
+  {id: 'team', section: 'Operación diaria', label: 'Equipo y gestión', description: 'Sueldo operativo y tareas de gestión interna.'},
+  {id: 'content', section: 'Operación diaria', label: 'Contenido y publicidad externa', description: 'Contenido de cuentas y publicidad fuera de Mercado Libre, como Meta.'},
+  {id: 'web-payments', section: 'Operación diaria', label: 'Web, cobros y tecnología', description: 'Hosting, telefonía y cargos de cobro web o Mercado Pago.'},
+  {id: 'services-other', section: 'Operación diaria', label: 'Otros servicios operativos', description: 'Servicios que la fuente todavía no asigna a un bloque más específico.'},
+  {id: 'legal', section: 'Obligaciones y financiación', label: 'Obligaciones legales', description: 'Aportes, impuestos y obligaciones registradas en el período.'},
+  {id: 'financing', section: 'Obligaciones y financiación', label: 'Préstamo Santander (registrado como gasto)', description: 'La fuente lo registra hoy como gasto dentro de “Inversión”; su clasificación definitiva sigue pendiente.'},
+  {id: 'operational-other', section: 'Obligaciones y financiación', label: 'Otros gastos operativos', description: 'Compras o reintegros operativos sin un bloque específico.'},
+  {id: 'marketing-other', section: 'Otros / a revisar', label: 'Otros gastos de marketing', description: 'Gastos de marketing que la fuente no identifica como Mercado Libre, Meta o contenido.'},
+  {id: 'unclassified', section: 'Otros / a revisar', label: 'Otro gasto registrado', description: 'Movimiento incluido para conciliar el cierre; falta una regla de lectura más específica.'}
+]);
+const GROUP_BY_ID = new Map(EXPENSE_GROUPS.map(group => [group.id, group]));
+const SECTION_ORDER = [...new Set(EXPENSE_GROUPS.map(group => group.section))];
 
 function record(header, row) {
   return Object.fromEntries(header.map((name, index) => [name, row[index] ?? '']));
@@ -42,6 +64,32 @@ function closedMonths(summaryRows) {
   return monthRows.slice(-3);
 }
 
+function expenseGroup(current) {
+  const origin = normalize(current['Origen/Proveedor']);
+  const description = normalize(current.Descripción);
+  const sourceCategory = normalize(current.Categoría);
+  const isMlOrigin = origin === 'mercado libre' || origin.includes('cargos e inversiones ml');
+
+  if (origin === 'mercado libre ads') return 'ml-ads';
+  if (isMlOrigin) {
+    if (description.includes('mi pagina')) return 'ml-my-page';
+    if (description.includes('cupon') || description.includes('descuento')) return 'ml-promotions';
+    if (description.includes('publicidad')) return 'ml-ads';
+    return 'ml-selling';
+  }
+  if (origin === 'mercado pago' || origin.includes('hosting') || origin === 'claro') return 'web-payments';
+  if (origin.includes('alquiler deposito')) return 'warehouse';
+  if (origin === 'logifast') return 'fulfilment';
+  if (origin.includes('sueldo javi')) return 'team';
+  if (origin.includes('contenido cuentas') || origin.includes('publicidad meta')) return 'content';
+  if (origin === 'dgi') return 'legal';
+  if (origin.includes('prestamo')) return 'financing';
+  if (sourceCategory === 'servicios') return 'services-other';
+  if (sourceCategory === 'operativa') return 'operational-other';
+  if (sourceCategory === 'marketing') return 'marketing-other';
+  return 'unclassified';
+}
+
 function groupedExpenses(movementRows, month) {
   const [header, ...rows] = movementRows;
   const required = ['Tipo', 'Categoría', 'Monto devengado', 'Mes devengado', '#Mes'];
@@ -55,21 +103,23 @@ function groupedExpenses(movementRows, month) {
     if (Number(current['#Mes']) !== month.monthNumber || normalize(current['Mes devengado']) !== normalize(month.month)) continue;
     const amount = numeric(current['Monto devengado']);
     if (amount === null) throw new Error(`Hay un gasto sin monto numérico en ${month.label}.`);
-    const category = String(current.Categoría ?? '').trim() || 'Sin categoría';
-    groups.set(category, (groups.get(category) || 0) + amount);
+    const groupId = expenseGroup(current);
+    groups.set(groupId, (groups.get(groupId) || 0) + amount);
   }
   if (!groups.size) throw new Error(`No se encontraron gastos devengados para ${month.label}.`);
   return groups;
 }
 
 function monthComment(month, previous) {
-  const main = month.categories.slice().sort((left, right) => right.amount - left.amount)[0];
+  const main = month.groups.slice().sort((left, right) => right.amount - left.amount)[0];
+  const marketplaceTotal = sum(month.groups.filter(group => group.section === 'Mercado Libre').map(group => group.amount));
   const share = main.amount / month.expenses;
-  const mainText = `${main.label} fue la categoría principal: ${Math.round(share * 100)}% del gasto del mes.`;
-  if (!previous || previous.expenses === 0) return mainText;
+  const mainText = `${main.label} fue el bloque principal: ${Math.round(share * 100)}% del gasto del mes.`;
+  const marketplaceText = marketplaceTotal > 0 ? ` Mercado Libre explicó ${Math.round(marketplaceTotal / month.expenses * 100)}% del total.` : '';
+  if (!previous || previous.expenses === 0) return `${mainText}${marketplaceText}`;
   const change = (month.expenses - previous.expenses) / previous.expenses;
-  if (Math.abs(change) < 0.005) return `${mainText} El total se mantuvo prácticamente igual que en ${previous.month}.`;
-  return `${mainText} El total ${change > 0 ? 'subió' : 'bajó'} ${Math.round(Math.abs(change) * 100)}% frente a ${previous.month}.`;
+  if (Math.abs(change) < 0.005) return `${mainText}${marketplaceText} El total se mantuvo prácticamente igual que en ${previous.month}.`;
+  return `${mainText}${marketplaceText} El total ${change > 0 ? 'subió' : 'bajó'} ${Math.round(Math.abs(change) * 100)}% frente a ${previous.month}.`;
 }
 
 /**
@@ -88,19 +138,20 @@ export function buildExpenseControl(snapshot) {
     if (!closeEnough(groupedTotal, month.expenses)) {
       throw new Error(`Los gastos agrupados de ${month.label} no concilian con Resumen Mensual.`);
     }
-    const categories = [...groups.entries()]
-      .map(([label, amount]) => ({label: displayCategory(label), amount, share: amount / month.expenses}))
+    const monthGroups = [...groups.entries()]
+      .map(([id, amount]) => ({...GROUP_BY_ID.get(id), amount, share: amount / month.expenses}))
       .sort((left, right) => right.amount - left.amount || left.label.localeCompare(right.label, 'es'));
-    return {...month, categories};
+    return {...month, groups: monthGroups};
   });
 
-  const categories = [...new Set(byMonth.flatMap(month => month.categories.map(category => category.label)))]
-    .map(label => ({
-      label,
-      values: byMonth.map(month => month.categories.find(category => category.label === label)?.amount ?? 0)
+  const groups = EXPENSE_GROUPS
+    .filter(group => byMonth.some(month => month.groups.some(monthGroup => monthGroup.id === group.id)))
+    .map(group => ({
+      ...group,
+      values: byMonth.map(month => month.groups.find(monthGroup => monthGroup.id === group.id)?.amount ?? 0)
     }))
-    .map(category => ({...category, latest: category.values.at(-1), total: sum(category.values)}))
-    .sort((left, right) => right.latest - left.latest || right.total - left.total || left.label.localeCompare(right.label, 'es'));
+    .map(group => ({...group, latest: group.values.at(-1), total: sum(group.values)}))
+    .sort((left, right) => SECTION_ORDER.indexOf(left.section) - SECTION_ORDER.indexOf(right.section) || right.total - left.total || left.label.localeCompare(right.label, 'es'));
 
   const months = byMonth.map((month, index) => {
     const previous = byMonth[index - 1];
@@ -111,7 +162,7 @@ export function buildExpenseControl(snapshot) {
       state: month.state,
       expenses: month.expenses,
       change,
-      categories: month.categories,
+      groups: month.groups,
       comment: monthComment(month, previous)
     };
   });
@@ -125,8 +176,8 @@ export function buildExpenseControl(snapshot) {
       source: 'Google Sheets API · Resumen Mensual + Movimientos 2026 · solo lectura'
     },
     months,
-    categories,
-    methodology: 'Gastos devengados por mes económico. “Inversión (gasto)” conserva esa categoría de la fuente; las compras de stock con Tipo Inversión no se suman a estos gastos.',
+    groups,
+    methodology: 'Gastos devengados por mes económico. La tabla conserva la suma de la fuente, pero organiza los movimientos para lectura: Mercado Libre se abre entre venta, publicidad, promociones y Mi Página. Las compras de stock con Tipo Inversión no se suman a estos gastos.',
     nextStep: 'La próxima capa puede vincular documentación y caja del mismo cierre, sin duplicar el gasto devengado.'
   };
 }
