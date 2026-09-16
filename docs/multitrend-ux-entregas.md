@@ -1,5 +1,7 @@
 # Multitrend: navegación, rentabilidad y cierre
 
+> Dirección vigente: la experiencia de costos deja de ser un sitio separado. La ruta canónica es `multitrend-dashboard/rentabilidad/`, centrada en la posición actual de stock, costo y margen unitario estimado de cada producto en Web y Mercado Libre, tal como define [Stock y costos de productos](./productos-y-rentabilidad.md). No presenta resultado financiero ni comparaciones históricas. La página `costos-multitrend/` sólo conserva una redirección de compatibilidad.
+
 ## Alcance
 
 Tres espacios en el mismo sitio protegido: inicio del ecosistema, rentabilidad del stock y ciclos comerciales. HTML, CSS y JavaScript existentes; sin dependencias de producción nuevas. Marca oficial verde/negro y Rethink Sans.
@@ -9,15 +11,16 @@ La fuente privada vive en `_local/multitrend-source/multitrend-dashboard/` y no 
 ## Entregas
 
 1. Portada con accesos separados, meses buscables y ordenables. El reporte mensual usa su último corte: nunca suma ciclos solapados.
-2. `/multitrend-dashboard/rentabilidad/`: snapshot fechado de `STOCK_MT_FINAL`, cálculos por encabezado, tabla compacta con detalle, búsqueda/filtros/orden, acciones por prioridad y explicación sencilla de las columnas. No confundir margen unitario estimado con ganancia realizada.
+2. `/multitrend-dashboard/rentabilidad/`: snapshot fechado de `STOCK_MT_FINAL`, cálculos de costo por encabezado, búsqueda/filtros/orden, ficha desplegable, alertas actuales y simulador de incorporación sin escritura. Cada producto expone stock, costo final, precio y margen unitario estimado para Web y Mercado Libre. La valuación de inventario es `stock × costo final`, no caja, ventas ni ganancia.
 3. Cierre del 2 de septiembre: resultado de agosto, puente completo al total informado por Mercado Libre, tablas paginadas con detalle y corrección de estados. El cierre del 28 permanece como referencia histórica.
 
 ## Validación y publicación
 
-- Revisar cifras con valores efectivos del maestro y parámetros de esa misma lectura.
+- Revisar cifras con valores efectivos del maestro y parámetros de esa misma lectura; no mezclar cortes anteriores.
 - Comprobar fórmulas, datos ausentes y prioridades con pruebas de lógica.
 - Probar búsqueda, filtros, orden en ambos sentidos, paginación y detalles en navegador; escritorio y móvil.
-- Comprobar que el sitio conserva el cifrado y que los archivos de datos privados no entran en Git.
+- Comprobar que el sitio conserva el cifrado, que los datos privados no entran en Git y que el HTML de rentabilidad es autocontenido al abrirse directamente en Chrome.
+- Para la actualización automática, el workflow `refresh-stock-position.yml` sólo lee Sheets mediante una cuenta de servicio con permiso de Lector y requiere los secretos de Actions; GitHub Pages no llama a la Sheet.
 - Generar con `npm run build:multitrend-protected`; solicita la contraseña de forma oculta y verifica que sea la del sitio existente antes de modificar la salida.
 - En Windows también se puede usar `powershell -NoProfile -File tools/build-protected-dashboard.ps1 -Dialog` para ingresar la clave en una ventana con campo oculto.
 - Validar con `npm run stage:multitrend-protected -- --check`.

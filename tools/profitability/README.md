@@ -1,5 +1,7 @@
 # Panel de rentabilidad
 
+> Histórico / no canónico para la salida actual. La experiencia vigente de `rentabilidad/` es posición de stock, costos y márgenes unitarios estimados de Web y Mercado Libre; su implementación está en [`tools/stock-position/`](../stock-position/) y su contrato en [`docs/productos-y-rentabilidad.md`](../../docs/productos-y-rentabilidad.md). Este módulo se conserva como referencia de la calculadora anterior y no forma parte del workflow nocturno.
+
 La página independiente usa exclusivamente una lectura de `Articulos` y
 `Parametros` de `STOCK_MT_FINAL`. No consulta reportes de ventas ni escribe en el
 Maestro. El bloque de costos se resuelve por encabezado.

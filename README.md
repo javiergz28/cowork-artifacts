@@ -1,24 +1,24 @@
 # cowork-artifacts
 
-Backup y hosting (GitHub Pages) de los artefactos vivos de Cowork de Javi. Cada carpeta es un artefacto standalone (HTML autocontenido).
+Repositorio y hosting de las capas web de Multitrend. El código versionado no contiene datos comerciales, costos, stock, clientes ni credenciales.
 
-- [`flow/`](./flow/index.html) — **Flow, Personal Command Center.** Task manager personal (Today, Focus, Inbox, Upcoming, Completed). Persistencia real vía Supabase (proyecto `flow-personal-command-center`).
-- [`multitrend-dashboard/`](./multitrend-dashboard/index.html) — **Reportes Multitrend.** Histórico de inteligencia comercial de Multitrend Uruguay (Mercado Libre): índice de reportes, una página por mes y el panel congelado de cada ciclo.
-
-## Estructura de los reportes de Multitrend
-
-```
-multitrend-dashboard/
-├── index.html              Landing: explicación + tarjetas por mes
-├── 2026-08/index.html      Reporte mensual (plantilla, una carpeta por mes)
-├── ciclos/2026-08-28.html  Panel congelado de cada ciclo — no se edita nunca
-├── ultimo/                 URL estable que redirige al panel más reciente
-├── data/ciclos.json        Manifiesto: de acá salen el índice y las páginas mensuales
-└── assets/                 CSS y JS compartidos (reportes.js para el índice, nav.js para los paneles)
+```text
+multitrend-dashboard/       Salida pública/protegida de reportes y rentabilidad
+├── assets/                 Presentación compartida
+├── ciclos/                 Snapshots históricos inmutables
+├── 2026-07/, 2026-08/      Páginas mensuales
+├── ultimo/                 Ruta estable al último ciclo
+└── rentabilidad/           Ruta canónica de productos, costos y rentabilidad
+mt-toolkit/                 Utilidades de análisis de reportes de Mercado Libre
+tools/                      Generación, cifrado, staging e integridad
+docs/                       Diseño, decisiones operativas y guías
+costos-multitrend/          Redirección de compatibilidad hacia rentabilidad/
 ```
 
-**Para agregar un ciclo nuevo: [`COMO_AGREGAR_UN_CICLO.md`](./multitrend-dashboard/COMO_AGREGAR_UN_CICLO.md).** En resumen: copiar el HTML a `ciclos/`, agregar un objeto a `ciclos.json` y pushear. El índice, la página del mes y la navegación entre paneles se arman solos.
+La fuente editable del dashboard y los snapshots viven fuera de Git, en `_local/` cuando están disponibles. Nunca editar directamente la salida protegida ni publicar datos privados en GitHub Pages.
 
-Los paneles se generan con el ciclo `/multitrend-ciclo` a partir de los reportes exportados de Mercado Libre, cruzados con el maestro `STOCK_MT_FINAL`.
+La lectura canónica de inventario está en [Stock y costos de productos](./docs/productos-y-rentabilidad.md): usa una foto de `STOCK_MT_FINAL` para buscar productos, explicar costos y alertar problemas actuales. Expone stock, costo, precio y margen unitario estimado en pesos para Web y Mercado Libre; no calcula resultado financiero.
+
+La actualización se define en [refresh-stock-position.yml](./.github/workflows/refresh-stock-position.yml): admite una corrida manual y una corrida nocturna protegida. Requiere que el dueño del repositorio cargue los secretos `GOOGLE_SERVICE_ACCOUNT_JSON` y `STATICRYPT_PASSWORD`; nunca se guardan en el código. Para ciclos históricos, usar [la guía de publicación](./multitrend-dashboard/COMO_AGREGAR_UN_CICLO.md).
 
 🔗 **GitHub Pages:** https://javiergz28.github.io/cowork-artifacts/

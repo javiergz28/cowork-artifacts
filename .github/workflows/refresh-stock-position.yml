@@ -1,0 +1,63 @@
+name: Actualizar stock y costos Multitrend
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 01:00 America/Montevideo (Uruguay UTC-3).
+    - cron: '0 4 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-stock-position
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener el repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar herramientas de cifrado
+        run: npm ci
+
+      - name: Leer el Maestro en modo solo lectura
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: node tools/fetch-stock-snapshot.mjs _local/stock-position/live-master.json
+
+      - name: Validar y generar la fuente privada
+        run: |
+          node --test tools/stock-position/model.test.mjs
+          node tools/build-stock-position.mjs _local/stock-position/live-master.json _local/stock-position/source/multitrend-dashboard/rentabilidad
+
+      - name: Cifrar la lectura privada
+        env:
+          STATICRYPT_PASSWORD: ${{ secrets.STATICRYPT_PASSWORD }}
+        run: node tools/build-protected-stock-position.mjs
+
+      - name: Preparar exclusivamente la salida segura
+        run: node tools/stage-protected-stock-position.mjs
+
+      - name: Versionar la página cifrada si cambió
+        run: |
+          git add multitrend-dashboard/rentabilidad/index.html
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "La salida protegida no cambió."
+            exit 0
+          fi
+          git config user.name "multitrend-bot"
+          git config user.email "multitrend-bot@users.noreply.github.com"
+          git commit -m "Actualiza lectura cifrada de stock"
+          git push origin HEAD:main
