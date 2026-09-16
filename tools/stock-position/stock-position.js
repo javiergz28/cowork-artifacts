@@ -58,15 +58,19 @@
         const change = month.change === null ? 'Primer mes de la comparación' : `${month.change >= 0 ? '↑' : '↓'} ${percent(Math.abs(month.change))} vs. ${months[index - 1].month}`;
         return `<article class="expense-month"><div class="expense-month-top"><span>${escape(month.month)}</span><span class="expense-state">${escape(month.state)}</span></div><strong>${money(month.expenses)}</strong><p>Gasto devengado</p><small class="${month.change !== null && month.change > 0 ? 'expense-up' : 'expense-down'}">${change}</small></article>`;
       }).join('');
-      const columnCount = months.length + 3;
-      $('expense-matrix-head').innerHTML = `<tr><th scope="col">Bloque de gasto</th><th scope="col">Qué incluye</th>${months.map(month => `<th scope="col">${escape(month.month)}</th>`).join('')}<th scope="col">Total 3 meses</th></tr>`;
-      let previousSection = null;
-      const groupRows = expenses.groups.map(group => {
-        const section = group.section !== previousSection ? `<tr class="expense-section-row"><th colspan="${columnCount}" scope="colgroup">${escape(group.section)}</th></tr>` : '';
-        previousSection = group.section;
-        return `${section}<tr><th scope="row"><strong>${escape(group.label)}</strong></th><td class="expense-description">${escape(group.description)}</td>${group.values.map(value => `<td>${money(value)}</td>`).join('')}<td class="expense-total">${money(group.total)}</td></tr>`;
-      }).join('');
-      $('expense-matrix-body').innerHTML = groupRows + `<tr class="expense-grand-total"><th scope="row" colspan="2">Total de gastos</th>${months.map(month => `<td>${money(month.expenses)}</td>`).join('')}<td>${money(months.reduce((total, month) => total + month.expenses, 0))}</td></tr>`;
+      const sectionGroups = expenses.groups.reduce((sections, group) => {
+        if (!sections.has(group.section)) sections.set(group.section, []);
+        sections.get(group.section).push(group);
+        return sections;
+      }, new Map());
+      const columnLabels = `<div class="expense-column-labels" aria-hidden="true"><span>Rubro</span>${months.map(month => `<span>${escape(month.month)}</span>`).join('')}<span>Total 3 meses</span></div>`;
+      const rowHtml = (group, index) => {
+        const popoverId = `expense-info-${index}`;
+        return `<article class="expense-row"><div class="expense-name"><strong>${escape(group.label)}</strong><button class="expense-info" type="button" data-expense-info aria-expanded="false" aria-controls="${popoverId}" aria-label="Ver qué incluye ${escape(group.label)}">Qué incluye <span aria-hidden="true">i</span></button><div id="${popoverId}" class="expense-popover" role="note" aria-hidden="true"><p class="micro-label">Qué incluye</p><p>${escape(group.description)}</p></div></div>${group.values.map((value, valueIndex) => `<div class="expense-value" data-label="${escape(months[valueIndex].month)}"><strong>${money(value)}</strong></div>`).join('')}<div class="expense-value expense-total" data-label="Total 3 meses"><strong>${money(group.total)}</strong></div></article>`;
+      };
+      const sectionsHtml = [...sectionGroups.entries()].map(([section, groups], sectionIndex) => `<section class="expense-ledger-section" aria-labelledby="expense-section-${sectionIndex}"><header><h4 id="expense-section-${sectionIndex}">${escape(section)}</h4><span>${groups.length} rubro${groups.length === 1 ? '' : 's'}</span></header>${groups.map((group, groupIndex) => rowHtml(group, `${sectionIndex}-${groupIndex}`)).join('')}</section>`).join('');
+      const grandTotal = months.reduce((total, month) => total + month.expenses, 0);
+      $('expense-ledger').innerHTML = `${columnLabels}${sectionsHtml}<div class="expense-grand-total"><strong>Total de gastos</strong>${months.map((month, index) => `<strong data-label="${escape(month.month)}">${money(month.expenses)}</strong>`).join('')}<strong data-label="Total 3 meses">${money(grandTotal)}</strong></div>`;
       $('expense-comments').innerHTML = months.map(month => `<article><strong>${escape(month.month)}</strong><p>${escape(month.comment)}</p></article>`).join('');
       $('expense-methodology').textContent = expenses.methodology;
       $('expense-next-step').textContent = expenses.nextStep;
@@ -186,6 +190,32 @@
       const button = event.target.closest('[data-priority]');
       if (!button) return;
       state.priority = button.dataset.priority; $('priority').value = state.priority; state.page = 1; render(); $('productos').scrollIntoView({behavior: 'smooth'});
+    });
+    function closeExpensePopovers(except = null) {
+      document.querySelectorAll('.expense-row.is-open').forEach(row => {
+        if (row === except) return;
+        row.classList.remove('is-open');
+        const button = row.querySelector('[data-expense-info]');
+        const popover = row.querySelector('.expense-popover');
+        if (button) button.setAttribute('aria-expanded', 'false');
+        if (popover) popover.setAttribute('aria-hidden', 'true');
+      });
+    }
+    $('expense-ledger').addEventListener('click', event => {
+      const button = event.target.closest('[data-expense-info]');
+      if (!button) return;
+      const row = button.closest('.expense-row');
+      const opening = !row.classList.contains('is-open');
+      closeExpensePopovers(row);
+      row.classList.toggle('is-open', opening);
+      button.setAttribute('aria-expanded', String(opening));
+      row.querySelector('.expense-popover').setAttribute('aria-hidden', String(!opening));
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.expense-ledger')) closeExpensePopovers();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeExpensePopovers();
     });
     $('product-list').addEventListener('click', event => {
       const button = event.target.closest('[data-sku]');
