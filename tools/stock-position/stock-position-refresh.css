@@ -152,12 +152,16 @@ summary:focus-visible { outline: 3px solid rgba(37, 191, 80, .65); outline-offse
 .expense-card-heading > p { margin: 4px 0 0; color: var(--muted); font-size: 11px; text-align: right; }
 .micro-label { margin: 0; color: var(--green-deep); font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
 .expense-table-wrap { overflow-x: auto; }
-.expense-table { width: 100%; min-width: 600px; border-collapse: collapse; font-size: 12px; }
+.expense-table { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 12px; }
 .expense-table th,
 .expense-table td { padding: 11px 14px; border-bottom: 1px solid rgba(12, 12, 12, .08); text-align: right; white-space: nowrap; }
 .expense-table thead { color: #4b5850; background: #edf6ee; font-size: 10px; letter-spacing: .055em; text-transform: uppercase; }
-.expense-table th:first-child { width: 36%; text-align: left; }
+.expense-table th:first-child { width: 25%; text-align: left; }
+.expense-table th:nth-child(2) { width: 29%; text-align: left; white-space: normal; }
 .expense-table tbody th { font-weight: 750; }
+.expense-table tbody th strong { display: block; color: #17231a; }
+.expense-description { max-width: 250px; color: #56645a; font-size: 11px; line-height: 1.4; text-align: left !important; white-space: normal !important; }
+.expense-section-row th { padding: 8px 14px; color: #0e602b; background: #e0f8e7; border-bottom-color: #c7edcf; font-size: 10px; font-weight: 900; letter-spacing: .09em; text-align: left; text-transform: uppercase; }
 .expense-total { color: var(--green-deep); font-weight: 850; background: rgba(234, 249, 237, .55); }
 .expense-grand-total { color: #fff; background: #0c0c0c; font-weight: 850; }
 .expense-grand-total th,
