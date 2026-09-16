@@ -1,4 +1,4 @@
-name: Actualizar stock y costos Multitrend
+name: Actualizar stock, costos y gastos Multitrend
 
 on:
   workflow_dispatch:
@@ -31,15 +31,18 @@ jobs:
       - name: Instalar herramientas de cifrado
         run: npm ci
 
-      - name: Leer el Maestro en modo solo lectura
+      - name: Leer fuentes en modo solo lectura
         env:
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        run: node tools/fetch-stock-snapshot.mjs _local/stock-position/live-master.json
+        run: |
+          node tools/fetch-stock-snapshot.mjs _local/stock-position/live-master.json
+          node tools/fetch-expense-snapshot.mjs _local/stock-position/live-expenses.json
 
       - name: Validar y generar la fuente privada
         run: |
           node --test tools/stock-position/model.test.mjs
-          node tools/build-stock-position.mjs _local/stock-position/live-master.json _local/stock-position/source/multitrend-dashboard/rentabilidad
+          node --test tools/expense-control/model.test.mjs
+          node tools/build-stock-position.mjs _local/stock-position/live-master.json _local/stock-position/live-expenses.json _local/stock-position/source/multitrend-dashboard/rentabilidad
 
       - name: Cifrar la lectura privada
         env:

@@ -5,23 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c0c0c">
   <meta name="robots" content="noindex,nofollow">
-  <title>Stock y costos · Multitrend</title>
+  <title>Stock, costos y gastos · Multitrend</title>
   <style id="stock-position-styles">__STOCK_POSITION_CSS__</style>
 </head>
 <body>
   <a class="skip" href="#contenido">Ir al contenido</a>
   <header class="topbar">
-    <div class="wrap topbar-inner"><a class="brand" href="../index.html" aria-label="Multitrend · Inicio"><img class="brand-logo" src="../assets/brand/multitrend-horizontal.svg" alt="Multitrend"><span class="brand-context">Centro de decisión</span></a><nav aria-label="Navegación"><a href="../index.html">Inicio</a><a href="./" aria-current="page">Stock y costos</a></nav></div>
+    <div class="wrap topbar-inner"><a class="brand" href="../index.html" aria-label="Multitrend · Inicio"><img class="brand-logo" src="../assets/brand/multitrend-horizontal.svg" alt="Multitrend"><span class="brand-context">Centro de decisión</span></a><nav aria-label="Navegación"><a href="../index.html">Inicio</a><a href="./" aria-current="page">Stock y costos</a><a href="#gastos">Gastos</a></nav></div>
   </header>
   <main id="contenido" class="wrap">
     <section class="hero reveal" aria-labelledby="titulo">
-      <div><p class="eyebrow"><span aria-hidden="true"></span> Stock, costo y margen actual</p><h1 id="titulo">Qué tenemos.<br><em>Qué deja cada venta.</em></h1><p class="hero-copy">Buscá un producto y compará stock, costo final, precio y margen unitario estimado en Web y Mercado Libre. No usa ventas ni cortes históricos.</p></div>
+      <div><p class="eyebrow"><span aria-hidden="true"></span> Stock, costo, margen y gasto</p><h1 id="titulo">Qué tenemos.<br><em>Qué deja cada venta.</em></h1><p class="hero-copy">Buscá un producto y compará stock, costo final, precio y margen unitario estimado en Web y Mercado Libre. Más abajo, entendé cómo se compusieron los últimos tres cierres de gastos.</p></div>
       <aside class="snapshot"><span class="micro-label">Foto de la fuente</span><strong id="snapshot-date">Cargando fecha…</strong><p id="snapshot-source">STOCK_MT_FINAL · Articulos + Parametros</p><p>Lectura privada de trabajo. Se cifra antes de publicarse; el Maestro sigue siendo la fuente operativa.</p><a id="source-link" href="#criterio">Cómo se calcula <span aria-hidden="true">↗</span></a></aside>
     </section>
 
     <div id="app-error" class="app-error" role="alert" hidden></div>
     <noscript><p class="app-error">Activá JavaScript para consultar la posición de stock.</p></noscript>
     <section id="kpis" class="kpis reveal" aria-label="Resumen actual de stock y márgenes"></section>
+
+    <section id="gastos" class="section expenses reveal" aria-labelledby="gastos-title">
+      <div class="section-heading"><div><p class="eyebrow">Control financiero</p><h2 id="gastos-title">Gastos que explican los últimos cierres</h2></div><span class="subtle-tag" id="expense-status">Cargando cierres…</span></div>
+      <p class="section-intro">Una lectura simple de los últimos tres meses cerrados: cuánto se devengó, qué categorías lo explican y dónde poner la atención al preparar el próximo cierre.</p>
+      <div class="expense-months" id="expense-months" aria-live="polite"></div>
+      <div class="expense-layout">
+        <article class="expense-breakdown"><div class="expense-card-heading"><div><p class="micro-label">Por categoría</p><h3>Cómo se compone cada mes</h3></div><p>Gastos devengados en UYU</p></div><div class="expense-table-wrap"><table class="expense-table"><thead id="expense-matrix-head"></thead><tbody id="expense-matrix-body"></tbody></table></div></article>
+        <aside class="expense-reading"><p class="micro-label">Lectura simple</p><h3>Qué mirar primero</h3><div id="expense-comments" class="expense-comments"></div></aside>
+      </div>
+      <div class="expense-method"><div><strong>Qué incluye</strong><p id="expense-methodology"></p></div><div><strong>Próximo paso</strong><p id="expense-next-step"></p></div></div>
+    </section>
 
     <section id="alertas" class="section reveal" aria-labelledby="alertas-title">
       <div class="section-heading"><div><p class="eyebrow">Alertas de esta foto</p><h2 id="alertas-title">Qué revisar primero</h2></div><a class="text-link" href="#criterio">Cómo se prioriza <span aria-hidden="true">↗</span></a></div>
@@ -72,7 +83,7 @@
       <details class="method-details"><summary>Reglas de las alertas actuales</summary><div id="priority-rules" class="rules-copy"></div></details>
     </section>
   </main>
-  <footer class="wrap footer"><p><strong>Multitrend</strong> · Posición de stock y costos</p><p id="footer-source"></p></footer>
+  <footer class="wrap footer"><p><strong>Multitrend</strong> · Stock, costos y gastos</p><p id="footer-source"></p></footer>
   <script id="stock-position-data" type="application/json">__STOCK_POSITION_DATA__</script>
   <script>__STOCK_POSITION_JS__</script>
 </body>

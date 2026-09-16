@@ -48,6 +48,24 @@
       {label: 'Márgenes a revisar', value: integer(summary.negativeMargins), detail: `${integer(summary.webMarginKnown)} Web y ${integer(summary.mlMarginKnown)} ML calculables.`, attention: true}
     ].map(item => `<article class="kpi${item.attention ? ' attention' : ''}"><span class="label">${item.label}</span><strong>${item.value}</strong><p>${item.detail}</p></article>`).join('');
 
+    function renderExpenses(expenses) {
+      if (!expenses || !Array.isArray(expenses.months) || expenses.months.length !== 3 || !Array.isArray(expenses.categories)) {
+        throw new Error('La lectura de gastos no está disponible o no contiene tres cierres conciliados.');
+      }
+      const months = expenses.months;
+      $('expense-status').textContent = `${months.length} meses cerrados`;
+      $('expense-months').innerHTML = months.map((month, index) => {
+        const change = month.change === null ? 'Primer mes de la comparación' : `${month.change >= 0 ? '↑' : '↓'} ${percent(Math.abs(month.change))} vs. ${months[index - 1].month}`;
+        return `<article class="expense-month"><div class="expense-month-top"><span>${escape(month.month)}</span><span class="expense-state">${escape(month.state)}</span></div><strong>${money(month.expenses)}</strong><p>Gasto devengado</p><small class="${month.change !== null && month.change > 0 ? 'expense-up' : 'expense-down'}">${change}</small></article>`;
+      }).join('');
+      $('expense-matrix-head').innerHTML = `<tr><th scope="col">Categoría</th>${months.map(month => `<th scope="col">${escape(month.month)}</th>`).join('')}<th scope="col">Total 3 meses</th></tr>`;
+      $('expense-matrix-body').innerHTML = expenses.categories.map(category => `<tr><th scope="row">${escape(category.label)}</th>${category.values.map(value => `<td>${money(value)}</td>`).join('')}<td class="expense-total">${money(category.total)}</td></tr>`).join('') + `<tr class="expense-grand-total"><th scope="row">Total de gastos</th>${months.map(month => `<td>${money(month.expenses)}</td>`).join('')}<td>${money(months.reduce((total, month) => total + month.expenses, 0))}</td></tr>`;
+      $('expense-comments').innerHTML = months.map(month => `<article><strong>${escape(month.month)}</strong><p>${escape(month.comment)}</p></article>`).join('');
+      $('expense-methodology').textContent = expenses.methodology;
+      $('expense-next-step').textContent = expenses.nextStep;
+    }
+    renderExpenses(data.expenses);
+
     const categories = [...new Set(products.map(product => product.category))].sort((a, b) => a.localeCompare(b, 'es'));
     $('category').insertAdjacentHTML('beforeend', categories.map(category => `<option value="${escape(category)}">${escape(category)}</option>`).join(''));
     $('parameters').innerHTML = [
