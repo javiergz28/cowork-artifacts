@@ -30,8 +30,9 @@
     </section>
 
     <section class="section explorer reveal" id="productos" aria-labelledby="productos-title">
-      <div class="section-heading"><div><p class="eyebrow">Producto por producto</p><h2 id="productos-title">Buscá stock, costo y margen</h2></div><button type="button" class="button" id="reset-filters">Limpiar filtros</button></div>
-      <p class="section-intro">Los importes son por unidad o presentación registrada. Web y ML muestran <strong>precio − costo final − comisión estimada</strong>: margen unitario estimado, no ganancia neta ni cierre financiero.</p>
+      <div class="section-heading"><div><p class="eyebrow">Producto por producto</p><h2 id="productos-title">Encontrá lo importante en segundos</h2></div><button type="button" class="button" id="reset-filters">Limpiar filtros</button></div>
+      <p class="section-intro">Primero ubicá el producto, después mirá las cinco cifras clave y, si querés decidir un precio, abrí el detalle y usá <strong>Probar este producto</strong>. Web y ML muestran <strong>precio − costo final − comisión estimada</strong>: margen unitario estimado, no ganancia neta ni cierre financiero.</p>
+      <ol class="quick-steps" aria-label="Cómo usar el panel"><li><span>1</span> Buscá por nombre o SKU</li><li><span>2</span> Compará stock, costo y ambos canales</li><li><span>3</span> Probá un escenario sin modificar nada</li></ol>
       <form class="filters" id="filters" role="search" aria-label="Filtrar productos">
         <label class="search-field">Buscar producto o SKU<input id="search" type="search" placeholder="Nombre, SKU, categoría o nota…" autocomplete="off"></label>
         <label>Categoría<select id="category"><option value="all">Todas las categorías</option></select></label>
@@ -46,9 +47,21 @@
     </section>
 
     <section class="section simulator reveal" id="simulador" aria-labelledby="simulador-title">
-      <div class="section-heading"><div><p class="eyebrow">Escenario, sin escribir</p><h2 id="simulador-title">Calculá el costo de un lote</h2></div><span class="subtle-tag">No modifica STOCK_MT_FINAL</span></div>
-      <p class="section-intro">Usá el costo de compra y los parámetros actuales para explorar cuánto costaría incorporar un lote. No modifica el Maestro ni se presenta como precio o margen real.</p>
-      <div class="simulator-grid"><form id="simulator-form" class="simulator-form"><label>Compra por unidad<input name="purchase" type="number" min="0" step="0.01" required></label><label>Moneda<select name="currency"><option value="USD">USD</option><option value="UYU">UYU</option></select></label><label>Tipo de cambio USD/UYU<input name="exchange" type="number" min="0" step="0.01" required></label><label>Coef. importación<input name="importFactor" type="number" min="1" step="0.0001" required></label><label>Coef. impuestos<input name="taxFactor" type="number" min="1" step="0.0001" required></label><label>Unidades del lote<input name="units" type="number" min="1" step="1" value="1" required></label><button class="button primary" type="submit">Actualizar escenario</button></form><aside class="simulation-result" id="simulation-result" aria-live="polite"></aside></div>
+      <div class="section-heading"><div><p class="eyebrow">Escenario, sin escribir</p><h2 id="simulador-title">Probá un precio antes de decidir</h2></div><span class="subtle-tag">No modifica STOCK_MT_FINAL</span></div>
+      <p class="section-intro">Elegí un producto y probá un multiplicador —por ejemplo ×2 o ×3—, o ingresá precios distintos para Web y Mercado Libre. Todo lo que aparece aquí es un escenario local: no cambia el Maestro ni publica precios.</p>
+      <div class="simulator-grid">
+        <form id="simulator-form" class="simulator-form">
+          <label class="field-wide">1 · Producto de la foto<select name="productSku" id="scenario-product" aria-describedby="scenario-product-help"></select><small id="scenario-product-help">Podés empezar por el precio actual, el sugerido del Maestro o un valor propio.</small></label>
+          <label>Costo final por unidad<input name="finalCost" type="number" min="0" step="0.01" required></label>
+          <label>Multiplicador<input name="multiplier" type="number" min="0.01" step="0.01" required></label>
+          <label>Precio propuesto Web<input name="webPrice" type="number" min="0" step="0.01" required></label>
+          <label>Precio propuesto ML<input name="mlPrice" type="number" min="0" step="0.01" required></label>
+          <div class="simulator-actions"><button class="button" type="button" id="apply-multiplier">Usar × multiplicador</button><button class="button primary" type="submit">Actualizar escenario</button></div>
+          <p class="scenario-origin" id="scenario-origin"></p>
+          <details class="scenario-cost-inputs"><summary>Calcular el costo desde compra e importación</summary><p>Úsalo para una reposición o un producto nuevo. Al actualizar, el costo final de arriba pasa a ser la base del escenario.</p><div class="cost-input-grid"><label>Compra por unidad<input name="purchase" type="number" min="0" step="0.01"></label><label>Moneda<select name="currency"><option value="USD">USD</option><option value="UYU">UYU</option></select></label><label>Tipo de cambio USD/UYU<input name="exchange" type="number" min="0" step="0.01"></label><label>Coef. importación<input name="importFactor" type="number" min="1" step="0.0001"></label><label>Coef. impuestos<input name="taxFactor" type="number" min="1" step="0.0001"></label><label>Unidades del lote<input name="units" type="number" min="1" step="1" value="1"></label></div><button class="button secondary" type="button" id="calculate-import-cost">Usar este costo de importación</button></details>
+        </form>
+        <aside class="simulation-result" id="simulation-result" aria-live="polite"></aside>
+      </div>
     </section>
 
     <section id="criterio" class="section method reveal" aria-labelledby="criterio-title">

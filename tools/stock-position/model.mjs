@@ -26,10 +26,11 @@ function readParameters(rows) {
   };
 }
 
-function channel(price, cost, fee, status, isPublished) {
+function channel(price, suggestedPrice, cost, fee, status, isPublished) {
   const margin = price !== null && cost !== null ? price - cost - price * fee : null;
   return {
     price,
+    suggestedPrice,
     fee,
     status,
     isPublished,
@@ -183,8 +184,9 @@ export function buildStockPosition(snapshot) {
       raw,
       expectedCosts: expected
     };
-    product.web = channel(positive(raw['Precio Web']), product.finalCost, parameters.webFee, String(raw['Online WEB'] ?? ''), normalize(raw['Online WEB']) === 'publicado');
-    product.ml = channel(positive(raw['Precio ML']), product.finalCost, parameters.mlFee, String(raw['Estado ML'] ?? ''), normalize(raw['Estado ML']) === 'activa');
+    product.multiplier = positive(raw.Multiplicador);
+    product.web = channel(positive(raw['Precio Web']), positive(raw['Precio Sugerido WEB $']), product.finalCost, parameters.webFee, String(raw['Online WEB'] ?? ''), normalize(raw['Online WEB']) === 'publicado');
+    product.ml = channel(positive(raw['Precio ML']), positive(raw['Precio Sugerido ML']), product.finalCost, parameters.mlFee, String(raw['Estado ML'] ?? ''), normalize(raw['Estado ML']) === 'activa');
     product.auditDifferences = [...auditCosts(raw, expected), ...auditMargins(raw, product)];
     product.stockValue = product.stock !== null && product.stock > 0 && product.finalCost !== null && !basisUnverified
       ? product.stock * product.finalCost

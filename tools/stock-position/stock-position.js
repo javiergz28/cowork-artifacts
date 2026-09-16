@@ -6,6 +6,8 @@
   const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const money = value => value === null || value === undefined ? 'Pendiente' : '$ ' + new Intl.NumberFormat('es-UY', {maximumFractionDigits: 2}).format(value);
   const integer = value => new Intl.NumberFormat('es-UY', {maximumFractionDigits: 0}).format(value);
+  const percent = value => value === null || value === undefined ? 'Pendiente' : new Intl.NumberFormat('es-UY', {style: 'percent', maximumFractionDigits: 1}).format(value);
+  const inputValue = value => Number.isFinite(value) ? String(Math.round(value * 100) / 100) : '';
   const priorityOrder = {urgent: 0, high: 1, minor: 2, none: 3};
   const priorities = {
     urgent: {label: 'Urgente', plural: 'Urgentes', title: 'Validar antes de valorar', description: 'Hay una equivalencia de unidad o pack sin confirmar.'},
@@ -106,10 +108,10 @@
         ['IVA de importación', money(product.importTax)],
         ['Costo final', money(product.finalCost)]
       ].map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join('');
-      const channelMetric = (label, channel, type) => `<div class="channel-metric ${type}"><span>${label}</span><strong>${money(channel.price)}</strong><small class="${channel.margin !== null && channel.margin < 0 ? 'negative' : ''}">Margen $: ${money(channel.margin)}</small></div>`;
-      const channelDetail = (label, channel, type) => `<section class="channel-detail ${type}"><p class="channel-title">${label}</p><div><span>Precio registrado</span><strong>${money(channel.price)}</strong></div><div><span>Comisión estimada</span><strong>${money(channel.commission)}</strong></div><div><span>Margen unitario estimado</span><strong class="${channel.margin !== null && channel.margin < 0 ? 'negative' : ''}">${money(channel.margin)}</strong><small>${channel.pct === null ? 'Pendiente' : new Intl.NumberFormat('es-UY', {style: 'percent', maximumFractionDigits: 1}).format(channel.pct)} del precio</small></div></section>`;
+      const channelMetric = (label, channel, type) => `<div class="channel-metric ${type}"><span>${label}</span><strong>${money(channel.price)}</strong><small class="${channel.margin !== null && channel.margin < 0 ? 'negative' : ''}">Margen $: ${money(channel.margin)}</small>${channel.suggestedPrice !== null ? `<small class="suggested-price">Sugerido: ${money(channel.suggestedPrice)}</small>` : ''}</div>`;
+      const channelDetail = (label, channel, type) => `<section class="channel-detail ${type}"><p class="channel-title">${label}</p><div><span>Precio actual</span><strong>${money(channel.price)}</strong></div><div><span>Precio sugerido del Maestro</span><strong>${money(channel.suggestedPrice)}</strong></div><div><span>Comisión estimada</span><strong>${money(channel.commission)}</strong></div><div><span>Margen unitario estimado</span><strong class="${channel.margin !== null && channel.margin < 0 ? 'negative' : ''}">${money(channel.margin)}</strong><small>${percent(channel.pct)} del precio</small></div></section>`;
       const audit = product.auditDifferences.length ? `<p class="audit-note">El modelo recalculó ${product.auditDifferences.map(item => escape(item.header)).join(', ')} y detectó una diferencia. Ver alerta.</p>` : '';
-      return `<article class="product-card ${product.priority}"><div class="product-top"><div><p class="sku">${escape(product.sku)}</p><h3>${escape(product.name)}</h3><p class="category">${escape(product.category)}</p></div><span class="priority-badge ${product.priority}">${status.label}</span></div><div class="product-metrics"><div><span>Stock actual</span><strong>${product.stock === null ? 'Por revisar' : integer(product.stock)}</strong></div><div><span>Costo final</span><strong>${money(product.finalCost)}</strong></div>${channelMetric('Web', product.web, 'web')}${channelMetric('Mercado Libre', product.ml, 'ml')}<div class="valuation"><span>Valor estimado del stock</span><strong>${product.stockValue === null ? 'Pendiente' : money(product.stockValue)}</strong></div></div><details><summary>Ver costo, margen y alertas <span aria-hidden="true">↓</span></summary><div class="detail"><div class="cost-grid">${components}</div><div class="channel-details">${channelDetail('Web', product.web, 'web')}${channelDetail('Mercado Libre', product.ml, 'ml')}</div>${audit}${product.notes ? `<p class="notes"><strong>Nota del Maestro:</strong> ${escape(product.notes)}</p>` : ''}<div class="actions">${product.actions.length ? product.actions.map(actionHtml).join('') : '<p class="no-action">Sin alerta actual para este producto.</p>'}</div><p class="lineage">Lectura de la fila ${product.sheetRow} del Maestro. Este panel no modifica la fuente.</p></div></details></article>`;
+      return `<article class="product-card ${product.priority}"><div class="product-top"><div><p class="sku">${escape(product.sku)}</p><h3>${escape(product.name)}</h3><p class="category">${escape(product.category)}</p></div><span class="priority-badge ${product.priority}">${status.label}</span></div><div class="product-metrics"><div><span>Stock actual</span><strong>${product.stock === null ? 'Por revisar' : integer(product.stock)}</strong></div><div><span>Costo final</span><strong>${money(product.finalCost)}</strong></div>${channelMetric('Web', product.web, 'web')}${channelMetric('Mercado Libre', product.ml, 'ml')}<div class="valuation"><span>Valor estimado del stock</span><strong>${product.stockValue === null ? 'Pendiente' : money(product.stockValue)}</strong></div></div><details><summary>Ver costo, margen y alertas <span aria-hidden="true">↓</span></summary><div class="detail"><div class="cost-grid">${components}</div><div class="channel-details">${channelDetail('Web', product.web, 'web')}${channelDetail('Mercado Libre', product.ml, 'ml')}</div><button class="simulate-product" type="button" data-sku="${escape(product.sku)}">Probar este producto en el simulador <span aria-hidden="true">↓</span></button>${audit}${product.notes ? `<p class="notes"><strong>Nota del Maestro:</strong> ${escape(product.notes)}</p>` : ''}<div class="actions">${product.actions.length ? product.actions.map(actionHtml).join('') : '<p class="no-action">Sin alerta actual para este producto.</p>'}</div><p class="lineage">Lectura de la fila ${product.sheetRow} del Maestro. Este panel no modifica la fuente.</p></div></details></article>`;
     }
     function renderActions() {
       $('action-cards').innerHTML = ['urgent', 'high', 'minor'].map(priority => {
@@ -160,25 +162,87 @@
       if (!button) return;
       state.priority = button.dataset.priority; $('priority').value = state.priority; state.page = 1; render(); $('productos').scrollIntoView({behavior: 'smooth'});
     });
+    $('product-list').addEventListener('click', event => {
+      const button = event.target.closest('[data-sku]');
+      if (!button) return;
+      $('scenario-product').value = button.dataset.sku;
+      setScenarioProduct(button.dataset.sku);
+      $('simulador').scrollIntoView({behavior: 'smooth', block: 'start'});
+      window.setTimeout(() => $('scenario-product').focus(), 350);
+    });
 
     const simulator = $('simulator-form');
-    for (const [name, value] of [['exchange', parameters.exchange], ['importFactor', parameters.importFactor], ['taxFactor', parameters.taxFactor]]) simulator.elements[name].value = value;
-    simulator.elements.purchase.value = 1;
+    const firstScenarioProduct = products.find(product => product.finalCost !== null) || products[0];
+    $('scenario-product').innerHTML = products.slice().sort((a, b) => a.name.localeCompare(b.name, 'es')).map(product => `<option value="${escape(product.sku)}">${escape(product.name)} · ${escape(product.sku)}</option>`).join('');
+    function priceOrigin(channel, label) {
+      if (channel.price !== null) return `Precio actual ${label}`;
+      if (channel.suggestedPrice !== null) return `Precio sugerido ${label} del Maestro`;
+      return 'Costo final × multiplicador';
+    }
+    function scenarioProduct() {
+      return products.find(product => product.sku === simulator.elements.productSku.value) || firstScenarioProduct;
+    }
+    function scenarioCost(values) {
+      const purchase = Number(values.purchase), exchange = Number(values.exchange), importFactor = Number(values.importFactor), taxFactor = Number(values.taxFactor);
+      if (!Number.isFinite(purchase) || purchase < 0) return null;
+      if (values.currency === 'UYU') return {base: purchase, importCharge: 0, tax: 0, final: purchase};
+      if (![exchange, importFactor, taxFactor].every(Number.isFinite) || exchange <= 0 || importFactor < 1 || taxFactor < 1) return null;
+      const base = purchase * exchange;
+      const importCharge = base * (importFactor - 1);
+      const tax = (base + importCharge) * (taxFactor - 1);
+      return {base, importCharge, tax, final: base + importCharge + tax};
+    }
+    function setScenarioProduct(sku) {
+      const product = products.find(item => item.sku === sku) || firstScenarioProduct;
+      const multiplier = product.multiplier || 2;
+      const fallback = product.finalCost === null ? null : product.finalCost * multiplier;
+      simulator.elements.productSku.value = product.sku;
+      simulator.elements.finalCost.value = inputValue(product.finalCost);
+      simulator.elements.multiplier.value = inputValue(multiplier);
+      simulator.elements.webPrice.value = inputValue(product.web.price ?? product.web.suggestedPrice ?? fallback);
+      simulator.elements.mlPrice.value = inputValue(product.ml.price ?? product.ml.suggestedPrice ?? fallback);
+      simulator.elements.purchase.value = inputValue(product.purchase);
+      simulator.elements.currency.value = String(product.currency).toUpperCase() === 'UYU' ? 'UYU' : 'USD';
+      for (const [name, value] of [['exchange', parameters.exchange], ['importFactor', parameters.importFactor], ['taxFactor', parameters.taxFactor]]) simulator.elements[name].value = inputValue(value);
+      simulator.elements.units.value = '1';
+      $('scenario-origin').textContent = `Base inicial: ${priceOrigin(product.web, 'Web')} · ${priceOrigin(product.ml, 'ML')}. Podés reemplazar ambos precios antes de mirar el margen.`;
+      renderSimulation();
+    }
     function renderSimulation() {
       const values = Object.fromEntries(new FormData(simulator));
-      const purchase = Number(values.purchase), units = Number(values.units), exchange = Number(values.exchange), importFactor = Number(values.importFactor), taxFactor = Number(values.taxFactor);
-      if (![purchase, units, exchange, importFactor, taxFactor].every(Number.isFinite) || purchase < 0 || units < 1 || exchange <= 0 || importFactor < 1 || taxFactor < 1) {
-        $('simulation-result').innerHTML = '<p>Completá valores válidos para ver el escenario.</p>'; return;
+      const cost = Number(values.finalCost), multiplier = Number(values.multiplier), webPrice = Number(values.webPrice), mlPrice = Number(values.mlPrice);
+      if (![cost, multiplier, webPrice, mlPrice].every(Number.isFinite) || cost <= 0 || multiplier <= 0 || webPrice <= 0 || mlPrice <= 0) {
+        $('simulation-result').innerHTML = '<p>Completá costo, multiplicador y ambos precios para ver el escenario.</p>'; return;
       }
-      const imported = values.currency === 'USD';
-      const base = imported ? purchase * exchange : purchase;
-      const importCharge = imported ? base * (importFactor - 1) : 0;
-      const tax = imported ? (base + importCharge) * (taxFactor - 1) : 0;
-      const final = base + importCharge + tax;
-      $('simulation-result').innerHTML = `<p class="simulation-label">Escenario estimado</p><strong class="simulation-main">${money(final)} <small>por unidad</small></strong><dl><div><dt>Costo base</dt><dd>${money(base)}</dd></div><div><dt>Importación</dt><dd>${money(importCharge)}</dd></div><div><dt>IVA de importación</dt><dd>${money(tax)}</dd></div><div><dt>Valor estimado del lote</dt><dd>${money(final * units)}</dd></div></dl><p class="footnote">No actualiza el Maestro ni incluye precio, margen, comisiones, flete adicional o gastos generales.</p>`;
+      const product = scenarioProduct();
+      const channel = (price, fee) => {
+        const commission = price * fee, margin = price - cost - commission;
+        return {price, commission, margin, pct: margin / price};
+      };
+      const web = channel(webPrice, parameters.webFee), ml = channel(mlPrice, parameters.mlFee);
+      const resultChannel = (label, value, type) => `<section class="scenario-channel ${type}"><p>${label}</p><strong>${money(value.price)}</strong><dl><div><dt>Comisión estimada</dt><dd>${money(value.commission)}</dd></div><div><dt>Margen unitario</dt><dd class="${value.margin < 0 ? 'negative' : ''}">${money(value.margin)}</dd></div><div><dt>Margen sobre precio</dt><dd class="${value.margin < 0 ? 'negative' : ''}">${percent(value.pct)}</dd></div></dl></section>`;
+      $('simulation-result').innerHTML = `<p class="simulation-label">Escenario local · ${escape(product.name)}</p><strong class="simulation-main">${money(cost)} <small>costo final usado</small></strong><p class="simulation-multiplier">Con × ${new Intl.NumberFormat('es-UY', {maximumFractionDigits: 2}).format(multiplier)}, el precio base sería <strong>${money(cost * multiplier)}</strong>.</p><div class="scenario-channels">${resultChannel('Web', web, 'web')}${resultChannel('Mercado Libre', ml, 'ml')}</div><p class="footnote">Los márgenes descuentan sólo la comisión estimada del canal. Es un escenario, no un precio publicado ni una ganancia neta.</p>`;
     }
     simulator.addEventListener('submit', event => { event.preventDefault(); renderSimulation(); });
     simulator.addEventListener('input', renderSimulation);
+    simulator.elements.productSku.addEventListener('change', event => setScenarioProduct(event.target.value));
+    $('apply-multiplier').addEventListener('click', () => {
+      const cost = Number(simulator.elements.finalCost.value), multiplier = Number(simulator.elements.multiplier.value);
+      if (!Number.isFinite(cost) || cost <= 0 || !Number.isFinite(multiplier) || multiplier <= 0) return renderSimulation();
+      simulator.elements.webPrice.value = inputValue(cost * multiplier);
+      simulator.elements.mlPrice.value = inputValue(cost * multiplier);
+      renderSimulation();
+    });
+    $('calculate-import-cost').addEventListener('click', () => {
+      const values = Object.fromEntries(new FormData(simulator));
+      const calculated = scenarioCost(values);
+      if (!calculated || calculated.final <= 0) {
+        $('simulation-result').innerHTML = '<p>Completá una compra válida y, si es USD, tipo de cambio y coeficientes para calcular el costo.</p>'; return;
+      }
+      simulator.elements.finalCost.value = inputValue(calculated.final);
+      renderSimulation();
+    });
+    setScenarioProduct(firstScenarioProduct.sku);
     function enableSectionTransitions() {
       if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         document.querySelectorAll('.reveal').forEach(section => section.classList.add('is-visible'));

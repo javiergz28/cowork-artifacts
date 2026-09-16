@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildStockPosition} from './model.mjs';
 
-const headers = ['ITEM COD', 'NAME', 'CATEGORY', 'STOCK', 'Compra', 'Moneda', 'Costo base UYU', 'Recargo import. est.', 'IVA import. est.', 'Costo final UYU', 'Precio Web', 'Precio ML', 'Online WEB', 'Estado ML', 'Margen web $', 'Margen web %', 'Comisión ML $', 'Margen ML $', 'Margen ML %', 'Notas'];
+const headers = ['ITEM COD', 'NAME', 'CATEGORY', 'STOCK', 'Compra', 'Moneda', 'Costo base UYU', 'Recargo import. est.', 'IVA import. est.', 'Costo final UYU', 'Multiplicador', 'Precio Web', 'Precio Sugerido WEB $', 'Precio ML', 'Precio Sugerido ML', 'Online WEB', 'Estado ML', 'Margen web $', 'Margen web %', 'Comisión ML $', 'Margen ML $', 'Margen ML %', 'Notas'];
 function snapshot(overrides = {}, parameters = {}) {
   const row = {
     'ITEM COD': 'TEST-1', NAME: 'Producto de prueba', CATEGORY: 'Pruebas', STOCK: 4,
     Compra: 10, Moneda: 'USD', 'Costo base UYU': 400, 'Recargo import. est.': 200,
     'IVA import. est.': 120, 'Costo final UYU': 720,
-    'Precio Web': 1200, 'Precio ML': 1500, 'Online WEB': 'Publicado', 'Estado ML': 'Activa',
+    Multiplicador: 2, 'Precio Web': 1200, 'Precio Sugerido WEB $': 1250, 'Precio ML': 1500, 'Precio Sugerido ML': 1600, 'Online WEB': 'Publicado', 'Estado ML': 'Activa',
     'Margen web $': 420, 'Margen web %': 0.35, 'Comisión ML $': 300, 'Margen ML $': 480, 'Margen ML %': 0.32,
     Notas: '', ...overrides
   };
@@ -26,6 +26,16 @@ test('incluye precio y margen unitario estimado por canal sin confundirlos con r
   assert.equal(product.ml.margin, 480);
   assert.equal(product.web.pct, 0.35);
   assert.equal(product.ml.pct, 0.32);
+  assert.equal(product.multiplier, 2);
+  assert.equal(product.web.suggestedPrice, 1250);
+  assert.equal(product.ml.suggestedPrice, 1600);
+});
+
+test('conserva el precio sugerido como dato de referencia y no lo usa para cambiar el margen actual', () => {
+  const product = buildStockPosition(snapshot({'Precio Web': '', 'Margen web $': '', 'Margen web %': ''})).products[0];
+  assert.equal(product.web.price, null);
+  assert.equal(product.web.suggestedPrice, 1250);
+  assert.equal(product.web.margin, null);
 });
 
 test('resuelve campos por encabezado, aunque cambie el orden', () => {

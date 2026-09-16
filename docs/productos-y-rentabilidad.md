@@ -9,10 +9,12 @@ La persona que la abre puede:
 - buscar por nombre, SKU, categoría o nota;
 - ver el stock actual y el costo final de la presentación registrada;
 - comparar el precio actual de Web y Mercado Libre con su margen unitario estimado en pesos;
+- ver el precio sugerido de cada canal cuando existe en el Maestro, sin confundirlo con un precio publicado;
 - entender el desglose Compra → costo base → importación → IVA → costo final;
 - ver una valuación estimada de inventario (`STOCK × Costo final UYU`) cuando la unidad es verificable;
 - abrir alertas que expliquen qué pasa y cuál es el siguiente paso;
-- simular el costo de incorporar un lote, sin escribir en la fuente.
+- simular un precio Web y Mercado Libre por producto, con un multiplicador editable y sin escribir en la fuente;
+- calcular un costo de incorporación desde compra e importación cuando se trata de una reposición o un producto nuevo.
 
 `costos-multitrend/` sólo redirige a esta ruta, para no mantener dos productos equivalentes.
 
@@ -37,11 +39,13 @@ Cada producto recibe sólo la severidad más alta encontrada en la misma foto:
 
 Las alertas no modifican `STOCK_MT_FINAL`; describen evidencia, impacto y una acción pendiente para la persona responsable.
 
-## Simulador de incorporación
+## Simulador de precio y costo
 
-El simulador toma compra por unidad, moneda, tipo de cambio, coeficiente de importación, coeficiente de impuestos y cantidad del lote. Devuelve costo base, recargo, IVA de importación, costo final y valor estimado del lote.
+El simulador comienza con un producto de la foto actual. Usa su costo final y multiplicador cuando están disponibles; para cada canal propone primero el precio actual, después el precio sugerido del Maestro y, si falta ambos, `costo final × multiplicador`. Mika y Seba pueden reemplazar esos dos precios o aplicar el multiplicador a ambos con un botón explícito.
 
-No calcula multiplicador, precio, comisión o margen y no escribe en el Maestro. Flete adicional, gastos generales y otros componentes no presentes en los parámetros deben quedar fuera hasta contar con una definición aprobada.
+Para Web y Mercado Libre muestra por separado precio propuesto, comisión estimada, margen unitario estimado en pesos y margen sobre el precio. Es un escenario local: no actualiza el Maestro, no publica precios y no altera las alertas de la foto actual.
+
+El bloque desplegable de importación toma compra por unidad, moneda, tipo de cambio, coeficiente de importación, coeficiente de impuestos y cantidad del lote. Calcula el costo final para usarlo como base del escenario. Flete adicional, gastos generales y otros componentes no presentes en los parámetros quedan fuera hasta contar con una definición aprobada.
 
 ## Actualización controlada con GitHub Actions
 

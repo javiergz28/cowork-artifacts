@@ -16,12 +16,12 @@ if (!localRelative || isAbsolute(localRelative) || localRelative === '..' || loc
 const templateDir = join(repoRoot, 'tools', 'stock-position');
 const snapshot = JSON.parse(await readFile(resolve(repoRoot, inputArg), 'utf8'));
 const model = buildStockPosition(snapshot);
-const [template, css, js] = await Promise.all(['index.template.html', 'stock-position.css', 'stock-position.js'].map(file => readFile(join(templateDir, file), 'utf8')));
+const [template, css, refreshCss, js] = await Promise.all(['index.template.html', 'stock-position.css', 'stock-position-refresh.css', 'stock-position.js'].map(file => readFile(join(templateDir, file), 'utf8')));
 if (!['__STOCK_POSITION_DATA__', '__STOCK_POSITION_CSS__', '__STOCK_POSITION_JS__'].every(marker => template.includes(marker))) {
   throw new Error('La plantilla no contiene todos los puntos de inserción requeridos.');
 }
 const safeData = JSON.stringify(model).replaceAll('<', '\\u003c').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
-const safeCss = css.replaceAll('</style', '<\\/style');
+const safeCss = `${css}\n${refreshCss}`.replaceAll('</style', '<\\/style');
 const safeJs = js.replaceAll('</script', '<\\/script');
 const html = template
   .replace('__STOCK_POSITION_DATA__', safeData)
@@ -30,8 +30,4 @@ const html = template
 await mkdir(outputDir, {recursive: true});
 await writeFile(join(outputDir, 'index.html'), html, 'utf8');
 console.log(`Página privada generada: ${relative(repoRoot, join(outputDir, 'index.html'))}`);
-if (process.env.GITHUB_ACTIONS === 'true') {
-  console.log('Modelo de stock validado sin emitir cifras comerciales en el log.');
-} else {
-  console.log(JSON.stringify({readAt: model.meta.fetchedAtUtc, ...model.summary}, null, 2));
-}
+console.log('Modelo validado sin emitir cifras comerciales en el log.');
