@@ -2,7 +2,7 @@ import {cp, mkdir, readFile, rm} from 'node:fs/promises';
 import {dirname, join, relative, resolve, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
-import {randomBytes} from 'node:crypto';
+import {sharedStaticryptSalt, staticryptSaltFrom} from './shared-staticrypt.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const localRoot = join(repoRoot, '_local');
@@ -26,13 +26,17 @@ await rm(outputRoot, {recursive: true, force: true});
 await mkdir(stagingRoot, {recursive: true});
 await mkdir(outputDir, {recursive: true});
 await cp(sourceDir, join(stagingRoot, 'rentabilidad'), {recursive: true});
+const salt = await sharedStaticryptSalt(repoRoot);
 
-const result = spawnSync(process.execPath, [staticryptCli, join(stagingRoot, 'rentabilidad', 'index.html'), '--directory', outputDir, '--config', 'false', '--salt', randomBytes(16).toString('hex'), '--short', '--remember', '30', '--template-title', 'Multitrend · Stock y costos', '--template-instructions', 'Ingresá la contraseña compartida para abrir el panel.', '--template-button', 'Abrir panel', '--template-placeholder', 'Contraseña', '--template-remember', 'Recordarme durante 30 días', '--template-error', 'La contraseña no es correcta.'], {cwd: repoRoot, env: process.env, stdio: 'inherit'});
+const result = spawnSync(process.execPath, [staticryptCli, join(stagingRoot, 'rentabilidad', 'index.html'), '--directory', outputDir, '--config', 'false', '--salt', salt, '--short', '--remember', '30', '--template-title', 'Multitrend · Stock y costos', '--template-instructions', 'Ingresá la contraseña compartida para abrir el panel.', '--template-button', 'Abrir panel', '--template-placeholder', 'Contraseña', '--template-remember', 'Recordarme durante 30 días', '--template-error', 'La contraseña no es correcta.'], {cwd: repoRoot, env: process.env, stdio: 'inherit'});
 if (result.error) throw result.error;
 if (result.status !== 0) process.exit(result.status ?? 1);
 const protectedIndex = await readFile(join(outputDir, 'index.html'), 'utf8');
 if (!protectedIndex.includes('staticryptEncryptedMsgUniqueVariableName') || protectedIndex.includes('stock-position-data')) {
   throw new Error('La salida no quedó cifrada correctamente.');
+}
+if (staticryptSaltFrom(protectedIndex, 'el panel de stock generado') !== salt) {
+  throw new Error('El panel de stock no usa la sesión compartida; se canceló la salida.');
 }
 await rm(stagingRoot, {recursive: true, force: true});
 console.log('Panel de stock protegido generado en _local.');
