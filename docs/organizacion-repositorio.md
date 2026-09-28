@@ -15,12 +15,17 @@ El archivo `reel-parlantes-tg-recortado.mp4` ya se publicó mediante una URL pú
 
 | Ubicación | Uso |
 | --- | --- |
-| `artifacts/` | Proyectos de video, voces, imágenes, fuentes multimedia y renders |
-| `_local/creativos/tienda-web/` | Banners, capturas, previsualizaciones y notas de la tienda |
+| `~/Documents/Creaciones IA/` | Biblioteca creativa por marca y proyecto, fuera de Git |
+| `artifacts/` | Enlaces de compatibilidad a proyectos anteriores de la biblioteca |
+| `_local/creativos/tienda-web/` | Enlace de compatibilidad al proyecto de la tienda |
 | `_local/` | Fuentes privadas, snapshots, respaldos y nuevas lecturas auxiliares |
 | `.codex/`, `bridge/`, `.tmp-docs-trusted-read/` | Configuración y lecturas auxiliares locales existentes |
 
 Estas rutas están ignoradas por Git. Mantener juntos los HTML de previsualización y sus imágenes relativas. Los proyectos de video conservan sus rutas para no interrumpir sus scripts y servidores locales.
+
+La biblioteca usa `01_Entregas`, `02_Material`, `03_Proyecto` y `04_Revisiones`. Cada proyecto tiene un registro y las entregas llevan títulos claros y versiones incrementales. Las instrucciones globales de Codex y la habilidad local `creative-library` aplican esta organización a los trabajos con acceso a esta Mac, incluso cuando el chat está abierto en un repositorio. Las descargas de ChatGPT sin acceso a la Mac requieren importación.
+
+Los respaldos de recuperación de Git permanecen fuera del repositorio, en `~/Documents/Multitrend/Respaldos Git/`, con acceso local restringido. Conservar una copia recuperable antes de descartar duplicados; los archivos ignorados no se respaldan automáticamente.
 
 ## Antes de publicar
 

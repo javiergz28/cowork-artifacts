@@ -28,9 +28,10 @@ La actualización se define en [refresh-stock-position.yml](./.github/workflows/
 
 GitHub conserva el código del dashboard, sus activos públicos y la salida cifrada que se publica. Las herramientas de edición de video, audio e imágenes funcionan localmente y no necesitan que sus archivos estén en GitHub.
 
-- `artifacts/`: proyectos creativos, tomas, voces, renders y exportaciones. Se conserva localmente y se ignora en Git.
+- `~/Documents/Creaciones IA/`: biblioteca creativa fuera del repositorio, organizada por marca y proyecto, con entregas, material, proyecto editable y revisiones. El catálogo local reúne las entregas con títulos claros y versiones.
+- `artifacts/`: enlaces de compatibilidad para proyectos anteriores; se ignora en Git. Crear los nuevos trabajos en la biblioteca creativa.
 - `_local/`: fuentes privadas, snapshots, respaldos y lecturas auxiliares nuevas. Se ignora en Git.
-- `_local/creativos/tienda-web/`: banners, capturas, previsualizaciones HTML y notas de diseño, agrupados con sus archivos relacionados.
+- `_local/creativos/tienda-web/`: enlace de compatibilidad a la biblioteca creativa.
 - `bridge/`, `.tmp-docs-trusted-read/` y `.codex/`: lecturas auxiliares y configuración local. Se ignoran en Git.
 - Las capturas, medios y previsualizaciones `multitrend-*` sueltas en la raíz también se ignoran. Los activos del sitio deben ir dentro de su carpeta web correspondiente.
 

@@ -8,7 +8,7 @@ node_modules/
 
 # Producción creativa y lecturas auxiliares: permanecen sólo en esta Mac.
 /artifacts/
-/multitrend-image-optimization/
+/multitrend-image-optimization
 /bridge/
 /.tmp-docs-trusted-read/
 /.codex/
