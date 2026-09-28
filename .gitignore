@@ -5,3 +5,31 @@ node_modules/
 .env.*
 !.env.example
 .DS_Store
+
+# Producción creativa y lecturas auxiliares: permanecen sólo en esta Mac.
+/artifacts/
+/multitrend-image-optimization/
+/bridge/
+/.tmp-docs-trusted-read/
+/.codex/
+
+# Banners, capturas y previsualizaciones de trabajo sueltas en la raíz.
+# Los activos web dentro de multitrend-dashboard/ siguen versionados.
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.svg
+/*.mp4
+/*.mov
+/*.MOV
+/*.m4a
+/*.wav
+/*.mp3
+/multitrend-*.md
+/multitrend-*.html
+
+# Cachés y registros de ejecución.
+__pycache__/
+*.pyc
+*.log
